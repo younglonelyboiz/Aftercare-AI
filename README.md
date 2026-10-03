@@ -184,4 +184,4 @@ Prototype có khả năng:
 * Ghi lại audit log.
 * Có bộ test và metric để đánh giá an toàn.
 
-> **Lưu ý:** Đây là prototype phục vụ nghiên cứu/giáo dục, không phải hệ thống sử dụng trực tiếp trong chẩn đoán hoặc điều trị.
+> **Lưu ý:** Đây là prototype phục vụ nghiên cứu/giáo dục, không phải hệ thống sử dụng trực tiếp trong chẩn đoán hoặc điều trị bệnh nhân.
