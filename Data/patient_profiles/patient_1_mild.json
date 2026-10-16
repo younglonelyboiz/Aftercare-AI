@@ -1,0 +1,28 @@
+{
+  "patient_info": {
+    "patient_id": "BN-2026-ASTHMA-01",
+    "full_name": "Nguyễn Văn An",
+    "age": 28,
+    "gender": "Nam",
+    "discharge_date": "2026-10-01"
+  },
+  "clinical_status": {
+    "diagnosis": "Hen phế quản nhẹ - Đã kiểm soát tốt",
+    "known_triggers": ["Phấn hoa", "Khói bụi đường phố"],
+    "personal_best_pef": 520,
+    "baseline_spo2": 98
+  },
+  "current_medications": {
+    "controller_med": "Không dùng thuốc duy trì hàng ngày (Bậc 1 hoặc Bậc 2).",
+    "reliever_med": "Budesonide/Formoterol 80/4.5mcg (hoặc SABA) hít/xịt khi có triệu chứng hoặc trước khi tiếp xúc dị nguyên."
+  },
+  "action_plan_rules": {
+    "green_zone": "PEF từ 80-100% giá trị tốt nhất. Tiếp tục sinh hoạt bình thường.",
+    "yellow_zone": "PEF từ 60-80%. Tăng liều thuốc cắt cơn theo hướng dẫn cá nhân.",
+    "red_zone": "PEF < 60%. Cần dùng ngay thuốc cắt cơn và liên hệ cơ sở y tế."
+  },
+  "follow_up": {
+    "next_appointment": "2026-12-01",
+    "hospital": "Bệnh viện Phổi Trung ương"
+  }
+}

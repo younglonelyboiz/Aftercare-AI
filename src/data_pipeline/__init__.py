@@ -20,4 +20,3 @@ __all__ = [
     "compact_vector_json_string",
     "RAGPipeline",
 ]
-

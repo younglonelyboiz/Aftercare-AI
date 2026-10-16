@@ -13,61 +13,37 @@ from .converter import extract_and_clean_pdf
 from .chunker import split_markdown_by_headers
 from .embedder import GeminiRAGService
 from .formatter import compact_vector_in_existing_json, compact_vector_json_string
-from ..config import (
-    DEFAULT_PDF_PATH,
-    DEFAULT_MD_PATH,
-    DEFAULT_RAW_JSON_PATH,
-    DEFAULT_COMPACT_JSON_PATH,
-    DOCUMENT_REFERENCE,
-    SOURCE_AUTHORITY,
-    CLINICAL_DOMAIN,
-)
+
+# Cập nhật đường dẫn cứng nếu không dùng file config riêng
+DOCUMENT_REFERENCE = "BYT-QĐ1851"
+SOURCE_AUTHORITY = "Bộ Y tế Việt Nam"
+CLINICAL_DOMAIN = "asthma_management"
 
 class RAGPipeline:
-    """Pipeline xử lý dữ liệu tri thức phác đồ điều trị cho hệ thống Aftercare-AI."""
-
     def __init__(self, api_key: Optional[str] = None):
         self.rag_service = GeminiRAGService(api_key=api_key)
 
-    def step1_convert_pdf_to_md(
-        self,
-        pdf_path: Union[str, Path] = DEFAULT_PDF_PATH,
-        output_md_path: Union[str, Path] = DEFAULT_MD_PATH
-    ) -> Path:
-        """Bước 1: Chuyển đổi PDF sang Markdown và dọn dẹp nội dung rác."""
+    def step1_convert_pdf_to_md(self, pdf_path: str, output_md_path: str) -> Path:
         extract_and_clean_pdf(pdf_path, output_md_path)
         return Path(output_md_path)
 
-    def step2_process_markdown_to_json(
-        self,
-        input_md_path: Union[str, Path] = DEFAULT_MD_PATH,
-        output_json_path: Union[str, Path] = DEFAULT_RAW_JSON_PATH,
-        compact_output: bool = True
-    ) -> Path:
-        """
-        Bước 2: Đọc Markdown -> Cắt chunks ngữ nghĩa -> Tạo metadata & vector -> Lưu JSON.
-        """
+    def step2_process_markdown_to_json(self, input_md_path: str, output_json_path: str, compact_output: bool = True) -> Path:
         md_file = Path(input_md_path)
         out_file = Path(output_json_path)
-
-        if not md_file.exists():
-            raise FileNotFoundError(f"Không tìm thấy file Markdown: {md_file}")
 
         print(f"[Step 2] Đang đọc nội dung từ: {md_file}...")
         raw_text = md_file.read_text(encoding="utf-8")
         clean_text = clean_rag_markdown(raw_text)
 
-        print("[Step 2] Đang phân mảnh ngữ nghĩa theo tiêu đề...")
         chunks = split_markdown_by_headers(clean_text)
-        print(f"[Step 2] Đã tách thành {len(chunks)} đoạn ngữ nghĩa. Đang xử lý qua Gemini API...")
-
         dataset: List[Dict[str, Any]] = []
+        
         for idx, item in enumerate(chunks):
             content = item["content"]
             section_title = item["section_title"]
             citation_tag = f"[{DOCUMENT_REFERENCE}: {section_title}]"
 
-            print(f"[Step 2] Xử lý đoạn {idx + 1}/{len(chunks)}: '{section_title[:40]}...'")
+            print(f"[Step 2] Xử lý đoạn {idx + 1}/{len(chunks)}")
             llm_meta = self.rag_service.extract_metadata(content)
             embedding_vec = self.rag_service.generate_embedding(content)
 
@@ -94,29 +70,15 @@ class RAGPipeline:
             with open(out_file, "w", encoding="utf-8") as f:
                 json.dump(dataset, f, ensure_ascii=False, indent=2)
 
-        print(f"[Step 2] Thành công! Đã lưu {len(dataset)} bản ghi tri thức vào: {out_file}")
         return out_file
 
-    def step3_compact_json_vectors(
-        self,
-        input_json_path: Union[str, Path] = DEFAULT_RAW_JSON_PATH,
-        output_json_path: Union[str, Path] = DEFAULT_COMPACT_JSON_PATH
-    ) -> Path:
-        """Bước 3: Nén dòng vector trong file JSON để tối ưu dung lượng và định dạng."""
+    def step3_compact_json_vectors(self, input_json_path: str, output_json_path: str) -> Path:
         compact_vector_in_existing_json(input_json_path, output_json_path)
         return Path(output_json_path)
 
-    def run_all(
-        self,
-        pdf_path: Union[str, Path] = DEFAULT_PDF_PATH,
-        md_path: Union[str, Path] = DEFAULT_MD_PATH,
-        raw_json_path: Union[str, Path] = DEFAULT_RAW_JSON_PATH,
-        final_json_path: Union[str, Path] = DEFAULT_COMPACT_JSON_PATH
-    ):
-        """Chạy toàn bộ pipeline từ PDF ban đầu đến file JSON cơ sở tri thức hoàn chỉnh."""
+    def run_all(self, pdf_path: str, md_path: str, raw_json_path: str, final_json_path: str):
         print("=== BẮT ĐẦU CHẠY TOÀN BỘ RAG KNOWLEDGE PIPELINE ===")
         self.step1_convert_pdf_to_md(pdf_path, md_path)
         self.step2_process_markdown_to_json(md_path, raw_json_path, compact_output=False)
         self.step3_compact_json_vectors(raw_json_path, final_json_path)
         print("=== HOÀN TẤT TOÀN BỘ PIPELINE THÀNH CÔNG! ===")
-

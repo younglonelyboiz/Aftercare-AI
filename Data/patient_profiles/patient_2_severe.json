@@ -1,0 +1,28 @@
+{
+  "patient_info": {
+    "patient_id": "BN-2026-ASTHMA-02",
+    "full_name": "Trần Thị Mai",
+    "age": 61,
+    "gender": "Nữ",
+    "discharge_date": "2026-09-15"
+  },
+  "clinical_status": {
+    "diagnosis": "Hen phế quản nặng - Tiền sử nhập viện vì đợt cấp năm ngoái",
+    "known_triggers": ["Thời tiết lạnh", "Nhiễm virus đường hô hấp", "Mạt bụi nhà"],
+    "personal_best_pef": 280,
+    "baseline_spo2": 95
+  },
+  "current_medications": {
+    "controller_med": "Symbicort (Budesonide/Formoterol) 160/4.5mcg, hít 2 nhát x 2 lần/ngày.",
+    "reliever_med": "Ventolin (Salbutamol) 100mcg, xịt khi khó thở."
+  },
+  "risk_factors": {
+    "history_icu": true,
+    "frequent_exacerbations": true,
+    "note": "Thuộc nhóm nguy cơ cao đợt cấp tử vong do hen."
+  },
+  "follow_up": {
+    "next_appointment": "2026-11-15",
+    "hospital": "Khoa Hô hấp - Bệnh viện Bạch Mai"
+  }
+}
