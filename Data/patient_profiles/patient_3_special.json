@@ -1,0 +1,25 @@
+{
+  "patient_info": {
+    "patient_id": "BN-2026-ASTHMA-03",
+    "full_name": "Lê Hoàng Long",
+    "age": 45,
+    "gender": "Nam",
+    "discharge_date": "2026-10-05"
+  },
+  "clinical_status": {
+    "diagnosis": "Hen phế quản trung bình kèm Bệnh trào ngược dạ dày thực quản (GERD)",
+    "known_triggers": ["Cảm xúc mạnh", "Nằm ngay sau khi ăn tối"],
+    "personal_best_pef": 400,
+    "baseline_spo2": 97
+  },
+  "current_medications": {
+    "controller_med": "Fluticasone/Salmeterol 250mcg, hít sáng/tối.",
+    "reliever_med": "Salbutamol 100mcg khi cần.",
+    "comorbidity_med": "Esomeprazole 40mg uống trước ăn sáng 30 phút (điều trị GERD)."
+  },
+  "special_instructions": "Tránh ăn mặn, không ăn muộn trước khi ngủ 3 tiếng để hạn chế kích phát cơn hen do trào ngược.",
+  "follow_up": {
+    "next_appointment": "2026-11-05",
+    "hospital": "Bệnh viện Đại học Y Dược TP.HCM"
+  }
+}
