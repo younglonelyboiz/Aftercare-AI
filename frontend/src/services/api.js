@@ -32,3 +32,42 @@ export const getDocumentPdfUrl = (documentTag, pdfPage) => {
   const pageAnchor = pdfPage ? `#page=${pdfPage}` : '';
   return `${API_BASE_URL}/documents/view/${documentTag}${pageAnchor}`;
 };
+
+// -------------------------------------------------------------
+// CARE PLAN, NHẮC THUỐC & CHECK-IN TRACKER APIS
+// -------------------------------------------------------------
+export const getCarePlan = async (patientId) => {
+  const response = await apiClient.get(`/care-tracker/care-plans/${patientId}`);
+  return response.data;
+};
+
+export const updateCarePlan = async (carePlanData) => {
+  const response = await apiClient.post('/care-tracker/care-plans/', carePlanData);
+  return response.data;
+};
+
+export const submitCheckin = async (checkinData) => {
+  const response = await apiClient.post('/care-tracker/checkin/', checkinData);
+  return response.data;
+};
+
+export const getCheckinHistory = async (patientId, days = 30) => {
+  const response = await apiClient.get(`/care-tracker/checkin/history/${patientId}?days=${days}`);
+  return response.data;
+};
+
+export const getActiveReminders = async (patientId) => {
+  const response = await apiClient.get(`/care-tracker/reminders/active/${patientId}`);
+  return response.data;
+};
+
+export const actOnReminder = async (reminderId, action) => {
+  const response = await apiClient.post(`/care-tracker/reminders/${reminderId}/action`, { action });
+  return response.data;
+};
+
+export const getNurseOverview = async () => {
+  const response = await apiClient.get('/care-tracker/nurse/patients-overview');
+  return response.data;
+};
+

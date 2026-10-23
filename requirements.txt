@@ -1,13 +1,29 @@
-# Core RAG Data Processing Dependencies
-pymupdf4llm>=0.0.17
-langchain-text-splitters>=0.2.0
-google-generativeai>=0.8.0
+# ==============================================================================
+# AFTERCARE-AI DEPENDENCIES
+# ==============================================================================
+
+# 1. FastAPI & Web Server
+fastapi>=0.110.0
+uvicorn[standard]>=0.28.0
+python-dotenv>=1.0.0
 pydantic>=2.0.0
 
-# Future Agent & Backend dependencies (Week 2 - Week 3)
-fastapi>=0.110.0
-uvicorn>=0.28.0
+# 2. Database, ORM & Vector Store
 sqlalchemy>=2.0.0
 psycopg2-binary>=2.9.9
-langgraph>=0.0.30
+pgvector>=0.2.5
 
+# 3. Embedding, Reranking & IR Search
+sentence-transformers>=2.2.0
+torch>=2.0.0
+rank-bm25>=0.2.2
+
+# 4. LLM Providers
+google-genai>=0.1.0
+google-generativeai>=0.8.0
+openai>=1.0.0
+
+# 5. Document Processing & Evaluation
+pymupdf4llm>=0.0.17
+langchain-text-splitters>=0.2.0
+langgraph>=0.0.30

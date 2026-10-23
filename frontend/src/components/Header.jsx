@@ -1,7 +1,7 @@
 import React from 'react';
 import { Activity, User } from 'lucide-react';
 
-export default function Header({ patients, selectedPatientId, onSelectPatient }) {
+export default function Header({ patients, selectedPatientId, onSelectPatient, currentPortal, onSwitchPortal }) {
   return (
     <header className="app-header">
       <div className="brand-section">
@@ -14,9 +14,25 @@ export default function Header({ patients, selectedPatientId, onSelectPatient })
         </div>
       </div>
 
+      {/* PORTAL SWITCHER: BỆNH NHÂN VS ĐIỀU DƯỠNG */}
+      <div className="portal-toggle-group">
+        <button 
+          className={`portal-btn ${currentPortal === 'patient' ? 'active' : ''}`}
+          onClick={() => onSwitchPortal('patient')}
+        >
+          👤 Portal Bệnh Nhân
+        </button>
+        <button 
+          className={`portal-btn ${currentPortal === 'nurse' ? 'active' : ''}`}
+          onClick={() => onSwitchPortal('nurse')}
+        >
+          🏥 Portal Điều Dưỡng
+        </button>
+      </div>
+
       <div className="patient-selector-wrap">
         <User size={18} color="var(--text-secondary)" />
-        <label htmlFor="patient-select" className="selector-label">Hồ sơ bệnh nhân:</label>
+        <label htmlFor="patient-select" className="selector-label">Đang xem bệnh nhân:</label>
         <select
           id="patient-select"
           className="patient-select"

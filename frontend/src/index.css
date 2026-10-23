@@ -877,3 +877,754 @@ body {
   box-shadow: 0 2px 4px rgba(2, 132, 199, 0.15);
   transform: translateY(-1px);
 }
+
+/* ==========================================================================
+   PORTAL TOGGLE (PATIENT VS NURSE)
+   ========================================================================== */
+.portal-toggle-group {
+  display: flex;
+  background: #e2e8f0;
+  padding: 4px;
+  border-radius: 12px;
+  gap: 4px;
+}
+
+.portal-btn {
+  border: none;
+  background: transparent;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #475569;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.portal-btn.active {
+  background: #ffffff;
+  color: #0284c7;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.left-column-stack, .right-column-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ==========================================================================
+   MEDICATION REMINDER BANNER
+   ========================================================================== */
+.medication-reminder-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.reminder-alert-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reminder-alert-card.overdue {
+  background: #fff7ed;
+  border: 1.5px solid #f97316;
+}
+
+.reminder-alert-card.pending {
+  background: #eff6ff;
+  border: 1.5px solid #3b82f6;
+}
+
+.reminder-icon-box {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.reminder-body {
+  flex: 1;
+}
+
+.reminder-header-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.reminder-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: #ea580c;
+  color: #ffffff;
+}
+
+.reminder-time {
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.reminder-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 2px;
+}
+
+.reminder-message {
+  font-size: 0.85rem;
+  color: #475569;
+}
+
+.reminder-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-ack {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-ack:hover {
+  background: #059669;
+}
+
+.btn-snooze {
+  background: #ffffff;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-snooze:hover {
+  background: #f1f5f9;
+}
+
+/* ==========================================================================
+   CARE CALENDAR 14 DAYS
+   ========================================================================== */
+.care-calendar-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.calendar-legend {
+  display: flex;
+  gap: 12px;
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot-green { background: #10b981; }
+.dot-yellow { background: #f59e0b; }
+.dot-red { background: #ef4444; }
+.dot-empty { background: #cbd5e1; }
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.calendar-day-cell {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 8px 4px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.calendar-day-cell:hover {
+  transform: translateY(-2px);
+  border-color: #0284c7;
+}
+
+.calendar-day-cell.selected {
+  border-color: #0284c7;
+  background: #e0f2fe;
+}
+
+.calendar-day-cell.zone-green {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+}
+
+.calendar-day-cell.zone-yellow {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.calendar-day-cell.zone-red {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.day-weekday {
+  font-size: 0.7rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.day-number {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.day-status-indicator {
+  margin: 4px 0;
+  font-size: 0.8rem;
+}
+
+.day-pef-tag {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #0369a1;
+  background: #ffffff;
+  border-radius: 4px;
+  padding: 1px 2px;
+}
+
+.day-detail-panel {
+  margin-top: 16px;
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 14px;
+  border: 1px solid #e2e8f0;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.detail-header h4 {
+  font-size: 0.95rem;
+  color: #0f172a;
+}
+
+.btn-close-detail {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #64748b;
+}
+
+.detail-stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.stat-box {
+  background: #ffffff;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.stat-box .stat-label {
+  display: block;
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.stat-box .stat-val {
+  font-size: 0.9rem;
+  color: #0f172a;
+}
+
+.zone-text-green { color: #10b981; }
+.zone-text-yellow { color: #f59e0b; }
+.zone-text-red { color: #ef4444; }
+
+.detail-note, .detail-reliever {
+  font-size: 0.82rem;
+  color: #334155;
+  margin-top: 4px;
+}
+
+.empty-day-text {
+  font-size: 0.82rem;
+  color: #64748b;
+  font-style: italic;
+}
+
+/* ==========================================================================
+   CARE PLAN CHECKLIST
+   ========================================================================== */
+.care-checklist-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
+}
+
+.checklist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.badge-best-pef {
+  font-size: 0.82rem;
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.task-group {
+  margin-bottom: 18px;
+}
+
+.group-title {
+  font-size: 0.9rem;
+  color: #334155;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px dashed #e2e8f0;
+}
+
+.task-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #f8fafc;
+  margin-bottom: 6px;
+  border: 1px solid #f1f5f9;
+  transition: all 0.15s ease;
+}
+
+.task-row.done {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.task-row.done .task-name {
+  text-decoration: line-through;
+  color: #64748b;
+}
+
+.task-content {
+  flex: 1;
+}
+
+.task-name {
+  font-size: 0.9rem;
+  color: #0f172a;
+}
+
+.task-dose {
+  color: #0284c7;
+  font-weight: 600;
+}
+
+.task-instruction {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.task-times {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.done-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #16a34a;
+  background: #dcfce7;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.btn-quick-checkin {
+  background: #0284c7;
+  color: white;
+  border: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-quick-checkin:hover {
+  background: #0369a1;
+}
+
+/* ==========================================================================
+   NURSE COMMAND CENTER PORTAL
+   ========================================================================== */
+.nurse-portal-wrap {
+  width: 100%;
+}
+
+.nurse-command-center {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.nurse-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  padding: 20px 24px;
+  border-radius: 16px;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
+}
+
+.nurse-header h2 {
+  font-size: 1.3rem;
+  color: #0f172a;
+}
+
+.nurse-header p {
+  font-size: 0.88rem;
+  color: #64748b;
+}
+
+.btn-refresh {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.nurse-layout-grid {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 1024px) {
+  .nurse-layout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.nurse-patient-list-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
+  max-height: 800px;
+  display: flex;
+  flex-direction: column;
+}
+
+.nurse-patient-list-card .card-header h3 {
+  font-size: 1.05rem;
+  color: #0f172a;
+}
+
+.sort-hint {
+  font-size: 0.75rem;
+  color: #64748b;
+  display: block;
+  margin-top: 4px;
+  margin-bottom: 12px;
+}
+
+.patient-cards-scroll {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-right: 4px;
+}
+
+.nurse-p-card {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 14px;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nurse-p-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.nurse-p-card.active {
+  background: #f0f9ff;
+  border-color: #0284c7;
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
+}
+
+.nurse-p-card.zone-border-red {
+  border-left: 5px solid #ef4444;
+}
+
+.nurse-p-card.zone-border-yellow {
+  border-left: 5px solid #f59e0b;
+}
+
+.nurse-p-card.zone-border-green {
+  border-left: 5px solid #10b981;
+}
+
+.p-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.p-card-id {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #0f172a;
+}
+
+.zone-chip {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.zone-chip.zone-red { background: #fee2e2; color: #991b1b; }
+.zone-chip.zone-yellow { background: #fef3c7; color: #92400e; }
+.zone-chip.zone-green { background: #d1fae5; color: #065f46; }
+.zone-chip.zone-unknown { background: #e2e8f0; color: #475569; }
+
+.p-card-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.stat-col .lbl {
+  display: block;
+  font-size: 0.68rem;
+  color: #64748b;
+}
+
+.stat-col .val {
+  font-size: 0.9rem;
+  color: #0f172a;
+}
+
+.stat-col .sub {
+  display: block;
+  font-size: 0.65rem;
+  color: #94a3b8;
+}
+
+.adherence-bar-bg {
+  width: 100%;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 2px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.adherence-bar-fill {
+  height: 100%;
+  background: #0284c7;
+  border-radius: 2px;
+}
+
+.nurse-detail-panel {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
+}
+
+.detail-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.highlight-id {
+  color: #0284c7;
+  font-family: var(--font-mono);
+}
+
+.tag-best {
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+}
+
+/* Trend bars */
+.trend-box {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+  border: 1px solid #e2e8f0;
+}
+
+.trend-box h4 {
+  font-size: 0.92rem;
+  color: #1e293b;
+  margin-bottom: 14px;
+}
+
+.trend-bars-container {
+  display: flex;
+  align-items: flex-end;
+  height: 160px;
+  gap: 12px;
+  padding-top: 20px;
+  border-bottom: 1px solid #cbd5e1;
+}
+
+.trend-bar-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+  cursor: pointer;
+}
+
+.trend-bar-val {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 4px;
+}
+
+.trend-bar-fill {
+  width: 100%;
+  max-width: 24px;
+  border-radius: 4px 4px 0 0;
+  transition: height 0.3s ease;
+}
+
+.bar-zone-green { background: #10b981; }
+.bar-zone-yellow { background: #f59e0b; }
+.bar-zone-red { background: #ef4444; }
+
+.trend-bar-date {
+  font-size: 0.65rem;
+  color: #64748b;
+  margin-top: 6px;
+}
+
+.care-plan-edit-form h4 {
+  font-size: 1rem;
+  color: #0f172a;
+  margin-bottom: 16px;
+}
+
+.current-meds-summary {
+  background: #f1f5f9;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 16px 0;
+}
+
+.current-meds-summary h5 {
+  font-size: 0.85rem;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.current-meds-summary ul {
+  padding-left: 18px;
+  font-size: 0.85rem;
+  color: #475569;
+}
+
+.btn-save-plan {
+  background: #0284c7;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-save-plan:hover {
+  background: #0369a1;
+}
+
