@@ -22,8 +22,8 @@ Trong tuần 4, nhóm tập trung vào hai mảng công việc cốt lõi:
 
 | STT | Thành viên | Nhiệm vụ chính (Deliverable) | Issue liên kết | Pull Request & Reviewer |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | **Hoàng Ngọc Đức** | Thiết kế bộ đánh giá RAGAS tiếng Việt, thu thập số liệu 20 Test Cases | Issue #xx | PR #xx (Reviewer: Nguyễn Trường Giang) |
-| 2 | **Nguyễn Trường Giang** | Xây dựng API và giao diện Care Plan Tracker, Check-in & Lịch uống thuốc | Issue #yy | PR #yy (Reviewer: Hoàng Ngọc Đức) |
+| 1 | **Hoàng Ngọc Đức** | Thiết kế bộ đánh giá RAGAS tiếng Việt, thu thập số liệu 20 Test Cases | [Issue #5](https://github.com/younglonelyboiz/Aftercare-AI/issues/5) | [PR #7](https://github.com/younglonelyboiz/Aftercare-AI/pull/7) (Reviewer: Nguyễn Trường Giang) |
+| 2 | **Nguyễn Trường Giang** | Xây dựng API và giao diện Care Plan Tracker, Check-in & Lịch uống thuốc | [Issue #6](https://github.com/younglonelyboiz/Aftercare-AI/issues/6) | [PR #7](https://github.com/younglonelyboiz/Aftercare-AI/pull/7) (Reviewer: Hoàng Ngọc Đức) |
 
 ---
 

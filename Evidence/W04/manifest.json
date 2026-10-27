@@ -16,6 +16,8 @@
       "task_name": "RAGAS Clinical Vietnamese Benchmark",
       "assignee": "Hoàng Ngọc Đức",
       "reviewer": "Nguyễn Trường Giang",
+      "issue_number": 5,
+      "pr_number": 7,
       "status": "COMPLETED",
       "evidence_files": [
         "metrics.csv",
@@ -28,6 +30,8 @@
       "task_name": "Care Plan Tracker, Check-in & Medication Reminder Engine",
       "assignee": "Nguyễn Trường Giang",
       "reviewer": "Hoàng Ngọc Đức",
+      "issue_number": 6,
+      "pr_number": 7,
       "status": "COMPLETED",
       "evidence_files": [
         "README.md"
