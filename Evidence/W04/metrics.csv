@@ -1,0 +1,22 @@
+test_case_id,query,context_recall,context_precision,faithfulness,answer_relevance
+TC03,Nửa đêm đột ngột lên cơn hen khó thở khò khè tại nhà thì các bước xịt thuốc xử trí ban đầu như thế nào?,0.0,0.0,0.9,0.95
+TC04,Tôi tự thổi máy đo lưu lượng đỉnh PEF tại nhà thấy kim tụt xuống dưới 60% chỉ số tốt nhất của tôi thì phải xử trí sao?,1.0,1.0,1.0,0.95
+TC01,"Bác sĩ ơi, người nhà tôi đang lên cơn hen dữ dội, phải ngồi chồm ra trước để thở, nói không thành câu chỉ từng từ một thì đã nguy kịch phải gọi cấp cứu chưa?",0.0,0.0,1.0,0.95
+TC02,"Bệnh nhân hen đang thở rít mà tự nhiên lơ mơ ngủ gà, lồng ngực im phăng phắc không nghe thấy tiếng thở nữa thì là bệnh đỡ hay nặng hơn?",1.0,1.0,1.0,0.95
+TC05,Bác sĩ hướng dẫn khi cơn hen trở nặng thì uống viên Prednisolone liều bao nhiêu và uống trong bao nhiêu ngày?,1.0,1.0,1.0,0.95
+TC06,"Tôi dùng bình xịt thuốc hen duy trì mấy ngày nay thấy cổ họng cứ rát buốt, khàn đặc tiếng thì làm sao để phòng tránh?",1.0,1.0,1.0,0.95
+TC07,Xịt thuốc cắt cơn Salbutamol xong tôi thấy tay bị run lẩy bẩy với tim đập nhanh hồi hộp thì có nguy hiểm không bác sĩ?,1.0,0.5,1.0,0.95
+TC08,Tại sao bác sĩ lại chỉ định cho tôi phải hít thuốc qua một ống nhựa buồng đệm spacer thay vì ngậm xịt trực tiếp?,1.0,0.8333,1.0,0.95
+TC09,"Mấy tuần nay tôi thấy người hoàn toàn bình thường, hết ho khó thở rồi thì tôi có được tự dừng bình xịt duy trì hàng ngày không?",1.0,0.5,1.0,0.95
+TC10,"Bị hen phế quản thì có đi tập gym hay chạy bộ được không, trước khi tập có cần chuẩn bị xịt thuốc gì phòng trước không?",1.0,1.0,1.0,0.95
+TC11,Làm thế nào để tôi tự kiểm tra xem trong 4 tuần vừa rồi bệnh hen của mình được kiểm soát tốt hay chưa?,0.0,0.0,1.0,0.95
+TC12,Tôi đang mang thai 3 tháng mà bị hen phế quản thì dùng bình xịt thuốc hen có làm ảnh hưởng xấu đến em bé không?,1.0,1.0,1.0,0.95
+TC13,Người bị bệnh hen phế quản khi bị đau nhức xương khớp hay đau răng có được uống Aspirin hoặc Ibuprofen không?,0.0,0.0,1.0,0.95
+TC14,"Tôi bị hen mà hay bị ợ chua nóng rát ở ngực, liệu bệnh trào ngược dạ dày có làm hen của tôi nặng thêm không?",1.0,1.0,1.0,0.95
+TC15,Người lớn mắc bệnh hen phế quản mạn tính có cần đi tiêm phòng vắc xin cúm hàng năm không?,1.0,1.0,1.0,0.95
+TC16,"Sau khi vừa ra viện điều trị đợt cấp hen phế quản, bao lâu thì tôi cần quay lại bệnh viện khám lại?",0.0,0.0,1.0,0.95
+TC17,Mỗi lần đến lịch tái khám định kỳ hen phế quản thì tôi có cần mang theo các bình thuốc xịt đang dùng đi không?,1.0,1.0,1.0,0.95
+TC18,Tôi bị hen mà kèm theo hắt hơi sổ mũi dị ứng quanh năm thì có cần chữa viêm mũi không?,1.0,0.5,1.0,0.95
+TC19,"Bố tôi lớn tuổi có tiền sử hút thuốc lá nhiều năm, vừa ho đờm vừa khó thở thì làm sao phân biệt được hen hay COPD?",1.0,1.0,1.0,0.95
+TC20,Người nhà hút thuốc lá trong nhà có làm tăng nguy cơ bùng phát cơn hen không và bệnh nhân cần tránh gì?,1.0,1.0,1.0,0.95
+SUMMARY_AVERAGE,Total cases: 20,0.75,0.6667,0.995,0.95

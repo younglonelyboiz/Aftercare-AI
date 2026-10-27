@@ -1,0 +1,767 @@
+{
+  "summary": {
+    "total_cases_processed": 20,
+    "mean_context_recall": 0.75,
+    "mean_context_precision": 0.6667,
+    "mean_faithfulness": 0.995,
+    "mean_answer_relevance": 0.95
+  },
+  "details": [
+    {
+      "test_case_id": "TC03",
+      "query": "Nửa đêm đột ngột lên cơn hen khó thở khò khè tại nhà thì các bước xịt thuốc xử trí ban đầu như thế nào?",
+      "ground_truth_chunks": [
+        "CHK-BYT_1851-P42-01",
+        "CHK-BYT_1851-P46-01"
+      ],
+      "retrieved_chunk_ids": [
+        "CHK-BYT_1851-P45-01",
+        "CHK-BYT_1851-P43-01",
+        "CHK-GINA_2023-P42-02"
+      ],
+      "generated_answer": "Chào bạn, tôi hiểu bạn đang lo lắng về việc xử trí cơn hen cấp tính tại nhà. Khi nửa đêm đột ngột lên cơn hen khó thở khò khè tại nhà, bạn cần thực hiện các bước xử trí ban đầu như sau:\n\n*   **Đánh giá mức độ nặng của cơn hen:**\n    *   Bạn có thể nói thành câu hay chỉ nói được vài từ?\n    *   Bạn có cảm thấy kích động, lo lắng không?\n    *   Nhịp thở của bạn có nhanh không? Có phải gắng sức để thở không?\n    *   Nhịp tim của bạn có nhanh không?\n    *   Nếu bạn có máy đo độ bão hòa oxy (SpO2) tại nhà, hãy kiểm tra xem chỉ số là bao nhiêu.\n    *   Nếu bạn có máy đo lưu lượng đỉnh kế (PEF) tại nhà, hãy đo để đánh giá chức năng hô hấp.\n\n*   **Sử dụng thuốc cắt cơn hen (SABA):**\n    *   Ngay lập tức sử dụng thuốc đồng vận beta 2 tác dụng ngắn (SABA) theo chỉ định của bác sĩ. Thường là bằng thuốc định liều pMDI (bình xịt định liều) và buồng đệm.\n    *   Bạn cần lặp lại liều SABA theo hướng dẫn của bác sĩ.\n\n*   **Thở oxy (nếu có):**\n    *   Nếu bạn có sẵn bình oxy tại nhà và được bác sĩ hướng dẫn sử dụng, hãy thở oxy để duy trì độ bão hòa oxy từ 93-95% (đối với người lớn và trẻ vị thành niên) hoặc 94-98% (đối với trẻ em 6-12 tuổi).\n\n*   **Uống corticosteroid (nếu có chỉ định):**\n    *   Nếu bác sĩ đã kê đơn corticosteroid uống để xử trí đợt cấp, hãy uống sớm theo hướng dẫn.\n\n*   **Theo dõi và đánh giá đáp ứng:**\n    *   Kiểm tra đáp ứng của các triệu chứng (khó thở, khò khè) và độ bão hòa oxy thường xuyên.\n    *   Nếu có thể, đo chức năng hô hấp (PEF) sau 1 giờ.\n\n*   **Khi nào cần chuyển đến cơ sở y tế:**\n    *   Nếu bạn có bất kỳ dấu hiệu nào của cơn kịch phát nặng như: lơ mơ, lẫn lộn, nghe phổi im lặng, hoặc các triệu chứng không cải thiện sau khi xử trí ban đầu, bạn cần sắp xếp chuyển đến cơ sở cấp cứu ngay lập tức.\n\n**Lưu ý quan trọng:**\n\n*   Tuyệt đối không sử dụng thuốc an thần.\n*   Không cần thực hiện X-quang ngực hoặc làm khí máu thường quy, hoặc chỉ định kháng sinh cho các đợt kịch phát hen tại nhà trừ khi có chỉ định của bác sĩ.\n\nNếu bạn không chắc chắn về cách xử trí hoặc tình trạng của bạn không cải thiện, hãy liên hệ ngay với bác sĩ điều trị hoặc gọi cấp cứu.\n\nTài liệu tham khảo: Hướng dẫn chẩn đoán và điều trị Hen phế quản, Quyết định 1851/QĐ-BYT, Bảng 10, Bảng 9, Bảng 11 (trang 45, 46).",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_precision": 0.0,
+        "faithfulness": 0.9,
+        "answer_relevance": 0.95
+      },
+      "judge_trace": {
+        "context_recall": {
+          "score": 0.0,
+          "reason": "Tìm thấy 0/2 chunk chuẩn ([])"
+        },
+        "context_precision": {
+          "score": 0.0,
+          "reason": "Thứ hạng các chunk đúng trong Top 3: []"
+        },
+        "faithfulness": {
+          "score": 0.9,
+          "reason": "Câu trả lời của AI bám sát tài liệu, chỉ có một số chi tiết nhỏ như việc sử dụng corticosteroid uống tại nhà không được đề cập rõ ràng trong tài liệu."
+        },
+        "answer_relevance": {
+          "score": 0.95,
+          "reason": "Câu trả lời của AI bao gồm các bước xử trí cơn hen tại nhà, phù hợp với đáp án chuẩn lâm sàng, mặc dù có thêm một số chi tiết không cần thiết."
+        }
+      }
+    },
+    {
+      "test_case_id": "TC04",
+      "query": "Tôi tự thổi máy đo lưu lượng đỉnh PEF tại nhà thấy kim tụt xuống dưới 60% chỉ số tốt nhất của tôi thì phải xử trí sao?",
+      "ground_truth_chunks": [
+        "CHK-GINA_2023-P42-02",
+        "CHK-BYT_1851-P41-01"
+      ],
+      "retrieved_chunk_ids": [
+        "CHK-BYT_1851-P41-01",
+        "CHK-GINA_2023-P35-02",
+        "CHK-BYT_1851-P28-02"
+      ],
+      "generated_answer": "Chào bạn,\n\nKhi bạn tự thổi máy đo lưu lượng đỉnh PEF tại nhà mà thấy kim tụt xuống dưới 60% chỉ số tốt nhất của mình, đây là dấu hiệu cho thấy tình trạng hen của bạn đang trở nặng. Bạn cần xử trí theo các bước sau:\n\n- **Tăng thuốc giảm triệu chứng:** Tiếp tục sử dụng thuốc giảm triệu chứng của bạn.\n- **Tăng thuốc kiểm soát:** Tiếp tục sử dụng thuốc kiểm soát thường ngày.\n- **Dùng thêm corticoid đường uống (OCS):**\n    - Bạn cần dùng thêm prednisolone 40-50 mg/ngày.\n    - Liều này thường dùng trong 5-7 ngày đối với người lớn.\n    - **Lưu ý:** Việc giảm liều OCS không cần thiết nếu được kê toa trong thời gian dưới 2 tuần.\n- **Gặp bác sĩ:** Sau khi thực hiện các bước trên, bạn cần đến gặp bác sĩ để được thăm khám và tư vấn cụ thể hơn.\n\n**Ngoài ra, để quản lý hen hiệu quả, bạn nên:**\n\n- **Tự theo dõi triệu chứng và/hoặc chức năng hô hấp:** Việc này giúp bạn nhận biết sớm các dấu hiệu bất thường.\n- **Có bản kế hoạch hành động hen:** Đây là tài liệu hướng dẫn bạn cách xử trí khi tình trạng hen thay đổi.\n- **Thăm khám đều đặn:** Duy trì lịch thăm khám định kỳ với bác sĩ để được đánh giá và điều chỉnh phác đồ điều trị nếu cần.\n\nTài liệu tham khảo: [Tài liệu 1]: Giáo dục tự xử trí hen hiệu quả cần; [Tài liệu 2]: XỬ LÝ CÁC YẾU TỐ NGUY CƠ CÓ THỂ ĐIỀU CHỈNH ĐƯỢC",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_precision": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 0.95
+      },
+      "judge_trace": {
+        "context_recall": {
+          "score": 1.0,
+          "reason": "Tìm thấy 1/2 chunk chuẩn (['CHK-BYT_1851-P41-01'])"
+        },
+        "context_precision": {
+          "score": 1.0,
+          "reason": "Thứ hạng các chunk đúng trong Top 3: [1]"
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "reason": "Câu trả lời của AI bám sát tài liệu, không có thông tin sai lệch."
+        },
+        "answer_relevance": {
+          "score": 0.95,
+          "reason": "Câu trả lời của AI đáp ứng đầy đủ và chính xác các bước xử trí khi PEF dưới 60%."
+        }
+      }
+    },
+    {
+      "test_case_id": "TC01",
+      "query": "Bác sĩ ơi, người nhà tôi đang lên cơn hen dữ dội, phải ngồi chồm ra trước để thở, nói không thành câu chỉ từng từ một thì đã nguy kịch phải gọi cấp cứu chưa?",
+      "ground_truth_chunks": [
+        "CHK-GINA_2023-P42-02",
+        "CHK-BYT_1851-P42-02"
+      ],
+      "retrieved_chunk_ids": [
+        "CHK-BYT_1851-P45-01",
+        "CHK-BYT_1851-P43-01",
+        "CHK-GINA_2023-P40-01"
+      ],
+      "generated_answer": "Chào bạn, tôi hiểu bạn đang rất lo lắng cho người nhà. Với những triệu chứng bạn mô tả, người nhà bạn đang có dấu hiệu của một cơn hen nặng và cần được cấp cứu ngay lập tức.\n\nDưới đây là các dấu hiệu cho thấy tình trạng của người nhà bạn là nghiêm trọng:\n\n*   **Nói từng từ:** Đây là dấu hiệu cho thấy người bệnh đang rất khó thở, không thể nói thành câu hoàn chỉnh.\n*   **Ngồi khom phía trước:** Tư thế này thường được người bệnh hen nặng sử dụng để cố gắng mở rộng đường thở và hít thở dễ dàng hơn.\n*   **Kích động:** Tình trạng khó thở nặng có thể gây ra sự lo lắng và kích động.\n*   **Nhịp thở >30/phút:** Nhịp thở nhanh bất thường là một dấu hiệu của suy hô hấp.\n*   **Cơ hô hấp phụ co kéo:** Điều này cho thấy người bệnh đang phải gắng sức rất nhiều để thở.\n*   **Nhịp tim >120 lần/phút:** Nhịp tim nhanh cũng là một phản ứng của cơ thể khi thiếu oxy.\n*   **Độ bão hòa oxy (trong không khí) < 90%:** Mặc dù bạn chưa đo được, nhưng với các triệu chứng trên, khả năng cao độ bão hòa oxy của người nhà bạn đang thấp.\n*   **LLĐ ≤ 50% dự đoán hoặc tốt nhất:** Nếu có thiết bị đo lưu lượng đỉnh, đây cũng là một chỉ số quan trọng.\n\n**Bạn cần gọi cấp cứu ngay lập tức và trong lúc chờ đợi, hãy thực hiện các bước sau:**\n\n*   **Giữ bình tĩnh:** Cố gắng trấn an người bệnh.\n*   **Sử dụng thuốc cắt cơn:** Nếu người nhà có thuốc cắt cơn (thuốc đồng vận beta 2 tác dụng ngắn - SABA) dạng hít, hãy giúp họ sử dụng ngay theo hướng dẫn của bác sĩ.\n*   **Tư thế thoải mái:** Giúp người bệnh ngồi ở tư thế thoải mái nhất, thường là ngồi thẳng hoặc hơi khom về phía trước.\n*   **Không tự ý cho uống thuốc khác:** Tuyệt đối không tự ý cho người bệnh uống bất kỳ loại thuốc nào khác ngoài thuốc cắt cơn đã được bác sĩ chỉ định.\n\nTài liệu tham khảo: Bảng 10. Xử trí đợt cấp hen phế quản tại khoa cấp cứu (Tài liệu 1)",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_precision": 0.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 0.95
+      },
+      "judge_trace": {
+        "context_recall": {
+          "score": 0.0,
+          "reason": "Tìm thấy 0/2 chunk chuẩn ([])"
+        },
+        "context_precision": {
+          "score": 0.0,
+          "reason": "Thứ hạng các chunk đúng trong Top 3: []"
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "reason": "Câu trả lời của AI bám sát tài liệu, liệt kê đầy đủ các dấu hiệu của cơn hen nặng và hướng dẫn xử trí phù hợp."
+        },
+        "answer_relevance": {
+          "score": 0.95,
+          "reason": "Câu trả lời của AI trả lời đúng trọng tâm câu hỏi và cung cấp thông tin chi tiết về các dấu hiệu nguy hiểm và cách xử trí."
+        }
+      }
+    },
+    {
+      "test_case_id": "TC02",
+      "query": "Bệnh nhân hen đang thở rít mà tự nhiên lơ mơ ngủ gà, lồng ngực im phăng phắc không nghe thấy tiếng thở nữa thì là bệnh đỡ hay nặng hơn?",
+      "ground_truth_chunks": [
+        "CHK-BYT_1851-P45-01",
+        "CHK-BYT_1851-P42-02"
+      ],
+      "retrieved_chunk_ids": [
+        "CHK-BYT_1851-P45-01",
+        "CHK-GINA_2023-P19-02",
+        "CHK-GINA_2023-P19-01"
+      ],
+      "generated_answer": "Chào bạn,\n\nKhi bệnh nhân hen đang thở rít mà tự nhiên lơ mơ, ngủ gà, và lồng ngực im phăng phắc không nghe thấy tiếng thở nữa, đây là dấu hiệu **rất nặng** và nguy hiểm, không phải là bệnh đỡ.\n\nĐây là một trong những dấu hiệu cho thấy tình trạng đợt cấp hen phế quản đã chuyển sang mức độ nghiêm trọng, cần được cấp cứu ngay lập tức.\n\n- **Lơ mơ, lẫn lộn:** Đây là dấu hiệu của tình trạng thiếu oxy não nghiêm trọng.\n- **Ngực im lặng (lồng ngực im phăng phắc không nghe thấy tiếng thở):** Điều này cho thấy luồng khí đi vào và ra khỏi phổi đã bị tắc nghẽn gần như hoàn toàn, không còn đủ không khí để tạo ra tiếng thở rít hay bất kỳ âm thanh nào khác. Đây là một dấu hiệu cực kỳ nguy hiểm, cho thấy đường thở đã bị co thắt rất nặng hoặc tắc nghẽn.\n\nTrong trường hợp này, cần:\n- **Hội chẩn ICU (Khoa Hồi sức tích cực):** Để được theo dõi và điều trị chuyên sâu.\n- **Bắt đầu sử dụng SABA (thuốc đồng vận beta 2 tác dụng ngắn) và O2 (oxy):** Để nhanh chóng mở rộng đường thở và cung cấp oxy cho cơ thể.\n- **Chuẩn bị đặt nội khí quản:** Đây là một thủ thuật y tế để đảm bảo đường thở thông thoáng và hỗ trợ hô hấp khi bệnh nhân không thể tự thở hiệu quả.\n\nBạn cần đưa bệnh nhân đến cơ sở y tế gần nhất ngay lập tức để được cấp cứu kịp thời.\n\nTài liệu tham khảo: Bảng 10. Xử trí đợt cấp hen phế quản tại khoa cấp cứu, Quyết định 1851/QĐ-BYT.",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_precision": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 0.95
+      },
+      "judge_trace": {
+        "context_recall": {
+          "score": 1.0,
+          "reason": "Tìm thấy 1/2 chunk chuẩn (['CHK-BYT_1851-P45-01'])"
+        },
+        "context_precision": {
+          "score": 1.0,
+          "reason": "Thứ hạng các chunk đúng trong Top 3: [1]"
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "reason": "Câu trả lời của AI hoàn toàn bám sát tài liệu, mô tả chính xác các triệu chứng và biện pháp xử trí trong trường hợp đợt cấp hen phế quản nghiêm trọng."
+        },
+        "answer_relevance": {
+          "score": 0.95,
+          "reason": "Câu trả lời của AI đã trả lời đúng trọng tâm câu hỏi và cung cấp thông tin chi tiết về tình trạng nguy kịch của bệnh nhân hen, nhưng thiếu một số chi tiết nhỏ như 'kiệt cơ hô hấp'."
+        }
+      }
+    },
+    {
+      "test_case_id": "TC05",
+      "query": "Bác sĩ hướng dẫn khi cơn hen trở nặng thì uống viên Prednisolone liều bao nhiêu và uống trong bao nhiêu ngày?",
+      "ground_truth_chunks": [
+        "CHK-GINA_2023-P42-01",
+        "CHK-BYT_1851-P42-01"
+      ],
+      "retrieved_chunk_ids": [
+        "CHK-GINA_2023-P42-01",
+        "CHK-BYT_1851-P42-01",
+        "CHK-BYT_1851-P42-02"
+      ],
+      "generated_answer": "Chào bạn, tôi hiểu bạn đang lo lắng về việc xử trí khi cơn hen trở nặng. Về liều lượng và thời gian sử dụng Prednisolone khi cơn hen trở nặng, bạn có thể tham khảo hướng dẫn sau:\n\n*   **Đối với người lớn:**\n    *   Liều Prednisolone khuyến nghị là 40-50 mg/ngày.\n    *   Thời gian sử dụng thường là 5-7 ngày.\n\n*   **Đối với trẻ em:**\n    *   Liều Prednisolone khuyến nghị là 1-2 mg/kg/ngày, tối đa 40 mg/ngày.\n    *   Thời gian sử dụng thường là 3-5 ngày.\n\n**Lưu ý quan trọng:**\n\n*   Bạn nên uống Prednisolone vào buổi sáng để đạt hiệu quả tốt nhất.\n*   Nếu bạn sử dụng Prednisolone dưới 2 tuần, thường không cần giảm liều từ từ.\n*   Khi bắt đầu dùng Prednisolone, bạn nên liên hệ với bác sĩ điều trị để được tư vấn và theo dõi.\n*   Prednisolone có thể có một số tác dụng phụ thường gặp như rối loạn giấc ngủ, tăng cảm giác thèm ăn, trào ngược và thay đổi tâm trạng.\n*   Việc sử dụng Prednisolone có thể cứu sống bệnh nhân trong những đợt hen nặng, nhưng việc điều trị lặp đi lặp lại có thể tiềm ẩn nguy cơ tích lũy.\n*   Để giảm nhu cầu sử dụng Prednisolone, bạn nên tối ưu hóa liệu pháp hít, bao gồm việc chú ý đến kỹ thuật hít và tuân thủ điều trị.\n\nSau khi tự xử trí đợt cấp, bạn nên đến khám bác sĩ hoặc tư vấn nhân viên y tế để:\n*   Xác định nguyên nhân của đợt cấp.\n*   Đánh giá mức độ kiểm soát triệu chứng.\n*   Xem xét các điều trị bổ sung nếu cần.\n*   Thiết lập kế hoạch khám lại định kỳ tiếp theo.\n\nTài liệu tham khảo: [Tài liệu 1], [Tài liệu 2], [Tài liệu 3]",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_precision": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 0.95
+      },
+      "judge_trace": {
+        "context_recall": {
+          "score": 1.0,
+          "reason": "Tìm thấy 2/2 chunk chuẩn (['CHK-GINA_2023-P42-01', 'CHK-BYT_1851-P42-01'])"
+        },
+        "context_precision": {
+          "score": 1.0,
+          "reason": "Thứ hạng các chunk đúng trong Top 3: [1, 2]"
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "reason": "Câu trả lời của AI hoàn toàn bám sát tài liệu được cung cấp."
+        },
+        "answer_relevance": {
+          "score": 0.95,
+          "reason": "Câu trả lời của AI cung cấp thông tin chính xác về liều lượng và thời gian sử dụng Prednisolone cho cả người lớn và trẻ em, đồng thời bổ sung thêm các lưu ý quan trọng."
+        }
+      }
+    },
+    {
+      "test_case_id": "TC06",
+      "query": "Tôi dùng bình xịt thuốc hen duy trì mấy ngày nay thấy cổ họng cứ rát buốt, khàn đặc tiếng thì làm sao để phòng tránh?",
+      "ground_truth_chunks": [
+        "CHK-GINA_2023-P45-02"
+      ],
+      "retrieved_chunk_ids": [
+        "CHK-GINA_2023-P45-02",
+        "CHK-BYT_1851-P18-01",
+        "CHK-BYT_1851-P23-02"
+      ],
+      "generated_answer": "Chào bạn, tôi hiểu bạn đang cảm thấy khó chịu vì cổ họng rát buốt và khàn tiếng sau khi dùng bình xịt thuốc hen. Đây là một tác dụng phụ thường gặp và có thể phòng tránh được.\n\nĐể phòng tránh tình trạng này, bạn có thể thực hiện các biện pháp sau:\n\n-   **Sử dụng buồng đệm (spacer) với bình xịt định liều áp lực (MDI):** Buồng đệm giúp thuốc được phân tán tốt hơn và giảm lượng thuốc đọng lại ở hầu họng.\n-   **Súc miệng lại với nước và phun ra sau khi hít thuốc:** Việc này giúp loại bỏ lượng thuốc còn sót lại trong khoang miệng và họng, giảm nguy cơ nhiễm nấm candida và khàn tiếng.\n\nCác tác dụng phụ tại chỗ như nhiễm nấm candida hầu họng và khàn tiếng thường gặp khi sử dụng thuốc chứa ICS (corticosteroid dạng hít). ICS là thuốc chống viêm hiệu quả nhất cho bệnh hen, giúp giảm triệu chứng, cải thiện chức năng hô hấp và giảm nguy cơ các cơn kịch phát.\n\nNếu tình trạng rát buốt và khàn tiếng không cải thiện hoặc trở nên nghiêm trọng hơn, bạn nên tham vấn trực tiếp bác sĩ điều trị để được kiểm tra và tư vấn cụ thể.\n\nTài liệu tham khảo: [Tài liệu 1]",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_precision": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 0.95
+      },
+      "judge_trace": {
+        "context_recall": {
+          "score": 1.0,
+          "reason": "Tìm thấy 1/1 chunk chuẩn (['CHK-GINA_2023-P45-02'])"
+        },
+        "context_precision": {
+          "score": 1.0,
+          "reason": "Thứ hạng các chunk đúng trong Top 3: [1]"
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "reason": "Câu trả lời bám sát tài liệu 1 về tác dụng phụ và cách phòng tránh khi sử dụng ICS."
+        },
+        "answer_relevance": {
+          "score": 0.95,
+          "reason": "Câu trả lời của AI trả lời đúng trọng tâm câu hỏi và đưa ra các biện pháp phòng tránh tác dụng phụ, phù hợp với đáp án chuẩn lâm sàng."
+        }
+      }
+    },
+    {
+      "test_case_id": "TC07",
+      "query": "Xịt thuốc cắt cơn Salbutamol xong tôi thấy tay bị run lẩy bẩy với tim đập nhanh hồi hộp thì có nguy hiểm không bác sĩ?",
+      "ground_truth_chunks": [
+        "CHK-GINA_2023-P48-02"
+      ],
+      "retrieved_chunk_ids": [
+        "CHK-BYT_1851-P44-01",
+        "CHK-GINA_2023-P48-02",
+        "CHK-GINA_2023-P48-01"
+      ],
+      "generated_answer": "Chào bạn, tôi hiểu bạn đang lo lắng về các triệu chứng run tay và tim đập nhanh sau khi xịt thuốc Salbutamol. Đây là những tác dụng phụ thường gặp của thuốc Salbutamol và thường không nguy hiểm, đặc biệt khi bạn mới sử dụng thuốc.\n\n*   **Nguyên nhân:** Salbutamol là thuốc giãn phế quản kích thích beta2 tác dụng ngắn (SABA), giúp làm giãn đường thở nhanh chóng để cắt cơn hen. Tuy nhiên, thuốc cũng có thể tác động lên các thụ thể beta2 ở các bộ phận khác trong cơ thể, gây ra các tác dụng phụ như run tay và nhịp tim nhanh.\n*   **Mức độ và thời gian:** Các tác dụng phụ này thường được báo cáo khi sử dụng SABA lần đầu. Khả năng dung nạp nhanh sau 1-2 tuần sử dụng thường xuyên, nghĩa là cơ thể bạn có thể quen dần và các triệu chứng này sẽ giảm đi.\n*   **Khi nào cần lưu ý:**\n    *   Nếu bạn thấy các triệu chứng này quá nặng, kéo dài, hoặc kèm theo các dấu hiệu bất thường khác, bạn nên thông báo cho bác sĩ điều trị để được đánh giá lại.\n    *   Việc lạm dụng hoặc đáp ứng kém với thuốc cắt cơn cho thấy khả năng kiểm soát hen kém và nguy cơ bị cơn kịch phát. Dùng 3 bình hít loại 200 liều trở lên mỗi năm có liên quan đến việc tăng nguy cơ đợt kịch phát; dùng 12 bình trở lên mỗi năm có liên quan ý nghĩa đến nguy cơ tử vong tăng.\n    *   Không nên chỉ điều trị bằng SABA đơn trị vì nguy cơ bị cơn kịch phát nặng và tử vong do hen.\n\nBạn hãy tiếp tục theo dõi các triệu chứng của mình và tuân thủ đúng hướng dẫn của bác sĩ về liều lượng và tần suất sử dụng thuốc nhé. Nếu có bất kỳ lo lắng nào, đừng ngần ngại trao đổi trực tiếp với bác sĩ điều trị của bạn.\n\nTài liệu tham khảo: [Tài liệu 2: Thuốc kháng cholinergic tác dụng ngắn hạn; Tài liệu 3: Thuốc giãn phế quản kích thích beta2 tác dụng ngắn hạn]",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_precision": 0.5,
+        "faithfulness": 1.0,
+        "answer_relevance": 0.95
+      },
+      "judge_trace": {
+        "context_recall": {
+          "score": 1.0,
+          "reason": "Tìm thấy 1/1 chunk chuẩn (['CHK-GINA_2023-P48-02'])"
+        },
+        "context_precision": {
+          "score": 0.5,
+          "reason": "Thứ hạng các chunk đúng trong Top 3: [2]"
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "reason": "Câu trả lời của AI bám sát tài liệu về tác dụng phụ của Salbutamol và các khuyến cáo sử dụng."
+        },
+        "answer_relevance": {
+          "score": 0.95,
+          "reason": "Câu trả lời của AI đã giải thích rõ ràng về tác dụng phụ của Salbutamol và khi nào cần lưu ý, phù hợp với đáp án chuẩn lâm sàng."
+        }
+      }
+    },
+    {
+      "test_case_id": "TC08",
+      "query": "Tại sao bác sĩ lại chỉ định cho tôi phải hít thuốc qua một ống nhựa buồng đệm spacer thay vì ngậm xịt trực tiếp?",
+      "ground_truth_chunks": [
+        "CHK-GINA_2023-P34-01",
+        "CHK-BYT_1851-P24-02"
+      ],
+      "retrieved_chunk_ids": [
+        "CHK-BYT_1851-P24-02",
+        "CHK-BYT_1851-P33-03",
+        "CHK-GINA_2023-P34-01"
+      ],
+      "generated_answer": "Chào bạn, tôi hiểu bạn đang thắc mắc về việc sử dụng buồng đệm (spacer) khi hít thuốc. Bác sĩ chỉ định bạn dùng buồng đệm vì điều này giúp bạn sử dụng thuốc hiệu quả hơn, đặc biệt là với bình hít định liều (pMDI).\n\nDưới đây là những lý do cụ thể:\n- **Tăng hiệu quả sử dụng thuốc:** Hầu hết bệnh nhân (lên đến 80%) sử dụng bình hít không đúng cách, dẫn đến thuốc không vào phổi đủ. Buồng đệm giúp khắc phục vấn đề này bằng cách giữ thuốc lơ lửng trong buồng đệm, cho phép bạn hít thuốc từ từ và sâu hơn, giúp thuốc đến phổi hiệu quả hơn.\n- **Khắc phục khó khăn trong kỹ thuật hít:** Nếu bạn gặp khó khăn trong việc phối hợp động tác bóp bình xịt và hít vào cùng lúc (không thể đồng bộ tay bóp miệng hít), buồng đệm sẽ giúp bạn dễ dàng hơn trong việc hít thuốc đúng kỹ thuật.\n- **Giảm tác dụng phụ:** Khi thuốc được hít đúng cách và đi sâu vào phổi, lượng thuốc đọng lại ở miệng và họng sẽ ít hơn, từ đó giảm nguy cơ gặp các tác dụng phụ tại chỗ như khàn tiếng hoặc nấm miệng.\n- **Kiểm soát hen tốt hơn:** Việc sử dụng thuốc hiệu quả sẽ giúp kiểm soát các triệu chứng hen tốt hơn, giảm nguy cơ bùng phát cơn hen cấp.\n\nBác sĩ sẽ kiểm tra kỹ thuật hít của bạn tại mỗi lần tái khám để đảm bảo bạn sử dụng bình hít và buồng đệm đúng cách.\n\nTài liệu tham khảo: [Tài liệu 1: 3.3.1. Huấn luyện kỹ năng sử dụng hiệu quả các bình hít; Tài liệu 3: KỸ NĂNG DÙNG THUỐC HÍT VÀ TUÂN THỦ ĐIỀU TRỊ]",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_precision": 0.8333333333333333,
+        "faithfulness": 1.0,
+        "answer_relevance": 0.95
+      },
+      "judge_trace": {
+        "context_recall": {
+          "score": 1.0,
+          "reason": "Tìm thấy 2/2 chunk chuẩn (['CHK-BYT_1851-P24-02', 'CHK-GINA_2023-P34-01'])"
+        },
+        "context_precision": {
+          "score": 0.8333333333333333,
+          "reason": "Thứ hạng các chunk đúng trong Top 3: [1, 3]"
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "reason": "Câu trả lời của AI bám sát tài liệu, giải thích đúng lý do sử dụng buồng đệm và các lợi ích liên quan."
+        },
+        "answer_relevance": {
+          "score": 0.95,
+          "reason": "Câu trả lời của AI đã giải thích rõ ràng và đầy đủ lý do bác sĩ chỉ định sử dụng buồng đệm, bao gồm việc tăng hiệu quả sử dụng thuốc, khắc phục khó khăn kỹ thuật, giảm tác dụng phụ và kiểm soát hen tốt hơn."
+        }
+      }
+    },
+    {
+      "test_case_id": "TC09",
+      "query": "Mấy tuần nay tôi thấy người hoàn toàn bình thường, hết ho khó thở rồi thì tôi có được tự dừng bình xịt duy trì hàng ngày không?",
+      "ground_truth_chunks": [
+        "CHK-GINA_2023-P33-03",
+        "CHK-BYT_1851-P21-03"
+      ],
+      "retrieved_chunk_ids": [
+        "CHK-GINA_2023-P27-01",
+        "CHK-BYT_1851-P21-03",
+        "CHK-BYT_1851-P09-01"
+      ],
+      "generated_answer": "Chào bạn, tôi hiểu rằng bạn đang cảm thấy khỏe hơn và muốn biết liệu có thể tự dừng bình xịt duy trì hàng ngày hay không.\n\nBạn **không nên tự ý dừng hoàn toàn bình xịt duy trì hàng ngày** khi đã được chẩn đoán hen phế quản, ngay cả khi bạn cảm thấy hoàn toàn bình thường.\n\nDưới đây là những lý do quan trọng:\n-   **Nguy cơ đợt cấp tăng lên**: Việc giảm bậc điều trị quá nhiều hoặc quá nhanh, hoặc ngưng hoàn toàn thuốc hít chứa corticosteroid (ICS) có thể làm tăng nguy cơ xuất hiện các đợt cấp của bệnh hen.\n-   **Hen là bệnh viêm mạn tính**: Hen phế quản là một bệnh viêm mạn tính của đường thở, có nghĩa là tình trạng viêm vẫn có thể tồn tại ngay cả khi bạn không có triệu chứng. Thuốc duy trì giúp kiểm soát tình trạng viêm này.\n-   **Tránh lạm dụng thuốc cắt cơn**: Nếu bạn chỉ dùng thuốc cắt cơn (SABA) đơn độc mà không có thuốc duy trì, có thể dẫn đến việc lạm dụng SABA. Lạm dụng SABA có liên quan đến việc tăng nguy cơ đợt kịch phát và thậm chí tử vong.\n-   **Cần đánh giá lại bởi bác sĩ**: Nếu bạn cảm thấy bệnh đã được kiểm soát tốt, hãy trao đổi với bác sĩ điều trị của bạn. Bác sĩ sẽ đánh giá lại tình trạng bệnh và có thể xem xét việc giảm liều thuốc duy trì một cách từ từ và an toàn, chứ không phải dừng hoàn toàn.\n\nĐiều quan trọng là bạn cần tiếp tục tuân thủ phác đồ điều trị mà bác sĩ đã chỉ định. Nếu có bất kỳ thắc mắc hay mong muốn thay đổi liều lượng thuốc, hãy luôn tham vấn trực tiếp bác sĩ điều trị của bạn.\n\nTài liệu tham khảo: Quyết định 1851/QĐ-BYT ngày 24 tháng 04 năm 2020 - HƯỚNG DẪN CHẨN ĐOÁN VÀ ĐIỀU TRỊ HEN PHẾ QUẢN NGƯỜI LỚN VÀ TRẺ EM ≥ 12 TUỔI (Mục 1. Định nghĩa Hen phế quản, Mục 2. Chẩn đoán, Mục 2.1. Triệu chứng lâm sàng, Mục b. Giảm bậc điều trị khi hen được kiểm soát hoàn toàn); GINA 2023 - Các lựa chọn khác ở Bậc 1 cho người lớn và trẻ vị thành niên (Phương thức 2).",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_precision": 0.5,
+        "faithfulness": 1.0,
+        "answer_relevance": 0.95
+      },
+      "judge_trace": {
+        "context_recall": {
+          "score": 1.0,
+          "reason": "Tìm thấy 1/2 chunk chuẩn (['CHK-BYT_1851-P21-03'])"
+        },
+        "context_precision": {
+          "score": 0.5,
+          "reason": "Thứ hạng các chunk đúng trong Top 3: [2]"
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "reason": "Câu trả lời của AI hoàn toàn bám sát tài liệu, không có thông tin bịa đặt hay sai lệch."
+        },
+        "answer_relevance": {
+          "score": 0.95,
+          "reason": "Câu trả lời của AI trả lời thẳng thắc mắc và đủ ý chính của đáp án chuẩn, nhưng có thể rút gọn hơn."
+        }
+      }
+    },
+    {
+      "test_case_id": "TC10",
+      "query": "Bị hen phế quản thì có đi tập gym hay chạy bộ được không, trước khi tập có cần chuẩn bị xịt thuốc gì phòng trước không?",
+      "ground_truth_chunks": [
+        "CHK-BYT_1851-P23-02",
+        "CHK-GINA_2023-P28-02"
+      ],
+      "retrieved_chunk_ids": [
+        "CHK-BYT_1851-P23-02",
+        "CHK-BYT_1851-P18-01",
+        "CHK-GINA_2023-P10-03"
+      ],
+      "generated_answer": "Chào bạn,\n\nNgười bị hen phế quản hoàn toàn có thể tập gym hoặc chạy bộ được, thậm chí việc tập luyện thể lực còn được khuyến khích vì nó giúp cải thiện sức khỏe chung. Tuy nhiên, bạn cần lưu ý một số điều để đảm bảo an toàn và hiệu quả:\n\n- **Có thể tập luyện thể lực:** Việc tập luyện thể lực được khuyến khích cho bệnh nhân hen vì nó cải thiện sức khỏe chung.\n- **Cần hướng dẫn cách xử trí co thắt phế quản do gắng sức:** Bạn nên được bác sĩ hoặc chuyên gia y tế hướng dẫn cụ thể về cách xử lý nếu xuất hiện các triệu chứng co thắt phế quản khi tập luyện.\n- **Tránh hoạt động cường độ cao khi không khí ô nhiễm hoặc thời tiết khắc nghiệt:**\n    - Tránh hoạt động thể lực cường độ cao ngoài trời khi không khí bị ô nhiễm nặng.\n    - Tránh tập luyện khi thời tiết quá lạnh hoặc độ ẩm thấp.\n- **Luôn mang theo thuốc cắt cơn:** Tất cả các bệnh nhân hen phải có thuốc cắt cơn mang theo bên mình trong mọi lúc, mọi nơi để xử lý kịp thời nếu có cơn hen cấp.\n- **Tham khảo ý kiến bác sĩ về việc xịt thuốc phòng ngừa:** Về việc xịt thuốc phòng trước khi tập, bạn nên tham vấn trực tiếp bác sĩ điều trị của mình. Bác sĩ sẽ đánh giá tình trạng hen của bạn và đưa ra lời khuyên phù hợp nhất, có thể bao gồm việc sử dụng thuốc kiểm soát hen có ICS (Inhaled Corticosteroids) theo khuyến cáo của GINA để giảm các đợt cấp.\n\nTài liệu tham khảo: [Tài liệu 1], [Tài liệu 2]",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_precision": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 0.95
+      },
+      "judge_trace": {
+        "context_recall": {
+          "score": 1.0,
+          "reason": "Tìm thấy 1/2 chunk chuẩn (['CHK-BYT_1851-P23-02'])"
+        },
+        "context_precision": {
+          "score": 1.0,
+          "reason": "Thứ hạng các chunk đúng trong Top 3: [1]"
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "reason": "Câu trả lời của AI hoàn toàn bám sát tài liệu, không có thông tin bịa đặt."
+        },
+        "answer_relevance": {
+          "score": 0.95,
+          "reason": "Câu trả lời của AI trả lời đúng trọng tâm câu hỏi của bệnh nhân và cung cấp thông tin chi tiết về việc tập luyện và sử dụng thuốc phòng ngừa."
+        }
+      }
+    },
+    {
+      "test_case_id": "TC11",
+      "query": "Làm thế nào để tôi tự kiểm tra xem trong 4 tuần vừa rồi bệnh hen của mình được kiểm soát tốt hay chưa?",
+      "ground_truth_chunks": [
+        "CHK-GINA_2023-P13-01",
+        "CHK-BYT_1851-P15-01"
+      ],
+      "retrieved_chunk_ids": [
+        "CHK-GINA_2023-P07-01",
+        "CHK-BYT_1851-P16-01",
+        "CHK-BYT_1851-P14-02"
+      ],
+      "generated_answer": "Chào bạn, tôi hiểu bạn đang muốn tự đánh giá mức độ kiểm soát bệnh hen của mình trong 4 tuần vừa qua. Bạn hoàn toàn có thể tự kiểm tra điều này dựa trên các tiêu chí về kiểm soát triệu chứng và việc sử dụng thuốc cắt cơn.\n\nĐể đánh giá xem bệnh hen của bạn có được kiểm soát tốt hay chưa trong 4 tuần vừa rồi, bạn hãy xem xét các điểm sau:\n\n-   **Triệu chứng khó chịu:** Bạn có tránh được các triệu chứng khó chịu trong ngày và đêm không?\n-   **Thuốc cắt cơn:** Bạn có cần sử dụng thuốc cắt cơn tối thiểu hoặc không cần sử dụng không?\n-   **Hoạt động thể chất:** Bạn có làm việc hiệu suất và có được cuộc sống thể chất tích cực không?\n-   **Chức năng hô hấp:** Chức năng hô hấp của bạn có bình thường hoặc gần như bình thường không? (Việc này thường cần đo chức năng hô hấp tại cơ sở y tế, nhưng bạn có thể tự cảm nhận về khả năng hô hấp của mình).\n\nNếu bạn đạt được hầu hết các tiêu chí trên, bệnh hen của bạn có thể đang được kiểm soát tốt.\n\n**Lưu ý quan trọng:**\n-   Việc tự đánh giá này chỉ mang tính chất tham khảo ban đầu.\n-   Để có đánh giá chính xác nhất về tình trạng kiểm soát hen và các nguy cơ trong tương lai, bạn vẫn cần thăm khám bác sĩ định kỳ và thực hiện đo chức năng hô hấp.\n-   Nếu bạn nhận thấy mình không đạt được các tiêu chí trên, hoặc có bất kỳ lo lắng nào, hãy trao đổi ngay với bác sĩ điều trị của mình để được tư vấn và điều chỉnh phác đồ phù hợp.\n\nTài liệu tham khảo: [Tài liệu 1: CHÚNG TA BIẾT ĐƯỢC GÌ VỀ BỆNH HEN?, Tài liệu 3: 2.7.2. Đánh giá kiểm soát hen]",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_precision": 0.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 0.95
+      },
+      "judge_trace": {
+        "context_recall": {
+          "score": 0.0,
+          "reason": "Tìm thấy 0/2 chunk chuẩn ([])"
+        },
+        "context_precision": {
+          "score": 0.0,
+          "reason": "Thứ hạng các chunk đúng trong Top 3: []"
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "reason": "Câu trả lời của AI bám sát tài liệu, sử dụng các tiêu chí kiểm soát hen từ tài liệu để hướng dẫn tự đánh giá."
+        },
+        "answer_relevance": {
+          "score": 0.95,
+          "reason": "Câu trả lời của AI bao quát các tiêu chí chính để tự đánh giá kiểm soát hen, mặc dù không chi tiết như đáp án chuẩn."
+        }
+      }
+    },
+    {
+      "test_case_id": "TC12",
+      "query": "Tôi đang mang thai 3 tháng mà bị hen phế quản thì dùng bình xịt thuốc hen có làm ảnh hưởng xấu đến em bé không?",
+      "ground_truth_chunks": [
+        "CHK-GINA_2023-P36-03",
+        "CHK-BYT_1851-P13-02"
+      ],
+      "retrieved_chunk_ids": [
+        "CHK-GINA_2023-P36-03",
+        "CHK-GINA_2023-P10-02",
+        "CHK-BYT_1851-P27-01"
+      ],
+      "generated_answer": "Chào bạn, tôi hiểu rằng bạn đang lo lắng về việc sử dụng thuốc xịt hen trong thai kỳ. Bạn yên tâm nhé, việc sử dụng bình xịt thuốc hen có chứa ICS (corticosteroid dạng hít) trong thai kỳ là an toàn và cần thiết để kiểm soát bệnh hen, không làm ảnh hưởng xấu đến em bé.\n\nDưới đây là những thông tin chi tiết để bạn hiểu rõ hơn:\n\n*   **Lợi ích vượt trội:** Đối với cả mẹ và bé, lợi ích khi bệnh hen được điều trị tích cực sẽ vượt trội so với nguy cơ tiềm tàng của thuốc điều trị.\n*   **Nguy cơ khi không điều trị:** Đợt kịch phát hen có liên quan đến tăng nguy cơ sinh non, nhẹ cân khi sinh và tử vong chu sinh. Vì vậy, việc kiểm soát hen tốt là rất quan trọng.\n*   **Không nên ngưng thuốc:** Bạn không nên ngưng thuốc có chứa ICS. Việc điều chỉnh hạ liều là ưu tiên thấp trong thai kỳ.\n*   **Giám sát thường xuyên:** Bệnh hen của bạn nên được giám sát mỗi 4-6 tuần trong suốt thai kỳ để đảm bảo kiểm soát tốt nhất.\n*   **Tham vấn bác sĩ:** Nếu bạn cần khẳng định khách quan chẩn đoán hen, không khuyến cáo giảm bậc điều trị thuốc có chứa ICS cho mục đích này hoặc việc thực hiện nghiệm pháp gây co thắt phế quản phải chờ đến sau sanh.\n\nTóm lại, bạn hãy tiếp tục sử dụng bình xịt thuốc hen theo chỉ định của bác sĩ để đảm bảo sức khỏe cho cả mẹ và bé nhé.\n\nTài liệu tham khảo: [Tài liệu 1], [Tài liệu 2]",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_precision": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 0.95
+      },
+      "judge_trace": {
+        "context_recall": {
+          "score": 1.0,
+          "reason": "Tìm thấy 1/2 chunk chuẩn (['CHK-GINA_2023-P36-03'])"
+        },
+        "context_precision": {
+          "score": 1.0,
+          "reason": "Thứ hạng các chunk đúng trong Top 3: [1]"
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "reason": "Câu trả lời của AI bám sát tài liệu, cung cấp thông tin chính xác về việc sử dụng ICS trong thai kỳ và tầm quan trọng của việc kiểm soát hen."
+        },
+        "answer_relevance": {
+          "score": 0.95,
+          "reason": "Câu trả lời của AI trả lời đúng trọng tâm câu hỏi và cung cấp thông tin chi tiết, phù hợp với đáp án chuẩn lâm sàng."
+        }
+      }
+    },
+    {
+      "test_case_id": "TC13",
+      "query": "Người bị bệnh hen phế quản khi bị đau nhức xương khớp hay đau răng có được uống Aspirin hoặc Ibuprofen không?",
+      "ground_truth_chunks": [
+        "CHK-GINA_2023-P37-01",
+        "CHK-GINA_2023-P36-02"
+      ],
+      "retrieved_chunk_ids": [
+        "CHK-BYT_1851-P27-01",
+        "CHK-GINA_2023-P45-02",
+        "CHK-GINA_2023-P07-02"
+      ],
+      "generated_answer": "Chào bạn,\n\nNgười bị bệnh hen phế quản khi bị đau nhức xương khớp hay đau răng **không nên tự ý uống Aspirin hoặc Ibuprofen** mà cần tham khảo ý kiến bác sĩ.\n\n- **Nguyên nhân:** Aspirin và các thuốc kháng viêm không steroid (NSAID) khác như Ibuprofen có thể gây khởi phát hoặc làm trầm trọng thêm cơn hen ở một số bệnh nhân.\n- **Tỷ lệ ảnh hưởng:** Bệnh hô hấp bùng phát do Aspirin lưu hành khoảng 7% trong số bệnh nhân hen chung và 15% trong số bệnh nhân hen nặng.\n- **Dấu hiệu nhận biết:** Chẩn đoán dựa vào tiền sử xuất hiện đợt cấp hen vài phút đến 1-2 giờ sau khi uống Aspirin hoặc các thuốc kháng viêm không steroid khác. Bệnh nhân thường là hen nặng kèm polyp mũi.\n- **Lời khuyên:** Để đảm bảo an toàn, bạn nên trao đổi với bác sĩ điều trị về tình trạng đau nhức xương khớp hay đau răng để được tư vấn loại thuốc giảm đau phù hợp, không ảnh hưởng đến bệnh hen của mình.\n\nTài liệu tham khảo: [Tài liệu 1: 3.5. Hen nặng ở bệnh nhân người lớn và vị thành niên - Bệnh hô hấp bùng phát do Aspirin; Tài liệu 3: Các yếu tố có thể gây ra hoặc làm trầm trọng thêm các triệu chứng hen]",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_precision": 0.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 0.95
+      },
+      "judge_trace": {
+        "context_recall": {
+          "score": 0.0,
+          "reason": "Tìm thấy 0/2 chunk chuẩn ([])"
+        },
+        "context_precision": {
+          "score": 0.0,
+          "reason": "Thứ hạng các chunk đúng trong Top 3: []"
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "reason": "Câu trả lời của AI bám sát tài liệu, cung cấp thông tin chính xác về tác động của Aspirin và NSAID đối với bệnh nhân hen."
+        },
+        "answer_relevance": {
+          "score": 0.95,
+          "reason": "Câu trả lời của AI trả lời đúng trọng tâm câu hỏi và cung cấp thông tin chi tiết về nguy cơ khi sử dụng Aspirin và Ibuprofen đối với người bệnh hen phế quản."
+        }
+      }
+    },
+    {
+      "test_case_id": "TC14",
+      "query": "Tôi bị hen mà hay bị ợ chua nóng rát ở ngực, liệu bệnh trào ngược dạ dày có làm hen của tôi nặng thêm không?",
+      "ground_truth_chunks": [
+        "CHK-BYT_1851-P26-01",
+        "CHK-GINA_2023-P37-01"
+      ],
+      "retrieved_chunk_ids": [
+        "CHK-BYT_1851-P26-01",
+        "CHK-GINA_2023-P37-01",
+        "CHK-GINA_2023-P11-02"
+      ],
+      "generated_answer": "Chào bạn,\n\nBệnh trào ngược dạ dày thực quản (GERD) thường gặp ở bệnh nhân hen và có thể có mối liên hệ với tình trạng hen của bạn.\n\n- **Triệu chứng trào ngược cần được điều trị:** Nếu bạn có các triệu chứng trào ngược như ợ chua, nóng rát sau xương ức, đau ngực, ợ hơi hoặc ợ chua, khó tiêu, đặc biệt là ho khan, thì việc điều trị các triệu chứng này là cần thiết.\n- **Lợi ích của việc điều trị trào ngược:** Điều trị trào ngược có thể mang lại lợi ích cho sức khỏe chung và có thể cải thiện một phần chức năng hô hấp của bạn.\n- **Không điều trị khi không có triệu chứng:** Tuy nhiên, nếu bạn không có triệu chứng trào ngược, việc điều trị bệnh này sẽ không mang lại lợi ích cho bệnh hen của bạn.\n- **Cách điều trị:** Bạn có thể được xem xét điều trị bằng thuốc ức chế bơm proton, và/hoặc thuốc tăng nhu động ruột, kết hợp với việc thay đổi chế độ ăn uống.\n\nBạn nên trao đổi trực tiếp với bác sĩ điều trị để được đánh giá cụ thể tình trạng trào ngược dạ dày và có hướng điều trị phù hợp nhất, giúp kiểm soát tốt cả hai bệnh lý.\n\nTài liệu tham khảo: [Tài liệu 1], [Tài liệu 2]",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_precision": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 0.95
+      },
+      "judge_trace": {
+        "context_recall": {
+          "score": 1.0,
+          "reason": "Tìm thấy 2/2 chunk chuẩn (['CHK-BYT_1851-P26-01', 'CHK-GINA_2023-P37-01'])"
+        },
+        "context_precision": {
+          "score": 1.0,
+          "reason": "Thứ hạng các chunk đúng trong Top 3: [1, 2]"
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "reason": "Câu trả lời của AI hoàn toàn bám sát tài liệu, không có thông tin sai lệch."
+        },
+        "answer_relevance": {
+          "score": 0.95,
+          "reason": "Câu trả lời của AI trả lời thẳng thắc mắc của bệnh nhân và đủ ý chính của đáp án chuẩn lâm sàng."
+        }
+      }
+    },
+    {
+      "test_case_id": "TC15",
+      "query": "Người lớn mắc bệnh hen phế quản mạn tính có cần đi tiêm phòng vắc xin cúm hàng năm không?",
+      "ground_truth_chunks": [
+        "CHK-BYT_1851-P23-02"
+      ],
+      "retrieved_chunk_ids": [
+        "CHK-BYT_1851-P23-02",
+        "CHK-BYT_1851-P18-01",
+        "CHK-BYT_1851-P25-02"
+      ],
+      "generated_answer": "Chào bạn, người lớn mắc bệnh hen phế quản mạn tính **cần đi tiêm phòng vắc xin cúm hàng năm**.\n\nViệc tiêm phòng cúm mỗi năm một lần là rất quan trọng để:\n- **Giảm đợt cấp hen:** Cúm là một trong những yếu tố có thể kích phát cơn hen, làm bệnh trở nên nặng hơn. Tiêm phòng giúp giảm nguy cơ mắc cúm, từ đó giảm số lần xuất hiện các đợt cấp hen.\n\nTài liệu tham khảo: [Tài liệu 1]",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_precision": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 0.95
+      },
+      "judge_trace": {
+        "context_recall": {
+          "score": 1.0,
+          "reason": "Tìm thấy 1/1 chunk chuẩn (['CHK-BYT_1851-P23-02'])"
+        },
+        "context_precision": {
+          "score": 1.0,
+          "reason": "Thứ hạng các chunk đúng trong Top 3: [1]"
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "reason": "Câu trả lời của AI bám sát tài liệu, nêu rõ việc tiêm phòng cúm hàng năm giúp giảm đợt cấp hen, phù hợp với thông tin trong Tài liệu 1."
+        },
+        "answer_relevance": {
+          "score": 0.95,
+          "reason": "Câu trả lời của AI trả lời đúng trọng tâm câu hỏi và giải thích lý do tiêm phòng cúm hàng năm cho người mắc hen phế quản mạn tính."
+        }
+      }
+    },
+    {
+      "test_case_id": "TC16",
+      "query": "Sau khi vừa ra viện điều trị đợt cấp hen phế quản, bao lâu thì tôi cần quay lại bệnh viện khám lại?",
+      "ground_truth_chunks": [
+        "CHK-BYT_1851-P47-02",
+        "CHK-GINA_2023-P44-02"
+      ],
+      "retrieved_chunk_ids": [
+        "CHK-BYT_1851-P44-02",
+        "CHK-GINA_2023-P19-02",
+        "CHK-BYT_1851-P42-02"
+      ],
+      "generated_answer": "Chào bạn, sau khi xuất viện vì đợt cấp hen phế quản, bạn cần quay lại bệnh viện khám lại trong vòng 2-7 ngày tùy thuộc vào tình trạng lâm sàng và hoàn cảnh xã hội của bạn.\n\nĐể đảm bảo việc kiểm soát hen phế quản tốt nhất, bác sĩ sẽ:\n- Đánh giá lại tình trạng sức khỏe của bạn.\n- Kiểm tra lại cách bạn sử dụng ống hít để đảm bảo đúng kỹ thuật.\n- Xem xét điều trị duy trì và các vấn đề quản lý quan trọng khác.\n- Lên lịch tái khám định kỳ tiếp theo.\n\nNếu bạn có bất kỳ dấu hiệu bất thường nào hoặc cảm thấy không khỏe, hãy liên hệ với bác sĩ ngay lập tức.\n\nTài liệu tham khảo: Quyết định 1851/QĐ-BYT của Bộ Y Tế, mục 4.5. Xử trí đợt cấp hen phế quản tại khoa cấp cứu; GINA 2023, Nội dung chung.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_precision": 0.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 0.95
+      },
+      "judge_trace": {
+        "context_recall": {
+          "score": 0.0,
+          "reason": "Tìm thấy 0/2 chunk chuẩn ([])"
+        },
+        "context_precision": {
+          "score": 0.0,
+          "reason": "Thứ hạng các chunk đúng trong Top 3: []"
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "reason": "Câu trả lời của AI bám sát tài liệu, không có thông tin sai lệch."
+        },
+        "answer_relevance": {
+          "score": 0.95,
+          "reason": "Câu trả lời của AI trả lời đúng trọng tâm câu hỏi và cung cấp thông tin chi tiết cần thiết."
+        }
+      }
+    },
+    {
+      "test_case_id": "TC17",
+      "query": "Mỗi lần đến lịch tái khám định kỳ hen phế quản thì tôi có cần mang theo các bình thuốc xịt đang dùng đi không?",
+      "ground_truth_chunks": [
+        "CHK-GINA_2023-P34-01",
+        "CHK-BYT_1851-P24-02"
+      ],
+      "retrieved_chunk_ids": [
+        "CHK-BYT_1851-P24-02",
+        "CHK-BYT_1851-P47-01",
+        "CHK-BYT_1851-P25-02"
+      ],
+      "generated_answer": "Chào bạn,\n\nBạn nên mang theo các bình thuốc xịt đang dùng khi đi tái khám định kỳ hen phế quản. Việc này rất quan trọng để bác sĩ có thể đánh giá và hướng dẫn bạn tốt nhất.\n\nDưới đây là những lý do cụ thể:\n- **Kiểm tra kỹ thuật hít thuốc:** Bác sĩ sẽ yêu cầu bạn hít thực tế để xem bạn có hít đúng kỹ thuật không. Hầu hết bệnh nhân (tới 80%) sử dụng bình hít không hiệu quả, điều này có thể khiến bệnh hen được kiểm soát kém, tăng nguy cơ đợt cấp và tăng khả năng bị tác dụng phụ của thuốc.\n- **Đánh giá tuân thủ điều trị:** Bác sĩ có thể kiểm tra số nhát hoặc số bình hít thuốc kiểm soát hen còn lại để biết bạn có tuân thủ tốt việc dùng thuốc hay không.\n- **Điều chỉnh kế hoạch điều trị:** Dựa trên kỹ thuật sử dụng thuốc và tình trạng tuân thủ của bạn, bác sĩ có thể điều chỉnh kế hoạch hành động hen hoặc xem lại thuốc kiểm soát hen của bạn nếu cần.\n\nViệc mang theo bình thuốc xịt giúp bác sĩ có cái nhìn toàn diện hơn về quá trình điều trị của bạn và đưa ra những lời khuyên chính xác, hiệu quả nhất.\n\nTài liệu tham khảo: [Tài liệu 1: 3.3.1. Huấn luyện kỹ năng sử dụng hiệu quả các bình hít; Tài liệu 2: Hẹn tái khám theo dõi - Kỹ năng tự xử trí và bản kế hoạch hành động hen; Tài liệu 3: Nội dung chung - Tuân thủ việc dùng thuốc và lời khuyên khác]",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_precision": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 0.95
+      },
+      "judge_trace": {
+        "context_recall": {
+          "score": 1.0,
+          "reason": "Tìm thấy 1/2 chunk chuẩn (['CHK-BYT_1851-P24-02'])"
+        },
+        "context_precision": {
+          "score": 1.0,
+          "reason": "Thứ hạng các chunk đúng trong Top 3: [1]"
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "reason": "Câu trả lời của AI bám sát tài liệu, nêu đúng các lý do cần mang bình hít khi tái khám và các yếu tố liên quan đến kiểm tra kỹ thuật hít, tuân thủ điều trị và điều chỉnh kế hoạch điều trị."
+        },
+        "answer_relevance": {
+          "score": 0.95,
+          "reason": "Câu trả lời của AI trả lời đúng trọng tâm câu hỏi và cung cấp thêm thông tin hữu ích về lý do cần mang bình thuốc xịt khi tái khám."
+        }
+      }
+    },
+    {
+      "test_case_id": "TC18",
+      "query": "Tôi bị hen mà kèm theo hắt hơi sổ mũi dị ứng quanh năm thì có cần chữa viêm mũi không?",
+      "ground_truth_chunks": [
+        "CHK-GINA_2023-P37-01",
+        "CHK-BYT_1851-P12-01"
+      ],
+      "retrieved_chunk_ids": [
+        "CHK-BYT_1851-P26-01",
+        "CHK-GINA_2023-P37-01",
+        "CHK-BYT_1851-P21-02"
+      ],
+      "generated_answer": "Chào bạn,\n\nVới tình trạng bạn bị hen kèm theo hắt hơi sổ mũi dị ứng quanh năm, **bạn rất nên điều trị viêm mũi dị ứng.**\n\nDưới đây là lý do và cách xử trí theo hướng dẫn:\n\n*   **Mối liên hệ giữa hen và viêm mũi:** Viêm mũi dị ứng và hen có mối liên quan chặt chẽ. Khoảng 10-40% bệnh nhân viêm mũi dị ứng có kèm theo bệnh hen.\n*   **Ảnh hưởng đến hen:** Nếu bạn bị hen kèm viêm mũi dị ứng, các triệu chứng hen của bạn có thể nặng hơn.\n*   **Lợi ích của việc điều trị viêm mũi:** Điều trị viêm mũi dị ứng sẽ giúp giảm các triệu chứng khó chịu ở mũi của bạn.\n*   **Cách điều trị kết hợp:**\n    *   Nên kết hợp thuốc điều trị hen với **corticoid xịt mũi** hoặc **montelukast dạng uống**.\n\nTài liệu tham khảo: [Tài liệu 1: Mục 3.4.1. Các bệnh đồng mắc và tình huống đặc biệt - Viêm mũi, viêm xoang và polyp mũi; Tài liệu 2: Mục Viêm mũi và viêm xoang]",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_precision": 0.5,
+        "faithfulness": 1.0,
+        "answer_relevance": 0.95
+      },
+      "judge_trace": {
+        "context_recall": {
+          "score": 1.0,
+          "reason": "Tìm thấy 1/2 chunk chuẩn (['CHK-GINA_2023-P37-01'])"
+        },
+        "context_precision": {
+          "score": 0.5,
+          "reason": "Thứ hạng các chunk đúng trong Top 3: [2]"
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "reason": "Câu trả lời bám sát tài liệu về mối liên hệ giữa hen và viêm mũi dị ứng, ảnh hưởng đến hen và cách điều trị kết hợp."
+        },
+        "answer_relevance": {
+          "score": 0.95,
+          "reason": "Câu trả lời của AI trả lời đúng trọng tâm câu hỏi và cung cấp thông tin chi tiết về mối liên hệ giữa hen và viêm mũi, cũng như lợi ích của việc điều trị viêm mũi."
+        }
+      }
+    },
+    {
+      "test_case_id": "TC19",
+      "query": "Bố tôi lớn tuổi có tiền sử hút thuốc lá nhiều năm, vừa ho đờm vừa khó thở thì làm sao phân biệt được hen hay COPD?",
+      "ground_truth_chunks": [
+        "CHK-BYT_1851-P12-01",
+        "CHK-GINA_2023-P11-01"
+      ],
+      "retrieved_chunk_ids": [
+        "CHK-GINA_2023-P11-01",
+        "CHK-BYT_1851-P13-02",
+        "CHK-GINA_2023-P10-03"
+      ],
+      "generated_answer": "Chào bạn, tôi hiểu bạn đang lo lắng về tình trạng sức khỏe của bố mình. Với trường hợp của bố bạn, việc phân biệt hen phế quản (HPQ) và bệnh phổi tắc nghẽn mạn tính (COPD) có thể phức tạp, đặc biệt khi có tiền sử hút thuốc lá và các triệu chứng như ho đờm, khó thở.\n\nĐể phân biệt hen hay COPD, cần dựa vào bệnh sử, kiểu hình các triệu chứng và các ghi nhận trong tiền sử bệnh.\n\n*   **Hen và COPD có thể cùng tồn tại hoặc chồng lấp lên nhau (ACO)**: Điều này thường gặp ở những người hút thuốc và người lớn tuổi như bố bạn.\n*   **Phân biệt dựa trên bệnh sử và triệu chứng**: Bệnh sử, dạng triệu chứng và hồ sơ bệnh án trước đây có thể giúp phân biệt hen với tình trạng giới hạn dòng khí trường diễn do COPD.\n*   **Chẩn đoán không chắc chắn**: Trong trường hợp chẩn đoán không chắc chắn, hoặc các đặc điểm phù hợp với cả hai chẩn đoán, cần chuyển sớm bệnh nhân đến khám các chuyên gia hoặc các cơ sở khám, điều trị chuyên khoa.\n*   **Lưu ý ở người lớn tuổi**:\n    *   Hen có thể không được chẩn đoán đầy đủ ở người già do nhận thức kém, định kiến khó thở là bình thường ở người già, thiếu tập thể dục hay giảm hoạt động.\n    *   Hen cũng có thể được chẩn đoán quá mức do nhầm lẫn với khó thở do suy tim trái hay bệnh tim do thiếu máu cục bộ.\n    *   Với tiền sử hút thuốc lá, COPD hay hội chứng chồng lấp hen-COPD (ACO) cần được xem xét.\n\nVì vậy, điều quan trọng nhất là bố bạn cần được thăm khám trực tiếp bởi bác sĩ chuyên khoa để có chẩn đoán chính xác và phác đồ điều trị phù hợp.\n\nTài liệu tham khảo: [Tài liệu 1], [Tài liệu 2], [Tài liệu 3]",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_precision": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 0.95
+      },
+      "judge_trace": {
+        "context_recall": {
+          "score": 1.0,
+          "reason": "Tìm thấy 1/2 chunk chuẩn (['CHK-GINA_2023-P11-01'])"
+        },
+        "context_precision": {
+          "score": 1.0,
+          "reason": "Thứ hạng các chunk đúng trong Top 3: [1]"
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "reason": "Câu trả lời của AI bám sát tài liệu, không có thông tin bịa đặt và sử dụng các thông tin chính xác từ tài liệu để giải thích về hen phế quản và COPD."
+        },
+        "answer_relevance": {
+          "score": 0.95,
+          "reason": "Câu trả lời của AI đã trả lời đúng trọng tâm câu hỏi của bệnh nhân và cung cấp thông tin chi tiết về cách phân biệt hen và COPD, cũng như nhấn mạnh tầm quan trọng của việc thăm khám chuyên khoa."
+        }
+      }
+    },
+    {
+      "test_case_id": "TC20",
+      "query": "Người nhà hút thuốc lá trong nhà có làm tăng nguy cơ bùng phát cơn hen không và bệnh nhân cần tránh gì?",
+      "ground_truth_chunks": [
+        "CHK-BYT_1851-P23-02"
+      ],
+      "retrieved_chunk_ids": [
+        "CHK-BYT_1851-P23-02",
+        "CHK-GINA_2023-P07-02",
+        "CHK-GINA_2023-P36-01"
+      ],
+      "generated_answer": "Chào bạn,\n\nViệc người nhà hút thuốc lá trong nhà **có làm tăng nguy cơ bùng phát cơn hen** và bệnh nhân cần tránh tiếp xúc với khói thuốc lá.\n\nDưới đây là những điều bạn cần lưu ý và tránh để bảo vệ sức khỏe cho người bệnh hen:\n\n-   **Tránh phơi nhiễm thụ động với khói thuốc lá:** Khói thuốc lá là một trong những yếu tố có thể gây ra hoặc làm trầm trọng thêm các triệu chứng hen.\n-   **Khuyến khích cai thuốc lá:** Khuyến khích người hút thuốc trong gia đình ngưng hút thuốc tại mỗi lần thăm khám, tư vấn hoặc giới thiệu bệnh nhân đến nơi cung cấp dịch vụ cai thuốc lá.\n-   **Loại bỏ việc hút thuốc trong nhà/xe ô tô:** Khuyên các bậc cha mẹ và người chăm sóc loại bỏ việc hút thuốc trong phòng/xe ô tô sử dụng cho trẻ bị hen.\n\nTài liệu tham khảo: [Tài liệu 1], [Tài liệu 2], [Tài liệu 3]",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_precision": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 0.95
+      },
+      "judge_trace": {
+        "context_recall": {
+          "score": 1.0,
+          "reason": "Tìm thấy 1/1 chunk chuẩn (['CHK-BYT_1851-P23-02'])"
+        },
+        "context_precision": {
+          "score": 1.0,
+          "reason": "Thứ hạng các chunk đúng trong Top 3: [1]"
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "reason": "Câu trả lời của AI bám sát tài liệu, không có thông tin bịa đặt và đúng với các khuyến cáo về tránh khói thuốc lá và cai thuốc lá."
+        },
+        "answer_relevance": {
+          "score": 0.95,
+          "reason": "Câu trả lời của AI trả lời đúng trọng tâm câu hỏi và bao gồm các biện pháp cần tránh để bảo vệ sức khỏe bệnh nhân hen."
+        }
+      }
+    }
+  ]
+}

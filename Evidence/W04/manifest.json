@@ -1,0 +1,48 @@
+{
+  "week": "W04",
+  "milestone": "Tuan4",
+  "project": "Aftercare-AI",
+  "tag": "w04",
+  "created_at": "2026-10-28T02:26:00+07:00",
+  "summary": {
+    "evaluation_cases": 20,
+    "mean_context_recall": 0.75,
+    "mean_context_precision": 0.6667,
+    "mean_faithfulness": 0.995,
+    "mean_answer_relevance": 0.95
+  },
+  "deliverables": [
+    {
+      "task_name": "RAGAS Clinical Vietnamese Benchmark",
+      "assignee": "Hoàng Ngọc Đức",
+      "reviewer": "Nguyễn Trường Giang",
+      "status": "COMPLETED",
+      "evidence_files": [
+        "metrics.csv",
+        "test-results.json",
+        "figures/ragas_metrics_overview.png",
+        "figures/ragas_per_testcase_breakdown.png"
+      ]
+    },
+    {
+      "task_name": "Care Plan Tracker, Check-in & Medication Reminder Engine",
+      "assignee": "Nguyễn Trường Giang",
+      "reviewer": "Hoàng Ngọc Đức",
+      "status": "COMPLETED",
+      "evidence_files": [
+        "README.md"
+      ]
+    }
+  ],
+  "structure": {
+    "directory": "Evidence/W04",
+    "files": [
+      "README.md",
+      "metrics.csv",
+      "test-results.json",
+      "manifest.json",
+      "figures/ragas_metrics_overview.png",
+      "figures/ragas_per_testcase_breakdown.png"
+    ]
+  }
+}

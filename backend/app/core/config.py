@@ -25,6 +25,10 @@ class Settings:
     EMBEDDING_DIM: int = int(os.getenv("EMBEDDING_DIM", "1024"))
     EMBEDDING_DEVICE: str = os.getenv("EMBEDDING_DEVICE", "cuda")
 
+    # Reranker Model (BAAI/bge-reranker-base)
+    RERANKER_MODEL: str = os.getenv("RERANKER_MODEL", "BAAI/bge-reranker-base")
+    RERANKER_DEVICE: str = os.getenv("RERANKER_DEVICE", "cuda")
+
     # Database PostgreSQL & PgVector
     POSTGRES_HOST: str = os.getenv("POSTGRES_HOST", "localhost")
     POSTGRES_PORT: int = int(os.getenv("POSTGRES_PORT", "5432"))
