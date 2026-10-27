@@ -101,7 +101,7 @@ source venv/bin/activate
 
 # Cài đặt thư viện phụ thuộc
 pip install --upgrade pip
-pip install fastapi uvicorn psycopg2-binary pgvector sentence-transformers torch pydantic python-dotenv google-genai openai rank-bm25
+pip install -r requirements.txt
 ```
 
 #### 👉 Dành cho Windows (PowerShell):
@@ -117,7 +117,7 @@ python -m venv venv
 
 # Cài đặt thư viện phụ thuộc
 python -m pip install --upgrade pip
-pip install fastapi uvicorn psycopg2-binary pgvector sentence-transformers torch pydantic python-dotenv google-genai openai rank-bm25
+pip install -r requirements.txt
 ```
 
 ---
@@ -144,6 +144,38 @@ python pipeline/ingest_to_pgvector.py
 > **Kết quả thành công sẽ hiển thị:**
 > `✓ THÀNH CÔNG! Đã nạp toàn bộ 192 chunks (1024 dims) vào PostgreSQL PgVector!`  
 > `✓ Tổng số bản ghi thực tế trong bảng 'medical_knowledge_chunks': 192`
+
+---
+
+### Bước 4.3: Chạy MIGRATION & SEED Dữ Liệu Care Plan, Nhắc Thuốc & Check-in (Asthma Tracker)
+
+Hệ thống cung cấp sẵn bộ script khởi tạo bảng và seed dữ liệu chuẩn GINA cho 3 bệnh nhân mẫu (nhẹ, nặng, kèm GERD) cùng lịch sử 14 ngày:
+
+#### 1. Khởi tạo cấu trúc bảng (Migration):
+* **Trên Linux:**
+  ```bash
+  PYTHONPATH=. python3 backend/app/db/migrate_asthma_tables.py
+  ```
+* **Trên Windows:**
+  ```powershell
+  $env:PYTHONPATH="."
+  python backend/app/db/migrate_asthma_tables.py
+  ```
+
+#### 2. Nạp dữ liệu mẫu (Care Plans, Reminders, 14-day Checkin Logs):
+* **Trên Linux:**
+  ```bash
+  PYTHONPATH=. python3 backend/app/db/seed_asthma_care_plans.py
+  ```
+* **Trên Windows:**
+  ```powershell
+  $env:PYTHONPATH="."
+  python backend/app/db/seed_asthma_care_plans.py
+  ```
+
+> **Kết quả thành công sẽ hiển thị:**
+> `✓ Khởi tạo bảng Asthma thành công 100%!`  
+> `✓ Seed dữ liệu Care Plans & Checkin cho 3 bệnh nhân Hen phế quản thành công 100%!`
 
 ---
 
