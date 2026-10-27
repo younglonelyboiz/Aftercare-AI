@@ -113,23 +113,9 @@ class AftercareRAGService:
                 }
             )
 
-        # 3. Tạo prompt chuẩn lâm sàng (Zero-Hallucination, Patient-aware, Grounding BYT & GINA)
+        # 3. Tạo prompt chuẩn lâm sàng (Zero-Hallucination, Grounding BYT & GINA)
         prompt = PROMPT_TEMPLATE.format(
             system_prompt=RAG_SYSTEM_PROMPT,
-            full_name=p_info["full_name"],
-            age=p_info["age"],
-            gender=p_info["gender"],
-            discharge_date=p_info.get("discharge_date", "Chưa rõ"),
-            diagnosis=c_status["diagnosis"],
-            known_triggers=", ".join(c_status.get("known_triggers", []))
-            if c_status.get("known_triggers")
-            else "Không ghi nhận",
-            controller_med=meds.get(
-                "controller_med", "Không dùng thuốc duy trì hàng ngày"
-            ),
-            reliever_med=meds.get("reliever_med", "Thuốc cắt cơn theo đơn"),
-            hospital=follow.get("hospital", "Cơ sở y tế điều trị"),
-            next_appointment=follow.get("next_appointment", "Theo lịch hẹn của bác sĩ"),
             rag_context=rag_context
             if rag_context.strip()
             else "Không tìm thấy đoạn tài liệu phù hợp trong cơ sở tri thức.",
