@@ -14,18 +14,66 @@ import {
   getCheckinHistory, 
   getActiveReminders, 
   actOnReminder, 
-  submitCheckin 
+  submitCheckin,
+  resetDemoData
 } from './services/api';
 
 export default function App() {
-  const [currentPortal, setCurrentPortal] = useState('patient'); // 'patient' hoặc 'nurse'
+  const [currentPortal, setCurrentPortal] = useState('nurse'); // 'patient' hoặc 'nurse'
   const [patients, setPatients] = useState([]);
-  const [selectedPatientId, setSelectedPatientId] = useState('');
-  const [patientProfile, setPatientProfile] = useState(null);
-  const [carePlan, setCarePlan] = useState(null);
+  const [selectedPatientId, setSelectedPatientId] = useState('BN-2026-ASTHMA-01');
+  const [isResetting, setIsResetting] = useState(false);
+  const [patientProfile, setPatientProfile] = useState({
+    patient_info: {
+      patient_id: 'BN-2026-ASTHMA-01',
+      full_name: 'Nguyễn Văn An',
+      age: 28,
+      gender: 'Nam',
+      discharge_date: '2026-10-01'
+    },
+    clinical_status: {
+      diagnosis: 'Hen phế quản nhẹ - Đã kiểm soát tốt',
+      known_triggers: ['Phấn hoa', 'Khói bụi đường phố'],
+      personal_best_pef: 520,
+      baseline_spo2: 98
+    },
+    current_medications: {
+      controller_med: 'Không dùng thuốc duy trì hàng ngày (Bậc 1 hoặc Bậc 2).',
+      reliever_med: 'Budesonide/Formoterol 80/4.5mcg (hoặc SABA) hít/xịt khi có triệu chứng hoặc trước khi tiếp xúc dị nguyên.'
+    },
+    follow_up: {
+      next_appointment: '2026-12-01',
+      hospital: 'Bệnh viện Phổi Trung ương'
+    },
+    action_plan_rules: {
+      green_zone: "✅ TÌNH TRẠNG HIỆN TẠI ỔN ĐỊNH: Các chỉ số và triệu chứng của Nguyễn Văn An đều nằm trong vùng an toàn (Vùng Xanh).\n\n• Tiếp tục duy trì xịt thuốc kiểm soát định kỳ đúng liều lượng.\n• Giữ ấm đường thở, uống đủ nước ấm và theo dõi chỉ số PEF hàng ngày.",
+      yellow_zone: "⚠️ CẢNH BÁO HEN TRỞ NẶNG (VÙNG VÀNG): Bệnh nhân có dấu hiệu hen bùng phát.\n\n1. SỬ DỤNG THUỐC CẮT CƠN: Dùng thuốc cắt cơn tác dụng nhanh theo đúng phác đồ Vùng Vàng.\n2. NGHỈ NGƠI TẠI CHỖ: Tránh tiếp xúc khói bụi, dị nguyên.\n3. THEO DÕI: Đánh giá lại nhịp thở sau 20-30 phút.",
+      red_zone: "🚨 CẢNH BÁO CỜ ĐỎ CẤP CỨU: Bệnh nhân đang có dấu hiệu nguy kịch cần hỗ trợ y tế khẩn cấp!\n\n1. DÙNG THUỐC CẮT CƠN KHẨN CẤP: Dùng ngay 2-4 nhát thuốc cắt cơn.\n2. TƯ THẾ: Ngồi thẳng lưng, hơi cúi người ra trước, tuyệt đối không nằm ngửa.\n3. CẤP CỨU: Gọi ngay 115 hoặc di chuyển tới cơ sở y tế gần nhất!"
+    }
+  });
+  const [carePlan, setCarePlan] = useState({
+    id: "plan-BN-2026-ASTHMA-01",
+    patient_id: "BN-2026-ASTHMA-01",
+    personal_best_pef: 520,
+    baseline_spo2: 98,
+    action_plan_green: "PEF >= 416 (>=80%). Sinh hoạt bình thường.",
+    action_plan_yellow: "PEF 312 - 415 (60-80%). Dùng thuốc cắt cơn theo chỉ định.",
+    action_plan_red: "PEF < 312 (<60%). Dùng thuốc cắt cơn ngay, gọi 115.",
+    items: [
+      {
+        id: "item-1",
+        item_type: "PEF_MEASURE",
+        title: "Thổi lưu lượng đỉnh (PEF) buổi sáng",
+        dosage: "Thổi 3 lần lấy số lớn nhất",
+        instructions: "Thổi lúc mới thức dậy trước khi vận động",
+        schedule_times: ["07:00"],
+        is_active: true
+      }
+    ]
+  });
   const [history, setHistory] = useState([]);
   const [reminders, setReminders] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   // Check-in State
   const [pef, setPef] = useState(480);
@@ -48,13 +96,12 @@ export default function App() {
       try {
         const data = await getPatients();
         setPatients(data);
-        if (data.length > 0) {
-          setSelectedPatientId(data[0].patient_id);
-        }
+        const initialId = (data.length > 0 && data[0].patient_id) ? data[0].patient_id : 'BN-2026-ASTHMA-01';
+        setSelectedPatientId(initialId);
+        loadPatientData(initialId);
       } catch (err) {
         console.error('Lỗi tải danh sách bệnh nhân:', err);
-      } finally {
-        setLoading(false);
+        loadPatientData('BN-2026-ASTHMA-01');
       }
     };
     fetchPatients();
@@ -94,11 +141,15 @@ export default function App() {
       }
     } catch (err) {
       console.error('Lỗi tải dữ liệu bệnh nhân:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadPatientData(selectedPatientId);
+    if (selectedPatientId) {
+      loadPatientData(selectedPatientId);
+    }
   }, [selectedPatientId]);
 
   // Calculate Action Zone
@@ -184,6 +235,23 @@ export default function App() {
     }
   };
 
+  // Reset Demo Data cho cả 3 bệnh nhân
+  const handleResetDemo = async () => {
+    if (!window.confirm('Khôi phục lại dữ liệu mẫu ban đầu cho cả 3 bệnh nhân để trình diễn demo?')) {
+      return;
+    }
+    setIsResetting(true);
+    try {
+      const res = await resetDemoData();
+      alert('✓ ' + (res.message || 'Đã reset dữ liệu demo thành công!'));
+      await loadPatientData(selectedPatientId);
+    } catch (err) {
+      alert('Lỗi khi reset demo: ' + (err.response?.data?.detail || err.message));
+    } finally {
+      setIsResetting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-secondary)' }}>
@@ -201,6 +269,8 @@ export default function App() {
         onSelectPatient={setSelectedPatientId}
         currentPortal={currentPortal}
         onSwitchPortal={setCurrentPortal}
+        onResetDemo={handleResetDemo}
+        isResetting={isResetting}
       />
 
       {/* 2. Banner Nhắc thuốc / Đo PEF nổi bật (In-app notification) */}
@@ -216,7 +286,11 @@ export default function App() {
       {currentPortal === 'nurse' ? (
         /* PORTAL ĐIỀU DƯỠNG (CLINICAL COMMAND CENTER) */
         <main className="nurse-portal-wrap">
-          <NurseCommandCenter onSelectPatientId={setSelectedPatientId} />
+          <NurseCommandCenter 
+            patients={patients}
+            selectedPatientId={selectedPatientId}
+            onSelectPatientId={setSelectedPatientId} 
+          />
         </main>
       ) : (
         /* PORTAL BỆNH NHÂN (PATIENT AFTERCARE & CHECKIN) */
@@ -241,6 +315,7 @@ export default function App() {
             />
 
             <DailyCheckInForm
+              patientId={selectedPatientId}
               personalBestPef={personalBest}
               actionPlan={patientProfile?.action_plan_rules}
               pef={pef}

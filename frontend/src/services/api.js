@@ -71,3 +71,19 @@ export const getNurseOverview = async () => {
   return response.data;
 };
 
+// -------------------------------------------------------------
+// SYMPTOM SCREENER ENGINE EVALUATION
+// -------------------------------------------------------------
+export const evaluateScreener = async (screenerInput) => {
+  const response = await apiClient.post('/screener/evaluate', screenerInput);
+  return response.data;
+};
+
+// -------------------------------------------------------------
+// RESET DEMO DATA
+// -------------------------------------------------------------
+export const resetDemoData = async () => {
+  const response = await apiClient.post('/care-tracker/reset-demo');
+  return response.data;
+};
+

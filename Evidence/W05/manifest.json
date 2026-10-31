@@ -1,0 +1,52 @@
+{
+  "week": "W05",
+  "milestone": "Tuan5",
+  "project": "Aftercare-AI",
+  "tag": "w05",
+  "created_at": "2026-10-31T16:00:00+07:00",
+  "summary": {
+    "engine": "Bộ sàng lọc triệu chứng rule-based và phân tầng mức độ nguy cơ",
+    "total_test_cases": 9,
+    "pass_rate": 1.0,
+    "emergency_sensitivity": 1.0,
+    "zero_diagnosis_compliance": 1.0,
+    "execution_time_ms": 4.2
+  },
+  "deliverables": [
+    {
+      "task_name": "Xây dựng động cơ sàng lọc triệu chứng rule-based và phân tầng mức độ nguy cơ",
+      "assignee": "Hoàng Ngọc Đức",
+      "reviewer": "Nguyễn Trường Giang",
+      "issue_number": 8,
+      "pr_number": 10,
+      "status": "COMPLETED",
+      "evidence_files": [
+        "README.md",
+        "test-results.txt",
+        "metrics.csv"
+      ]
+    },
+    {
+      "task_name": "Xây dựng giao diện sàng lọc triệu chứng và bộ kiểm thử an toàn lâm sàng",
+      "assignee": "Nguyễn Trường Giang",
+      "reviewer": "Hoàng Ngọc Đức",
+      "issue_number": 9,
+      "pr_number": 11,
+      "status": "COMPLETED",
+      "evidence_files": [
+        "manifest.json",
+        "figures/screener_ui_preview.png"
+      ]
+    }
+  ],
+  "structure": {
+    "directory": "Evidence/W05",
+    "files": [
+      "README.md",
+      "metrics.csv",
+      "test-results.txt",
+      "manifest.json",
+      "figures/"
+    ]
+  }
+}

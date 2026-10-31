@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageSquare, X, Send, ShieldAlert, BookOpen, AlertTriangle, ExternalLink, Maximize2, Minimize2, FileText } from 'lucide-react';
+import { MessageSquare, X, Send, ShieldAlert, BookOpen, AlertTriangle, ExternalLink, Maximize2, Minimize2, FileText, PhoneCall } from 'lucide-react';
 import { sendChatMessage, getDocumentPdfUrl } from '../../services/api';
 import PdfViewerModal from './PdfViewerModal';
 
@@ -223,6 +223,41 @@ export default function FloatingChatWidget({
             ))}
           </div>
 
+          {/* Emergency Fast-Dial Bar (Kích hoạt khi gặp cờ đỏ RED_ZONE) */}
+          {messages.length > 0 && messages[messages.length - 1].safety_status === 'RED_ZONE' && (
+            <div style={{
+              padding: '8px 12px',
+              backgroundColor: '#fee2e2',
+              borderTop: '1px solid #f87171',
+              borderBottom: '1px solid #f87171',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 8
+            }}>
+              <span style={{ fontSize: '0.8rem', color: '#991b1b', fontWeight: 600 }}>
+                🚨 Triệu chứng nguy cấp! Vui lòng gọi cấp cứu:
+              </span>
+              <a
+                href="tel:115"
+                style={{
+                  padding: '6px 12px',
+                  backgroundColor: '#dc2626',
+                  color: 'white',
+                  borderRadius: 6,
+                  textDecoration: 'none',
+                  fontWeight: 700,
+                  fontSize: '0.82rem',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6
+                }}
+              >
+                <PhoneCall size={14} /> Gọi 115
+              </a>
+            </div>
+          )}
+
           {/* Input Area */}
           <div className="chat-input-area">
             <input
@@ -243,6 +278,7 @@ export default function FloatingChatWidget({
               <Send size={16} />
             </button>
           </div>
+
         </div>
       )}
 

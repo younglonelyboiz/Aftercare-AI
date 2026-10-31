@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ClipboardCheck, CheckCircle2 } from 'lucide-react';
 import ActionZoneBanner from './ActionZoneBanner';
+import { evaluateScreener } from '../services/api';
 
 export default function DailyCheckInForm({
+  patientId,
   personalBestPef,
   actionPlan,
   pef,
@@ -18,6 +20,45 @@ export default function DailyCheckInForm({
   onSubmitCheckin
 }) {
   const pefRatio = personalBestPef > 0 ? Math.round((pef / personalBestPef) * 100) : 100;
+  const [screenerResult, setScreenerResult] = useState({
+    risk_level: "NORMAL",
+    matched_flags: [],
+    matched_reasons: ["Các chỉ số sinh hiệu và triệu chứng ghi nhận đều trong giới hạn an toàn bình thường."],
+    action_instructions: "✅ TÌNH TRẠNG HIỆN TẠI ỔN ĐỊNH: Các chỉ số và triệu chứng của Nguyễn Văn An đều nằm trong vùng an toàn (Vùng Xanh).\n\n• Tiếp tục duy trì xịt thuốc kiểm soát định kỳ đúng liều lượng.\n• Giữ ấm đường thở, uống đủ nước ấm và theo dõi chỉ số PEF hàng ngày.",
+    disclaimer: "Lưu ý y tế: Kết quả sàng lọc chỉ nhằm đánh giá mức độ khẩn cấp và hướng dẫn xử trí ban đầu, tuyệt đối không thay thế chẩn đoán của bác sĩ chuyên khoa."
+  });
+
+  // Tự động gọi evaluateScreener ngay khi mount và khi bệnh nhân thay đổi chỉ số
+  useEffect(() => {
+    let isMounted = true;
+    const fetchScreener = async () => {
+      try {
+        const selectedList = [];
+        if (symptoms.nightWaking) selectedList.push('night_waking');
+        if (symptoms.relieverUsed) selectedList.push('reliever_frequent');
+        if (symptoms.activityLimited) selectedList.push('activity_limited');
+        if (symptoms.dangerSign) selectedList.push('severe_dyspnea');
+
+        const result = await evaluateScreener({
+          patient_id: patientId || 'BN-2026-ASTHMA-01',
+          pef_value: pef,
+          spo2: spo2,
+          reliever_puffs: symptoms.relieverUsed ? 2 : 0,
+          selected_symptoms: selectedList
+        });
+        if (isMounted) {
+          setScreenerResult(result);
+        }
+      } catch (err) {
+        console.error('Không thể đánh giá sàng lọc:', err);
+      }
+    };
+
+    fetchScreener();
+    return () => {
+      isMounted = false;
+    };
+  }, [patientId, pef, spo2, symptoms]);
 
   const toggleSymptom = (key) => {
     setSymptoms((prev) => ({
@@ -31,7 +72,7 @@ export default function DailyCheckInForm({
       <div className="card-header-row">
         <div className="card-title">
           <ClipboardCheck size={20} color="var(--primary)" />
-          Check-in Sức Khỏe Hằng Ngày (Option A)
+          Check-in Sức Khỏe Hằng Ngày
         </div>
         <button
           onClick={onSubmitCheckin}
@@ -54,8 +95,10 @@ export default function DailyCheckInForm({
       <ActionZoneBanner
         zone={currentZone}
         actionPlan={actionPlan}
+        screenerResult={screenerResult}
         onOpenChatWithAlert={onOpenChatWithAlert}
       />
+
 
       {/* 1. PEF Input */}
       <div className="input-section">

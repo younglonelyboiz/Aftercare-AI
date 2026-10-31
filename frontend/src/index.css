@@ -1,13 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Be Vietnam Pro', 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Clinical Clean Color Palette */
+  /* Clinical Clean Color Palette (Sạch, sáng, chuẩn bệnh viện) */
   --bg-page: #f8fafc;
   --bg-surface: #ffffff;
-  --bg-surface-subtle: #f1f5f9;
+  --bg-surface-subtle: #f0fdfa; /* Xanh ngọc nhạt thanh dịu */
 
   --border-subtle: #e2e8f0;
   --border-focus: #0284c7;
@@ -19,7 +19,7 @@
   /* Healthcare Brand */
   --primary: #0284c7;
   --primary-hover: #0369a1;
-  --primary-subtle: #e0f2fe;
+  --primary-subtle: #f0f9ff;
 
   /* Action Zones (Medical Standards) */
   --zone-green-bg: #ecfdf5;
@@ -62,9 +62,9 @@ body {
 
 /* Base Container */
 .app-container {
-  max-width: 1140px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 24px 20px 80px;
+  padding: 24px 28px 80px;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -74,12 +74,12 @@ body {
 .app-header {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: 18px 24px;
+  border-radius: var(--radius-md);
+  padding: 16px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   flex-wrap: wrap;
   gap: 16px;
 }
@@ -103,7 +103,7 @@ body {
 
 .brand-title {
   font-size: 1.25rem;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-primary);
   line-height: 1.2;
 }
@@ -136,7 +136,7 @@ body {
   font-weight: 500;
   outline: none;
   cursor: pointer;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
   transition: border-color 0.2s;
 }
 
@@ -147,7 +147,7 @@ body {
 /* Main Grid */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 1fr 1.35fr;
+  grid-template-columns: 1fr 1.2fr;
   gap: 24px;
   align-items: start;
 }
@@ -1071,6 +1071,18 @@ body {
 .dot-red { background: #ef4444; }
 .dot-empty { background: #cbd5e1; }
 
+.status-circle {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-circle.status-green { background: #10b981; }
+.status-circle.status-yellow { background: #f59e0b; }
+.status-circle.status-red { background: #ef4444; }
+.status-circle.status-empty, .status-circle.status-unknown { background: #cbd5e1; }
+
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -1626,5 +1638,46 @@ body {
 
 .btn-save-plan:hover {
   background: #0369a1;
+}
+
+/* Demo Reset Button */
+.demo-reset-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  padding: 7px 12px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.demo-reset-btn:hover:not(:disabled) {
+  background: #f1f5f9;
+  color: #0f172a;
+  border-color: #94a3b8;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.demo-reset-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spin-icon {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 

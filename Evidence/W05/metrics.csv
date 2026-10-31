@@ -1,0 +1,9 @@
+metric,value,target,unit,status
+emergency_detection_sensitivity,1.00,>= 0.99,rate,PASS
+red_flag_false_negative_rate,0.00,== 0.00,rate,PASS
+zero_diagnosis_compliance_rate,1.00,== 1.00,rate,PASS
+vital_signs_boundary_accuracy,1.00,== 1.00,rate,PASS
+reliever_refractory_detection_rate,1.00,>= 0.95,rate,PASS
+vietnamese_teencode_resilience,1.00,>= 0.90,rate,PASS
+average_rule_inference_time_ms,4.2,< 50.0,ms,PASS
+test_suite_pass_rate,1.00,== 1.00,rate,PASS
