@@ -114,3 +114,17 @@ def get_nurse_overview(
 ):
     """Điều dưỡng xem danh sách tất cả bệnh nhân kèm xếp hạng ưu tiên Triage & độ tuân thủ."""
     return service.get_nurse_patient_overview()
+
+# -----------------------------------------------------------------------------
+# 5. DEMO RESET ENDPOINT
+# -----------------------------------------------------------------------------
+@router.post("/reset-demo")
+def reset_demo_data():
+    """Khôi phục dữ liệu ban đầu cho 3 bệnh nhân mẫu phục vụ demo."""
+    try:
+        from backend.app.db.seed_asthma_care_plans import seed_asthma_care_plans
+        seed_asthma_care_plans()
+        return {"status": "success", "message": "Đã reset toàn bộ dữ liệu mẫu (Care Plans, Check-ins, Reminders) cho 3 bệnh nhân thành công!"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Lỗi khi reset demo: {str(e)}")
+
