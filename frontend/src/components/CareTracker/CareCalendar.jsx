@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Calendar } from 'lucide-react';
 
 export default function CareCalendar({ history = [], onSelectDate }) {
   const [selectedDay, setSelectedDay] = useState(null);
@@ -9,12 +10,15 @@ export default function CareCalendar({ history = [], onSelectDate }) {
     logMap[item.date] = item;
   });
 
-  // Tạo danh sách 14 ngày gần nhất
+  // Tạo danh sách 14 ngày gần nhất (sử dụng local date để tránh lệch múi giờ)
   const days = [];
   for (let i = 13; i >= 0; i--) {
     const d = new Date();
     d.setDate(d.getDate() - i);
-    const dateStr = d.toISOString().split('T')[0];
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const dateStr = `${year}-${month}-${day}`;
     const dayLabel = `${d.getDate()}/${d.getMonth() + 1}`;
     const weekday = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'][d.getDay()];
     days.push({
@@ -34,7 +38,10 @@ export default function CareCalendar({ history = [], onSelectDate }) {
     <div className="care-calendar-card">
       <div className="calendar-header">
         <div>
-          <h3 className="section-title">📅 Nhật Ký & Lịch Theo Dõi Hen (14 Ngày)</h3>
+          <h3 className="section-title">
+            <Calendar size={18} color="var(--primary)" style={{ marginRight: 6, verticalAlign: 'middle' }} />
+            Nhật Ký & Lịch Theo Dõi Hen (14 Ngày)
+          </h3>
           <p className="section-desc">Màu sắc thể hiện mức độ kiểm soát cơn hen theo chuẩn GINA</p>
         </div>
         <div className="calendar-legend">
@@ -59,10 +66,7 @@ export default function CareCalendar({ history = [], onSelectDate }) {
               <div className="day-weekday">{item.weekday}</div>
               <div className="day-number">{item.dayLabel}</div>
               <div className="day-status-indicator">
-                {zone === 'green' && '🟢'}
-                {zone === 'yellow' && '🟡'}
-                {zone === 'red' && '🔴'}
-                {zone === 'empty' && '⚪'}
+                <span className={`status-circle status-${zone}`}></span>
               </div>
               {item.log && (
                 <div className="day-pef-tag">

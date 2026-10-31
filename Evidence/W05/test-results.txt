@@ -1,0 +1,18 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.12, pytest-8.3.4, pluggy-1.6.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/hoangduc/Documents/Aftercare-AI
+plugins: langsmith-0.13.0, Faker-40.43.0, anyio-4.15.1
+collecting ... collected 9 items
+
+tests/test_safety/test_symptom_screener.py::test_pef_boundary_red_zone PASSED [ 11%]
+tests/test_safety/test_symptom_screener.py::test_pef_boundary_yellow_zone PASSED [ 22%]
+tests/test_safety/test_symptom_screener.py::test_spo2_critical_red_zone PASSED [ 33%]
+tests/test_safety/test_symptom_screener.py::test_spo2_warning_yellow_zone PASSED [ 44%]
+tests/test_safety/test_symptom_screener.py::test_all_normal_vitals PASSED [ 55%]
+tests/test_safety/test_symptom_screener.py::test_reliever_refractory_patterns PASSED [ 66%]
+tests/test_safety/test_symptom_screener.py::test_vietnamese_teencode_and_no_accents PASSED [ 77%]
+tests/test_safety/test_symptom_screener.py::test_zero_diagnosis_assertion PASSED [ 88%]
+tests/test_safety/test_symptom_screener.py::test_custom_rule_config_override PASSED [100%]
+
+============================== 9 passed in 0.05s ===============================

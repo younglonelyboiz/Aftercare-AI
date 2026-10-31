@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ClipboardList, Pill, Wind, Stethoscope, ArrowRight, Check } from 'lucide-react';
 
 export default function CarePlanChecklist({ carePlan, onCheckinToday }) {
   const [completedItems, setCompletedItems] = useState({});
@@ -19,14 +20,20 @@ export default function CarePlanChecklist({ carePlan, onCheckinToday }) {
   return (
     <div className="care-checklist-card">
       <div className="checklist-header">
-        <h3 className="section-title">📋 Kế Hoạch Chăm Sóc & Nhiệm Vụ Hôm Nay</h3>
+        <h3 className="section-title">
+          <ClipboardList size={18} color="var(--primary)" style={{ marginRight: 6, verticalAlign: 'middle' }} />
+          Kế Hoạch Chăm Sóc & Nhiệm Vụ Hôm Nay
+        </h3>
         <span className="badge-best-pef">
           PEF Mục Tiêu: <strong>{carePlan.personal_best_pef} L/phút</strong>
         </span>
       </div>
 
       <div className="task-group">
-        <h4 className="group-title">💊 Thuốc Kiểm Soát Duy Trì (Chống Hen Tái Phát)</h4>
+        <h4 className="group-title">
+          <Pill size={15} color="var(--primary)" style={{ marginRight: 6, verticalAlign: 'middle' }} />
+          Thuốc Kiểm Soát Duy Trì (Chống Hen Tái Phát)
+        </h4>
         {controllers.length === 0 ? (
           <p className="empty-sub">Không có thuốc duy trì hàng ngày (Bậc 1 GINA).</p>
         ) : (
@@ -47,13 +54,18 @@ export default function CarePlanChecklist({ carePlan, onCheckinToday }) {
                     <strong>{item.title}</strong> — <span className="task-dose">{item.dosage}</span>
                   </div>
                   <div className="task-instruction">
-                    ℹ️ {item.instructions}
+                    {item.instructions}
                   </div>
                   <div className="task-times">
                     Giờ xịt: {item.schedule_times.join(', ')}
                   </div>
                 </div>
-                {isDone && <span className="done-pill">✓ Đã xịt</span>}
+                {isDone && (
+                  <span className="done-pill">
+                    <Check size={12} style={{ marginRight: 2, verticalAlign: 'middle' }} />
+                    Đã xịt
+                  </span>
+                )}
               </div>
             );
           })
@@ -61,7 +73,10 @@ export default function CarePlanChecklist({ carePlan, onCheckinToday }) {
       </div>
 
       <div className="task-group">
-        <h4 className="group-title">🫁 Đo Lưu Lượng Đỉnh & Kiểm Tra Triệu Chứng</h4>
+        <h4 className="group-title">
+          <Wind size={15} color="var(--primary)" style={{ marginRight: 6, verticalAlign: 'middle' }} />
+          Đo Lưu Lượng Đỉnh & Kiểm Tra Triệu Chứng
+        </h4>
         {measures.map(item => {
           const isDone = completedItems[item.id];
           return (
@@ -89,7 +104,7 @@ export default function CarePlanChecklist({ carePlan, onCheckinToday }) {
                 className="btn-quick-checkin"
                 onClick={onCheckinToday}
               >
-                Nhập số đo ➔
+                Nhập số đo <ArrowRight size={13} style={{ marginLeft: 3, verticalAlign: 'middle' }} />
               </button>
             </div>
           );
@@ -98,7 +113,10 @@ export default function CarePlanChecklist({ carePlan, onCheckinToday }) {
 
       {comorbidities.length > 0 && (
         <div className="task-group">
-          <h4 className="group-title">🩺 Thuốc Bệnh Kèm Theo</h4>
+          <h4 className="group-title">
+            <Stethoscope size={15} color="var(--primary)" style={{ marginRight: 6, verticalAlign: 'middle' }} />
+            Thuốc Bệnh Kèm Theo
+          </h4>
           {comorbidities.map(item => {
             const isDone = completedItems[item.id];
             return (
@@ -122,7 +140,12 @@ export default function CarePlanChecklist({ carePlan, onCheckinToday }) {
                     Giờ uống: {item.schedule_times.join(', ')}
                   </div>
                 </div>
-                {isDone && <span className="done-pill">✓ Đã uống</span>}
+                {isDone && (
+                  <span className="done-pill">
+                    <Check size={12} style={{ marginRight: 2, verticalAlign: 'middle' }} />
+                    Đã uống
+                  </span>
+                )}
               </div>
             );
           })}
