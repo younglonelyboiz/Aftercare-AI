@@ -94,3 +94,8 @@ Data/*_raw.json
 !Data/hen_phe_quan.md
 !Data/rag_knowledge.json
 !Data/*.pdf
+
+# ==========================================
+# Báo cáo tiến độ nội bộ (Local Reports)
+# ==========================================
+BAO_CAO_TIEN_DO_TUAN_5_AFTERCARE_AI.*
