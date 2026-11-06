@@ -15,9 +15,11 @@ from backend.app.core.database import get_db
 from backend.app.repositories.asthma_repositories import (
     CarePlanRepository,
     CheckinRepository,
-    ReminderRepository
+    ReminderRepository,
+    AlertTicketRepository
 )
 from backend.app.services.asthma_care_service import AsthmaCareService
+from backend.app.services.escalation_service import EscalationService
 from backend.app.schemas.care_tracker import (
     CarePlanDTO,
     CarePlanCreateOrUpdateDTO,
@@ -36,7 +38,9 @@ def get_care_service(db: Session = Depends(get_db)) -> AsthmaCareService:
     care_plan_repo = CarePlanRepository(db)
     checkin_repo = CheckinRepository(db)
     reminder_repo = ReminderRepository(db)
-    return AsthmaCareService(care_plan_repo, checkin_repo, reminder_repo)
+    ticket_repo = AlertTicketRepository(db)
+    escalation_service = EscalationService(ticket_repo)
+    return AsthmaCareService(care_plan_repo, checkin_repo, reminder_repo, escalation_service)
 
 # -----------------------------------------------------------------------------
 # 1. CARE PLANS ENDPOINTS
@@ -65,12 +69,13 @@ def create_or_update_care_plan(
 # 2. CHECK-IN ENDPOINTS
 # -----------------------------------------------------------------------------
 @router.post("/checkin/", response_model=CheckinResponseDTO)
-def submit_checkin(
+async def submit_checkin(
     data: CheckinCreateDTO,
     service: AsthmaCareService = Depends(get_care_service)
 ):
     """Bệnh nhân nộp số đo PEF & triệu chứng -> Tính toán vùng GINA và chỉ dẫn xử trí."""
-    return service.process_checkin(data)
+    return await service.process_checkin(data)
+
 
 @router.get("/checkin/history/{patient_id}", response_model=List[CheckinHistoryDTO])
 def get_checkin_history(

@@ -5,7 +5,8 @@ from typing import List, Dict, Any, Optional
 from backend.app.repositories.asthma_repositories import (
     CarePlanRepository,
     CheckinRepository,
-    ReminderRepository
+    ReminderRepository,
+    AlertTicketRepository
 )
 from backend.app.models.asthma import (
     AsthmaCarePlan,
@@ -30,11 +31,13 @@ class AsthmaCareService:
         self,
         care_plan_repo: CarePlanRepository,
         checkin_repo: CheckinRepository,
-        reminder_repo: ReminderRepository
+        reminder_repo: ReminderRepository,
+        escalation_service = None
     ):
         self.care_plan_repo = care_plan_repo
         self.checkin_repo = checkin_repo
         self.reminder_repo = reminder_repo
+        self.escalation_service = escalation_service
 
     # -------------------------------------------------------------------------
     # 1. CARE PLAN BUSINESS LOGIC
@@ -87,7 +90,7 @@ class AsthmaCareService:
     # -------------------------------------------------------------------------
     # 2. CHECK-IN & GINA ZONE ENGINE
     # -------------------------------------------------------------------------
-    def process_checkin(self, data: CheckinCreateDTO) -> CheckinResponseDTO:
+    async def process_checkin(self, data: CheckinCreateDTO) -> CheckinResponseDTO:
         plan = self.care_plan_repo.get_active_plan_by_patient_id(data.patient_id)
         best_pef = plan.personal_best_pef if plan else 500
         pef_ratio = round((data.pef_value / best_pef) * 100, 1)
@@ -127,12 +130,44 @@ class AsthmaCareService:
 
         self.checkin_repo.create_checkin(new_log)
 
+        # Kích hoạt leo thang cảnh báo nếu rơi vào Vùng Đỏ
+        if zone == "RED" and self.escalation_service:
+            reason_parts = []
+            if pef_ratio < 60:
+                reason_parts.append(f"PEF tụt nguy hiểm: {data.pef_value} L/min ({pef_ratio}% so với chuẩn {best_pef})")
+            if data.spo2_value and data.spo2_value < 92:
+                reason_parts.append(f"SpO2 hạ thấp nguy cấp: {data.spo2_value}%")
+            if has_danger:
+                reason_parts.append("Xuất hiện dấu hiệu cấp cứu đe dọa tính mạng")
+
+            await self.escalation_service.create_or_escalate_ticket(
+                patient_id=data.patient_id,
+                priority="P0_CRITICAL",
+                alert_type="RED_ZONE_DETECTION",
+                trigger_reason="; ".join(reason_parts) if reason_parts else "Chỉ số rơi vào Vùng Đỏ nguy kịch",
+                checkin_id=chk_id,
+                clinical_data={
+                    "pef_value": data.pef_value,
+                    "pef_percent": pef_ratio,
+                    "spo2": data.spo2_value,
+                    "symptoms": data.symptoms,
+                    "reliever_puffs": data.reliever_puffs
+                }
+            )
+        elif zone == "GREEN" and self.escalation_service:
+            # Tự động đóng các vé Vùng Vàng nếu bệnh nhân đã hồi phục Vùng Xanh
+            await self.escalation_service.confirm_patient_safety_20m(
+                patient_id=data.patient_id,
+                notes=f"Bệnh nhân check-in đạt Vùng Xanh an toàn (PEF {data.pef_value} L/min - {pef_ratio}% chuẩn)."
+            )
+
         return CheckinResponseDTO(
             checkin_id=chk_id,
             action_zone=zone,
             pef_percent=pef_ratio,
             guidance=guidance
         )
+
 
     def get_checkin_history(self, patient_id: str, days: int = 30) -> List[CheckinHistoryDTO]:
         logs = self.checkin_repo.get_history_by_patient_id(patient_id, days)

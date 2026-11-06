@@ -83,3 +83,26 @@ class AsthmaReminder(Base):
     last_triggered_date: Mapped[date] = mapped_column(Date, default=date.today)
     acknowledged_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+
+class AlertTicket(Base):
+    """Bảng Phiếu cảnh báo leo thang y tế tức thời (Escalation Alert Ticket)."""
+    __tablename__ = "alert_tickets"
+
+    id: Mapped[str] = mapped_column(String(100), primary_key=True, default=lambda: f"ticket-{uuid.uuid4().hex[:12]}")
+    patient_id: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
+    checkin_id: Mapped[Optional[str]] = mapped_column(String(100), ForeignKey("asthma_checkin_logs.id", ondelete="SET NULL"), nullable=True)
+    priority: Mapped[str] = mapped_column(String(20), nullable=False, default="P0_CRITICAL") # P0_CRITICAL, P1_HIGH, P2_MEDIUM
+    alert_type: Mapped[str] = mapped_column(String(50), nullable=False) # RED_ZONE_DETECTION, YELLOW_ZONE_FOLLOWUP_OVERDUE, NON_RESPONSE_24H, NON_RESPONSE_12H
+    trigger_reason: Mapped[str] = mapped_column(Text, nullable=False)
+    clinical_data = Column(JSONB, default=dict)
+    status: Mapped[str] = mapped_column(String(30), default="OPEN", nullable=False, index=True) # OPEN, ACKNOWLEDGED, RESOLVED
+    escalation_latency_ms: Mapped[int] = mapped_column(Integer, default=0)
+
+    # Audit Trail & Nhân viên xử lý
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, index=True)
+    acknowledged_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    acknowledged_by: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    resolved_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    resolved_by: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    resolution_notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+

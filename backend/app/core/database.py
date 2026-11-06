@@ -19,7 +19,7 @@ def get_db_connection():
 
 # 2. Cấu hình SQLAlchemy 2.0 ORM
 SQLALCHEMY_DATABASE_URL = (
-    f"postgresql://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@"
+    f"postgresql+psycopg2://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@"
     f"{settings.POSTGRES_HOST}:{settings.POSTGRES_PORT}/{settings.POSTGRES_DB}"
 )
 
