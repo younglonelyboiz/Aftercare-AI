@@ -87,3 +87,45 @@ export const resetDemoData = async () => {
   return response.data;
 };
 
+// -------------------------------------------------------------
+// ESCALATION & REAL-TIME ALERTS APIS
+// -------------------------------------------------------------
+export const getActiveAlertTickets = async () => {
+  const response = await apiClient.get('/escalations/tickets/active');
+  return response.data;
+};
+
+export const getAlertTicketsHistory = async () => {
+  const response = await apiClient.get('/escalations/tickets/history');
+  return response.data;
+};
+
+export const acknowledgeAlertTicket = async (ticketId, acknowledgedBy = 'Điều dưỡng trực ca') => {
+  const response = await apiClient.post(`/escalations/tickets/${ticketId}/acknowledge`, {
+    acknowledged_by: acknowledgedBy
+  });
+  return response.data;
+};
+
+export const resolveAlertTicket = async (ticketId, resolvedBy, resolutionNotes) => {
+  const response = await apiClient.post(`/escalations/tickets/${ticketId}/resolve`, {
+    resolved_by: resolvedBy,
+    resolution_notes: resolutionNotes
+  });
+  return response.data;
+};
+
+export const confirmPatientSafety20m = async (patientId, notes = 'Bệnh nhân báo an toàn sau khi xịt thuốc.') => {
+  const response = await apiClient.post(`/escalations/patients/${patientId}/safety-confirm-20m`, {
+    patient_id: patientId,
+    notes: notes
+  });
+  return response.data;
+};
+
+export const triggerNonResponseScan = async () => {
+  const response = await apiClient.post('/escalations/scan-non-response');
+  return response.data;
+};
+
+

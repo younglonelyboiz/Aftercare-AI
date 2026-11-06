@@ -15,7 +15,20 @@ import {
   ChevronRight,
   ShieldCheck
 } from 'lucide-react';
-import { getNurseOverview, getCarePlan, updateCarePlan, getCheckinHistory } from '../../services/api';
+import {
+  getNurseOverview,
+  getCarePlan,
+  updateCarePlan,
+  getCheckinHistory,
+  getActiveAlertTickets,
+  acknowledgeAlertTicket,
+  resolveAlertTicket,
+  triggerNonResponseScan
+} from '../../services/api';
+import LiveAlertBanner from './LiveAlertBanner';
+import TicketResolveModal from './TicketResolveModal';
+import NotificationToast from '../Common/NotificationToast';
+import { medicalAudioAlert } from '../../utils/audioAlert';
 
 export default function NurseCommandCenter({ patients = [], selectedPatientId, onSelectPatientId }) {
   const [patientsOverview, setPatientsOverview] = useState([
@@ -108,6 +121,24 @@ export default function NurseCommandCenter({ patients = [], selectedPatientId, o
   const [notesInput, setNotesInput] = useState("Bệnh nhân có tiền sử cấp cứu ICU năm ngoái, nhạy cảm với thời tiết lạnh và mạt bụi nhà.");
   const [isSaving, setIsSaving] = useState(false);
 
+  // REAL-TIME ESCALATION & ALERT TICKETS STATES (W06)
+  const [tickets, setTickets] = useState([]);
+  const [isMuted, setIsMuted] = useState(false);
+  const [resolvingTicket, setResolvingTicket] = useState(null);
+  const [wsConnected, setWsConnected] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
+
+  // NOTIFICATION TOAST UI (Thay thế hoàn toàn window.alert mặc định)
+  const [toast, setToast] = useState({ show: false, type: 'info', title: '', message: '', stats: null });
+  const showToast = (config) => {
+    setToast({ show: true, stats: null, duration: 3000, ...config });
+  };
+  const closeToast = () => {
+    setToast((prev) => ({ ...prev, show: false }));
+  };
+
+
+
   // Map tên bệnh nhân theo ID
   const patientNameMap = React.useMemo(() => {
     const map = {
@@ -158,6 +189,163 @@ export default function NurseCommandCenter({ patients = [], selectedPatientId, o
     }
   };
 
+  // 1. Tải danh sách vé cảnh báo từ Server
+  const fetchTickets = async () => {
+    try {
+      const activeTickets = await getActiveAlertTickets();
+      setTickets(activeTickets || []);
+      // Nếu có vé P0_CRITICAL trạng thái OPEN thì phát còi báo động
+      const hasOpenP0 = activeTickets && activeTickets.some(t => t.priority === 'P0_CRITICAL' && t.status === 'OPEN');
+      if (hasOpenP0 && !isMuted) {
+        medicalAudioAlert.startP0Siren();
+      } else {
+        medicalAudioAlert.stop();
+      }
+    } catch (err) {
+      console.warn('Lỗi tải danh sách vé cảnh báo:', err);
+    }
+  };
+
+  // 2. Thiết lập kết nối WebSocket thời gian thực (W06 Escalation Hub)
+  useEffect(() => {
+    fetchTickets();
+
+    const wsUrl = `ws://${window.location.hostname || 'localhost'}:8000/api/v1/escalations/ws/nurse-alerts`;
+    let ws = null;
+    let pingInterval = null;
+
+    try {
+      ws = new WebSocket(wsUrl);
+
+      ws.onopen = () => {
+        setWsConnected(true);
+        // Gửi ping định kỳ 25s để giữ kết nối
+        pingInterval = setInterval(() => {
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send('ping');
+          }
+        }, 25000);
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.event === 'NEW_ALERT_TICKET') {
+            const newTicket = data.ticket;
+            setTickets(prev => {
+              const filtered = prev.filter(t => t.id !== newTicket.id);
+              return [newTicket, ...filtered];
+            });
+
+            // Kích hoạt âm thanh theo mức độ ưu tiên
+            if (newTicket.priority === 'P0_CRITICAL') {
+              if (!isMuted) medicalAudioAlert.startP0Siren();
+            } else {
+              medicalAudioAlert.playWarningBeep();
+            }
+
+            // Làm mới danh sách bệnh nhân
+            fetchOverview();
+          } else if (data.event === 'TICKET_ACKNOWLEDGED') {
+            const ackTicket = data.ticket;
+            setTickets(prev => prev.map(t => t.id === ackTicket.id ? ackTicket : t));
+            medicalAudioAlert.stop();
+          } else if (data.event === 'TICKET_RESOLVED') {
+            const resTicket = data.ticket;
+            setTickets(prev => prev.filter(t => t.id !== resTicket.id));
+            medicalAudioAlert.stop();
+            fetchOverview();
+          } else if (data.event === 'PATIENT_CONFIRMED_SAFE') {
+            fetchTickets();
+            fetchOverview();
+          }
+        } catch (e) {
+          // Tin dạng text pong
+        }
+      };
+
+      ws.onclose = () => {
+        setWsConnected(false);
+        if (pingInterval) clearInterval(pingInterval);
+      };
+
+      ws.onerror = () => {
+        setWsConnected(false);
+      };
+    } catch (err) {
+      console.warn('Lỗi khởi tạo WebSocket:', err);
+    }
+
+    return () => {
+      medicalAudioAlert.stop();
+      if (pingInterval) clearInterval(pingInterval);
+      if (ws) ws.close();
+    };
+  }, [isMuted]);
+
+  // Handlers thao tác vé
+  const handleAcknowledgeTicket = async (ticketId) => {
+    try {
+      await acknowledgeAlertTicket(ticketId, 'Điều dưỡng trực ban');
+      medicalAudioAlert.stop();
+      fetchTickets();
+      showToast({
+        type: 'info',
+        title: 'Đã Tiếp Nhận Ca',
+        message: 'Đã ngắt còi báo động. Vui lòng liên hệ hỗ trợ bệnh nhân.'
+      });
+    } catch (err) {
+      showToast({ type: 'error', title: 'Lỗi Tiếp Nhận', message: err.message });
+    }
+  };
+
+  const handleResolveTicket = async (ticketId, nurseName, notes) => {
+    try {
+      await resolveAlertTicket(ticketId, nurseName, notes);
+      medicalAudioAlert.stop();
+      fetchTickets();
+      fetchOverview();
+      showToast({
+        type: 'success',
+        title: 'Đã Đóng Ca Can Thiệp Thành Công',
+        message: 'Biên bản xử lý lâm sàng đã được lưu vào hệ thống kiểm toán y tế.'
+      });
+    } catch (err) {
+      showToast({ type: 'error', title: 'Lỗi Xử Lý Ca', message: err.message });
+    }
+  };
+
+  const handleToggleMute = () => {
+    const nextMuted = medicalAudioAlert.toggleMute();
+    setIsMuted(nextMuted);
+    showToast({
+      type: nextMuted ? 'warning' : 'info',
+      title: nextMuted ? 'Đã Tắt Chuông Báo Động' : 'Đã Bật Chuông Báo Động',
+      message: nextMuted ? 'Âm thanh cảnh báo sẽ tạm thời không phát.' : 'Hệ thống sẽ phát còi khi có ca P0 nguy cấp.'
+    });
+  };
+
+  const handleManualScan = async () => {
+    setIsScanning(true);
+    try {
+      const res = await triggerNonResponseScan();
+      const s = res.scan_results;
+      showToast({
+        type: 'success',
+        title: 'Hoàn Tất Quét Tự Động Non-Response',
+        message: `Đã kiểm tra toàn bộ ${s.scanned_patients || 3} bệnh nhân đang theo dõi ngoại trú.`,
+        stats: s,
+        duration: 3000
+      });
+      fetchTickets();
+      fetchOverview();
+    } catch (err) {
+      showToast({ type: 'error', title: 'Lỗi Quét Tự Động', message: err.message });
+    } finally {
+      setIsScanning(false);
+    }
+  };
+
   useEffect(() => {
     fetchOverview();
   }, []);
@@ -180,10 +368,14 @@ export default function NurseCommandCenter({ patients = [], selectedPatientId, o
           schedule_times: it.schedule_times
         }))
       });
-      alert('✓ Đã cập nhật thành công Phác đồ chăm sóc cho bệnh nhân!');
+      showToast({
+        type: 'success',
+        title: 'Cập Nhật Thành Công',
+        message: 'Đã lưu phác đồ chăm sóc và ngưỡng PEF mới cho bệnh nhân.'
+      });
       fetchOverview();
     } catch (err) {
-      alert('Lỗi cập nhật phác đồ: ' + err.message);
+      showToast({ type: 'error', title: 'Lỗi Cập Nhật Phác Đồ', message: err.message });
     } finally {
       setIsSaving(false);
     }
@@ -193,6 +385,18 @@ export default function NurseCommandCenter({ patients = [], selectedPatientId, o
 
   return (
     <div className="nurse-command-center">
+      {/* 0. Toast Notification UI chuyên nghiệp thay thế window.alert */}
+      <NotificationToast toast={toast} onClose={closeToast} />
+
+      {/* 0. Live Escalation Alert Banner (W06 Real-Time Siren & Flash) */}
+      <LiveAlertBanner
+        tickets={tickets}
+        onAcknowledge={handleAcknowledgeTicket}
+        onOpenResolve={(t) => setResolvingTicket(t)}
+        isMuted={isMuted}
+        onToggleMute={handleToggleMute}
+      />
+
       {/* 1. Header & Triage Stats */}
       <div className="nurse-header">
         <div>
@@ -216,15 +420,30 @@ export default function NurseCommandCenter({ patients = [], selectedPatientId, o
             </h2>
           </div>
           <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>
-            Phân loại mức độ ưu tiên theo chuẩn GINA & Theo dõi độ tuân thủ dùng thuốc kiểm soát hằng ngày
+            Phân loại mức độ ưu tiên theo chuẩn GINA & Tự động phát hiện ca nguy kịch tức thời (Escalation Engine W06)
           </p>
         </div>
 
-        <button className="btn-refresh" onClick={fetchOverview} disabled={loading}>
-          <RefreshCw size={14} className={loading ? 'spin' : ''} style={{ marginRight: 6, verticalAlign: 'middle' }} />
-          Làm mới dữ liệu
-        </button>
+
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button
+            className="btn-refresh"
+            onClick={handleManualScan}
+            disabled={isScanning}
+            title="Quét ngay các ca bỏ quên check-in 24h hoặc quá 20m Vùng Vàng"
+            style={{ backgroundColor: '#f8fafc', color: '#0369a1', borderColor: '#bae6fd' }}
+          >
+            <Clock size={14} className={isScanning ? 'spin' : ''} style={{ marginRight: 6, verticalAlign: 'middle' }} />
+            {isScanning ? 'Đang quét...' : 'Quét Non-Response'}
+          </button>
+
+          <button className="btn-refresh" onClick={fetchOverview} disabled={loading}>
+            <RefreshCw size={14} className={loading ? 'spin' : ''} style={{ marginRight: 6, verticalAlign: 'middle' }} />
+            Làm mới dữ liệu
+          </button>
+        </div>
       </div>
+
 
       <div className="nurse-layout-grid">
         {/* CỘT TRÁI: DANH SÁCH BỆNH NHÂN THEO ĐỘ ƯU TIÊN */}
@@ -519,6 +738,15 @@ export default function NurseCommandCenter({ patients = [], selectedPatientId, o
           )}
         </div>
       </div>
+
+      {/* MODAL BIÊN BẢN GIẢI QUYẾT VÉ CẢNH BÁO LÂM SÀNG */}
+      {resolvingTicket && (
+        <TicketResolveModal
+          ticket={resolvingTicket}
+          onClose={() => setResolvingTicket(null)}
+          onResolve={handleResolveTicket}
+        />
+      )}
     </div>
   );
 }

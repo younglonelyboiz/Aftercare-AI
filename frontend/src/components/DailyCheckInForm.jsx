@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { ClipboardCheck, CheckCircle2 } from 'lucide-react';
+import { ClipboardCheck, CheckCircle2, Clock, Check } from 'lucide-react';
 import ActionZoneBanner from './ActionZoneBanner';
-import { evaluateScreener } from '../services/api';
+import { evaluateScreener, confirmPatientSafety20m } from '../services/api';
 
 export default function DailyCheckInForm({
   patientId,
@@ -20,6 +20,8 @@ export default function DailyCheckInForm({
   onSubmitCheckin
 }) {
   const pefRatio = personalBestPef > 0 ? Math.round((pef / personalBestPef) * 100) : 100;
+  const [countdownSeconds, setCountdownSeconds] = useState(1200); // 20 phút
+  const [safetyConfirmed, setSafetyConfirmed] = useState(false);
   const [screenerResult, setScreenerResult] = useState({
     risk_level: "NORMAL",
     matched_flags: [],
@@ -60,6 +62,34 @@ export default function DailyCheckInForm({
     };
   }, [patientId, pef, spo2, symptoms]);
 
+  // Bộ đếm ngược 20 phút khi ở Vùng Vàng
+  useEffect(() => {
+    let timer = null;
+    if (currentZone === 'yellow' && !safetyConfirmed) {
+      timer = setInterval(() => {
+        setCountdownSeconds((prev) => (prev > 0 ? prev - 1 : 0));
+      }, 1000);
+    } else {
+      setCountdownSeconds(1200);
+    }
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [currentZone, safetyConfirmed]);
+
+  const handleConfirmSafety = async () => {
+    try {
+      await confirmPatientSafety20m(
+        patientId || 'BN-2026-ASTHMA-01',
+        'Bệnh nhân xác nhận đã dùng thuốc cắt cơn, nghỉ ngơi 20 phút và nhịp thở đã ổn định an toàn.'
+      );
+      setSafetyConfirmed(true);
+      alert('✓ Đã xác nhận: Hệ thống đã ghi nhận tình trạng ổn định và hủy chuông cảnh báo tới điều dưỡng!');
+    } catch (err) {
+      alert('Lỗi xác nhận an toàn: ' + err.message);
+    }
+  };
+
   const toggleSymptom = (key) => {
     setSymptoms((prev) => ({
       ...prev,
@@ -98,6 +128,29 @@ export default function DailyCheckInForm({
         screenerResult={screenerResult}
         onOpenChatWithAlert={onOpenChatWithAlert}
       />
+
+      {/* VÒNG LẶP THEO DÕI VÙNG VÀNG 20 PHÚT (W06) */}
+      {currentZone === 'yellow' && (
+        <div className="yellow-followup-banner">
+          <div>
+            <div style={{ fontWeight: 600, color: '#92400e', fontSize: '0.88rem', display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
+              <Clock size={16} />
+              BỘ ĐẾM GIỜ AN TOÀN VÙNG VÀNG: {Math.floor(countdownSeconds / 60)}:{(countdownSeconds % 60).toString().padStart(2, '0')}
+            </div>
+            <p style={{ margin: 0, fontSize: '0.8rem', color: '#b45309', lineHeight: 1.4 }}>
+              Dùng ngay thuốc cắt cơn theo chỉ dẫn. Sau 20 phút nếu nhịp thở đã dịu, hãy bấm nút xác nhận để hệ thống không kích hoạt còi báo động tới điều dưỡng.
+            </p>
+          </div>
+          <button
+            type="button"
+            className="btn-confirm-safe"
+            onClick={handleConfirmSafety}
+            disabled={safetyConfirmed}
+          >
+            {safetyConfirmed ? '✓ Đã Báo An Toàn' : 'Xác Nhận An Toàn Sau 20p'}
+          </button>
+        </div>
+      )}
 
 
       {/* 1. PEF Input */}

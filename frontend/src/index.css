@@ -1681,3 +1681,565 @@ body {
   }
 }
 
+/* ==========================================================================
+   W06 REAL-TIME ESCALATION & NURSE ALERT HUB CSS
+   ========================================================================== */
+
+@keyframes pulseRedBanner {
+  0% {
+    background-color: #fef2f2;
+    border-color: #ef4444;
+    box-shadow: 0 0 0 rgba(239, 68, 68, 0);
+  }
+  50% {
+    background-color: #fee2e2;
+    border-color: #dc2626;
+    box-shadow: 0 0 16px rgba(220, 38, 38, 0.4);
+  }
+  100% {
+    background-color: #fef2f2;
+    border-color: #ef4444;
+    box-shadow: 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+@keyframes shakeAlert {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-10deg) scale(1.1); }
+  40% { transform: rotate(10deg) scale(1.1); }
+  60% { transform: rotate(-10deg) scale(1.1); }
+  80% { transform: rotate(10deg) scale(1.1); }
+}
+
+.live-escalation-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  border: 2px solid;
+  transition: all 0.3s ease;
+}
+
+.banner-p0-critical {
+  animation: pulseRedBanner 1.5s infinite ease-in-out;
+  color: #991b1b;
+}
+
+.banner-p1-high {
+  background-color: #fffbeb;
+  border-color: #f59e0b;
+  color: #92400e;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+}
+
+.banner-left-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.alert-icon-pulse {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.15);
+  color: #dc2626;
+}
+
+.shake-animation {
+  animation: shakeAlert 0.8s infinite ease-in-out;
+}
+
+.banner-headline {
+  font-size: 0.96rem;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.latency-tag {
+  font-size: 0.72rem;
+  background-color: #e0f2fe;
+  color: #0369a1;
+  padding: 1px 7px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+
+.banner-subtext {
+  font-size: 0.84rem;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.elapsed-counter {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: #b91c1c;
+}
+
+.banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-banner-mute {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 12px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-banner-mute:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.btn-banner-ack {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  background: #0284c7;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(2, 132, 199, 0.3);
+}
+
+.btn-banner-ack:hover {
+  background: #0369a1;
+}
+
+.btn-banner-resolve {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  background: #10b981;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.3);
+}
+
+.btn-banner-resolve:hover {
+  background: #059669;
+}
+
+/* Modal Escalation Resolution */
+.modal-backdrop-escalation {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+}
+
+.modal-card-escalation {
+  background: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  animation: fadeInModal 0.2s ease-out;
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.modal-header-escalation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+}
+
+.badge-p0-modal {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background-color: #fee2e2;
+  color: #dc2626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-close-modal {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+}
+.btn-close-modal:hover {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.modal-body-escalation {
+  padding: 20px 24px;
+}
+
+.clinical-alert-summary {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+
+.form-group-esc {
+  margin-bottom: 14px;
+}
+
+.form-group-esc label {
+  display: block;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 5px;
+}
+
+.input-esc, .textarea-esc {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  font-family: inherit;
+  color: #0f172a;
+}
+
+.input-esc:focus, .textarea-esc:focus {
+  outline: none;
+  border-color: #0284c7;
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
+}
+
+.quick-templates-box {
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+}
+
+.btn-template-chip {
+  text-align: left;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 5px;
+  padding: 5px 8px;
+  font-size: 0.76rem;
+  color: #475569;
+  cursor: pointer;
+  line-height: 1.3;
+}
+.btn-template-chip:hover {
+  background: #e0f2fe;
+  color: #0369a1;
+  border-color: #7dd3fc;
+}
+
+.modal-footer-escalation {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.btn-cancel-esc {
+  padding: 8px 16px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-submit-resolve {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 18px;
+  background: #0284c7;
+  border: none;
+  color: #ffffff;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(2, 132, 199, 0.3);
+}
+
+.btn-submit-resolve:hover {
+  background: #0369a1;
+}
+
+/* Patient Yellow-zone 20m Follow-up Box */
+.yellow-followup-banner {
+  background: #fffbeb;
+  border: 1.5px solid #f59e0b;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.btn-confirm-safe {
+  background: #f59e0b;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-weight: 600;
+  font-size: 0.84rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-confirm-safe:hover {
+  background: #d97706;
+}
+
+/* ==========================================================================
+   CUSTOM NOTIFICATION TOAST (Thay thế popup alert trình duyệt)
+   Hiệu ứng: Trượt từ góc phải sang, tồn tại đúng trong 3 giây
+   ========================================================================== */
+
+.custom-toast-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 99999;
+  max-width: 420px;
+  width: calc(100% - 48px);
+  pointer-events: none;
+}
+
+.custom-toast-card {
+  pointer-events: auto;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 14px 28px -4px rgba(15, 23, 42, 0.16), 0 6px 12px -2px rgba(15, 23, 42, 0.08);
+  border: 1.5px solid #e2e8f0;
+  animation: toastSlideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.custom-toast-card.toast-exiting {
+  animation: toastSlideOutRight 0.28s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+}
+
+@keyframes toastSlideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(120%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes toastSlideOutRight {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(120%);
+  }
+}
+
+.toast-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  animation-name: toastProgressShrink;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes toastProgressShrink {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+.toast-success .toast-progress-bar {
+  background-color: #10b981;
+}
+
+.toast-warning .toast-progress-bar {
+  background-color: #f59e0b;
+}
+
+.toast-error .toast-progress-bar {
+  background-color: #ef4444;
+}
+
+.toast-info .toast-progress-bar {
+  background-color: #0284c7;
+}
+
+.toast-success {
+  border-left: 5px solid #10b981;
+}
+
+.toast-warning {
+  border-left: 5px solid #f59e0b;
+}
+
+.toast-error {
+  border-left: 5px solid #ef4444;
+}
+
+.toast-info {
+  border-left: 5px solid #0284c7;
+}
+
+.toast-icon-wrap {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.toast-icon-success {
+  color: #10b981;
+}
+
+.toast-icon-warning {
+  color: #f59e0b;
+}
+
+.toast-icon-error {
+  color: #ef4444;
+}
+
+.toast-icon-info {
+  color: #0284c7;
+}
+
+.toast-content-wrap {
+  flex: 1;
+}
+
+.toast-title {
+  font-size: 0.94rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 2px;
+}
+
+.toast-message {
+  font-size: 0.84rem;
+  color: #475569;
+  line-height: 1.4;
+}
+
+.toast-stats-grid {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.toast-stat-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+}
+
+.toast-stat-label {
+  color: #64748b;
+}
+
+.toast-stat-val {
+  font-weight: 600;
+  color: #334155;
+  font-family: var(--font-mono);
+}
+
+.toast-stat-val.text-amber {
+  color: #d97706;
+}
+
+.toast-stat-val.text-red {
+  color: #dc2626;
+}
+
+.toast-close-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 3px;
+  border-radius: 4px;
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+
+.toast-close-btn:hover {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+
+
