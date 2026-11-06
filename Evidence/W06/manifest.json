@@ -1,0 +1,44 @@
+{
+  "manifest_version": "1.0.0",
+  "project_name": "Aftercare-AI",
+  "milestone": "W06 - Escalation Workflow & Non-Response Engine",
+  "timestamp": "2026-11-06T07:34:00Z",
+  "author": "Antigravity Agentic Pair-Programmer",
+  "clinical_standards": ["GINA 2024", "BYT QD 1851/QD-BYT"],
+  "deliverables": [
+    {
+      "file": "README.md",
+      "type": "REPORT",
+      "description": "Báo cáo tổng kết nghiệm thu minh chứng Tuần 06"
+    },
+    {
+      "file": "metrics.json",
+      "type": "METRICS_DATA",
+      "description": "Bảng số liệu đo lường thực nghiệm: Escalation Latency, Trigger Rate, Yellow-zone Follow-up"
+    },
+    {
+      "file": "logs/escalation_simulation.log",
+      "type": "RAW_LOGS",
+      "description": "Nhật ký kiểm thử end-to-end giả lập toàn bộ các kịch bản lâm sàng"
+    },
+    {
+      "file": "../../tests/test_escalation_w06.py",
+      "type": "TEST_SUITE",
+      "description": "Bộ mã nguồn kiểm thử tự động hóa W06 (Pytest)"
+    },
+    {
+      "file": "../../docs/ESCALATION_AND_NON_RESPONSE_DESIGN.md",
+      "type": "SPEC_DOCUMENT",
+      "description": "Bản thiết kế kỹ thuật hoàn chỉnh cấp Enterprise"
+    }
+  ],
+  "summary_metrics": {
+    "escalation_latency_ms": 45.08,
+    "escalation_latency_target_ms": 1000.0,
+    "non_response_trigger_rate": "100.0%",
+    "yellow_zone_followup_rate": "100.0%",
+    "false_positives_detected": 0,
+    "test_suite_status": "5/5 PASSED (100%)"
+  }
+}
+
