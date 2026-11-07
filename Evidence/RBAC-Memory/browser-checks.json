@@ -1,0 +1,12 @@
+{
+  "checks": [
+    "Login screen has role selector and demo patients",
+    "Patient login, own dashboard/chat, admin and other-patient API denied",
+    "Session survives page reload",
+    "Nurse demo dashboard renders assigned patients",
+    "Admin demo user management and nurse assignment controls render",
+    "390px login has no horizontal overflow"
+  ],
+  "browser_runtime_errors": [],
+  "status": "passed"
+}

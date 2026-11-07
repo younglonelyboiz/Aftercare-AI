@@ -20,7 +20,7 @@ class NonResponseWorker:
         self.interval_seconds = interval_seconds
         self.is_running = False
 
-    async def scan_once(self) -> Dict[str, Any]:
+    async def scan_once(self, patient_ids=None) -> Dict[str, Any]:
         """Thực thi một chu kỳ quét (Dùng cho cả background loop và test suite)."""
         stats = {
             "yellow_followup_triggered": 0,
@@ -37,6 +37,8 @@ class NonResponseWorker:
             escalation_service = EscalationService(ticket_repo)
 
             active_plans = care_plan_repo.get_all_active_plans()
+            if patient_ids is not None:
+                active_plans = [p for p in active_plans if p.patient_id in patient_ids]
             stats["scanned_patients"] = len(active_plans)
 
             now = datetime.utcnow()

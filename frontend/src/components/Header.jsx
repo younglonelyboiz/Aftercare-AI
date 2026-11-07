@@ -1,14 +1,16 @@
 import React from 'react';
-import { Activity, User, RotateCcw } from 'lucide-react';
+import { Activity, User, RotateCcw, LogOut, ShieldCheck } from 'lucide-react';
 
-export default function Header({ 
-  patients, 
-  selectedPatientId, 
-  onSelectPatient, 
-  currentPortal, 
+export default function Header({
+  patients,
+  selectedPatientId,
+  onSelectPatient,
+  currentPortal,
   onSwitchPortal,
   onResetDemo,
-  isResetting 
+  isResetting,
+  user,
+  onLogout
 }) {
   return (
     <header className="app-header">
@@ -24,24 +26,25 @@ export default function Header({
 
       {/* PORTAL SWITCHER: BỆNH NHÂN VS ĐIỀU DƯỠNG */}
       <div className="portal-toggle-group">
-        <button 
+        <button
           className={`portal-btn ${currentPortal === 'patient' ? 'active' : ''}`}
           onClick={() => onSwitchPortal('patient')}
         >
           <User size={15} style={{ marginRight: 6, verticalAlign: 'middle' }} />
           Portal Bệnh Nhân
         </button>
-        <button 
+        {user.role !== 'patient' && <button
           className={`portal-btn ${currentPortal === 'nurse' ? 'active' : ''}`}
           onClick={() => onSwitchPortal('nurse')}
         >
           <Activity size={15} style={{ marginRight: 6, verticalAlign: 'middle' }} />
           Portal Điều Dưỡng
-        </button>
+        </button>}
+        {user.role === 'admin' && <button className={`portal-btn ${currentPortal === 'admin' ? 'active' : ''}`} onClick={() => onSwitchPortal('admin')}><ShieldCheck size={15} /> Quản trị</button>}
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <div className="patient-selector-wrap">
+        {user.role !== 'patient' && <div className="patient-selector-wrap">
           <User size={18} color="var(--text-secondary)" />
           <label htmlFor="patient-select" className="selector-label">Đang xem bệnh nhân:</label>
           <select
@@ -56,10 +59,10 @@ export default function Header({
               </option>
             ))}
           </select>
-        </div>
+        </div>}
 
         {/* NÚT RESET DEMO */}
-        <button
+        {user.role === 'admin' && <button
           className="demo-reset-btn"
           onClick={onResetDemo}
           disabled={isResetting}
@@ -67,7 +70,8 @@ export default function Header({
         >
           <RotateCcw size={15} className={isResetting ? "spin-icon" : ""} />
           <span>{isResetting ? "Đang Reset..." : "Reset Demo"}</span>
-        </button>
+        </button>}
+        <div className="session-controls"><span>{user.full_name}</span><button onClick={onLogout}><LogOut size={15} /> Đăng xuất</button></div>
       </div>
     </header>
   );

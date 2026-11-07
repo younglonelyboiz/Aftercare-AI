@@ -12,6 +12,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from backend.app.core.database import get_db
+from backend.app.core.security import current_user, staff_user, admin_user, patient_scope, ensure_patient_access, allowed_patient_ids
+from backend.app.models.identity import User
 from backend.app.repositories.asthma_repositories import (
     CarePlanRepository,
     CheckinRepository,
@@ -45,7 +47,7 @@ def get_care_service(db: Session = Depends(get_db)) -> AsthmaCareService:
 # -----------------------------------------------------------------------------
 # 1. CARE PLANS ENDPOINTS
 # -----------------------------------------------------------------------------
-@router.get("/care-plans/{patient_id}", response_model=CarePlanDTO)
+@router.get("/care-plans/{patient_id}", response_model=CarePlanDTO, dependencies=[Depends(patient_scope)])
 def get_care_plan(
     patient_id: str,
     service: AsthmaCareService = Depends(get_care_service)
@@ -59,9 +61,11 @@ def get_care_plan(
 @router.post("/care-plans/")
 def create_or_update_care_plan(
     data: CarePlanCreateOrUpdateDTO,
+    user: User = Depends(staff_user),
     service: AsthmaCareService = Depends(get_care_service)
 ):
     """Điều dưỡng cập nhật phác đồ hoặc Best PEF."""
+    ensure_patient_access(service.care_plan_repo.db, user, data.patient_id)
     plan_id = service.create_or_update_care_plan(data)
     return {"status": "success", "message": "Đã cập nhật Care Plan thành công", "plan_id": plan_id}
 
@@ -71,13 +75,15 @@ def create_or_update_care_plan(
 @router.post("/checkin/", response_model=CheckinResponseDTO)
 async def submit_checkin(
     data: CheckinCreateDTO,
+    user: User = Depends(current_user),
     service: AsthmaCareService = Depends(get_care_service)
 ):
     """Bệnh nhân nộp số đo PEF & triệu chứng -> Tính toán vùng GINA và chỉ dẫn xử trí."""
+    ensure_patient_access(service.care_plan_repo.db, user, data.patient_id)
     return await service.process_checkin(data)
 
 
-@router.get("/checkin/history/{patient_id}", response_model=List[CheckinHistoryDTO])
+@router.get("/checkin/history/{patient_id}", response_model=List[CheckinHistoryDTO], dependencies=[Depends(patient_scope)])
 def get_checkin_history(
     patient_id: str,
     days: int = Query(default=30, ge=1, le=90),
@@ -89,7 +95,7 @@ def get_checkin_history(
 # -----------------------------------------------------------------------------
 # 3. REMINDERS ENDPOINTS
 # -----------------------------------------------------------------------------
-@router.get("/reminders/active/{patient_id}", response_model=List[ReminderDTO])
+@router.get("/reminders/active/{patient_id}", response_model=List[ReminderDTO], dependencies=[Depends(patient_scope)])
 def get_active_reminders(
     patient_id: str,
     service: AsthmaCareService = Depends(get_care_service)
@@ -101,9 +107,14 @@ def get_active_reminders(
 def act_on_reminder(
     reminder_id: str,
     body: ReminderActionDTO,
+    user: User = Depends(current_user),
     service: AsthmaCareService = Depends(get_care_service)
 ):
     """Bệnh nhân xác nhận [Đã xịt/uống thuốc] hoặc [Nhắc lại sau 15p]."""
+    reminder = service.reminder_repo.get_by_id(reminder_id)
+    if not reminder:
+        raise HTTPException(404, "Không tìm thấy nhắc nhở.")
+    ensure_patient_access(service.reminder_repo.db, user, reminder.patient_id)
     try:
         msg = service.act_on_reminder(reminder_id, body.action)
         return {"status": "success", "message": msg}
@@ -115,15 +126,17 @@ def act_on_reminder(
 # -----------------------------------------------------------------------------
 @router.get("/nurse/patients-overview", response_model=List[NursePatientOverviewDTO])
 def get_nurse_overview(
+    user: User = Depends(staff_user),
     service: AsthmaCareService = Depends(get_care_service)
 ):
     """Điều dưỡng xem danh sách tất cả bệnh nhân kèm xếp hạng ưu tiên Triage & độ tuân thủ."""
-    return service.get_nurse_patient_overview()
+    allowed = allowed_patient_ids(service.care_plan_repo.db, user)
+    return [p for p in service.get_nurse_patient_overview() if allowed is None or p.patient_id in allowed]
 
 # -----------------------------------------------------------------------------
 # 5. DEMO RESET ENDPOINT
 # -----------------------------------------------------------------------------
-@router.post("/reset-demo")
+@router.post("/reset-demo", dependencies=[Depends(admin_user)])
 def reset_demo_data():
     """Khôi phục dữ liệu ban đầu cho 3 bệnh nhân mẫu phục vụ demo."""
     try:
