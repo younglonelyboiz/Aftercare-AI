@@ -91,3 +91,36 @@ class NursePatientOverviewDTO(BaseModel):
     priority_score: int
     has_overdue_reminders: bool
     latest_checkin: Optional[Dict[str, Any]] = None
+
+class AlertTicketDTO(BaseModel):
+    id: str
+    patient_id: str
+    patient_name: Optional[str] = None
+    checkin_id: Optional[str] = None
+    priority: str # P0_CRITICAL | P1_HIGH | P2_MEDIUM
+    alert_type: str # RED_ZONE_DETECTION | YELLOW_ZONE_FOLLOWUP_OVERDUE | NON_RESPONSE_24H | NON_RESPONSE_12H
+    trigger_reason: str
+    clinical_data: Dict[str, Any] = Field(default_factory=dict)
+    status: str # OPEN | ACKNOWLEDGED | RESOLVED
+    escalation_latency_ms: int = 0
+    created_at: str
+    acknowledged_at: Optional[str] = None
+    acknowledged_by: Optional[str] = None
+    resolved_at: Optional[str] = None
+    resolved_by: Optional[str] = None
+    resolution_notes: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+class AlertTicketAcknowledgeDTO(BaseModel):
+    acknowledged_by: str = Field(default="Điều dưỡng trực ca")
+
+class AlertTicketResolveDTO(BaseModel):
+    resolved_by: str = Field(..., description="Tên điều dưỡng / bác sĩ xử lý")
+    resolution_notes: str = Field(..., description="Biên bản lâm sàng ghi nhận hành động can thiệp")
+
+class PatientSafetyConfirmDTO(BaseModel):
+    patient_id: str
+    notes: Optional[str] = "Bệnh nhân xác nhận đã xịt thuốc và nhịp thở ổn định sau 20 phút."
+
