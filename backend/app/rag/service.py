@@ -52,19 +52,27 @@ class AftercareRAGService:
         # 1. Đánh giá Triage an toàn y tế (Rule-based state machine)
         safety_status = self.triage.evaluate_risk(message, profile)
 
-        p_info = profile["patient_info"]
-        c_status = profile["clinical_status"]
-        meds = profile["current_medications"]
-        plan = profile["action_plan_rules"]
-        follow = profile["follow_up"]
+        p_info = profile.get("patient_info", {})
+        c_status = profile.get("clinical_status", {})
+        meds = profile.get("current_medications", {})
+        plan = profile.get("action_plan_rules", {})
+        follow = profile.get("follow_up", {})
+
+        patient_name = p_info.get("full_name", f"Bệnh nhân {patient_id}")
+        reliever_med = meds.get("reliever_med", "Thuốc cắt cơn dạng hít/xịt (Salbutamol/Ventolin)")
+        hospital_name = follow.get("hospital", "Bệnh viện Phổi hoặc cơ sở y tế gần nhất")
+
+        red_action = plan.get("red_zone") or "Sử dụng ngay 2-4 nhát thuốc cắt cơn qua buồng đệm. Nếu không cải thiện sau 5 phút, lặp lại liều và gọi 115 cấp cứu ngay."
+        yellow_action = plan.get("yellow_zone") or "Dùng ngay 2 nhát thuốc cắt cơn, nghỉ ngơi tại chỗ trong môi trường thoáng khí và đo lại PEF sau 20 phút."
 
         # 1. HARD RULE ĐIỀU TRỊ CẤP CỨU: Phản xạ bằng CODE thuần túy, tuyệt đối KHÔNG đưa vào LLM
         if safety_status == "RED_ZONE":
             action_text = (
-                f"🚨 CẢNH BÁO CỜ ĐỎ CẤP CỨU: Bác/Bạn {p_info['full_name']} đang có dấu hiệu NGUY KỊCH!\n\n"
-                f"1. DÙNG NGAY THUỐC CẮT CƠN: Sử dụng ngay {meds.get('reliever_med', 'Thuốc cắt cơn')} theo đúng kế hoạch hành động: {plan['red_zone']}\n"
-                f"2. TƯ THẾ AN TOÀN: Ngồi thẳng lưng, hơi cúi người ra phía trước, thở chúm môi chậm rãi. TUYỆT ĐỐI KHÔNG NẰM NGỬA!\n"
-                f"3. CẤP CỨU KHẨN CẤP: Nhờ người thân gọi ngay Cấp cứu 115 hoặc di chuyển khẩn cấp tới {follow.get('hospital', 'cơ sở y tế gần nhất')}!"
+                f"🚨 CẢNH BÁO CỜ ĐỎ CẤP CỨU: Bác/Bạn {patient_name} đang có dấu hiệu NGUY KỊCH!\n\n"
+                f"1. GỌI NGAY CẤP CỨU 115: Nhờ người thân gọi ngay Cấp cứu 115 hoặc di chuyển khẩn cấp tới {hospital_name}!\n"
+                f"2. DÙNG NGAY THUỐC CẮT CƠN: Sử dụng ngay {reliever_med} theo đúng kế hoạch hành động: {red_action}\n"
+                f"3. TƯ THẾ AN TOÀN: Ngồi thẳng lưng, hơi cúi người ra phía trước, thở chúm môi chậm rãi. TUYỆT ĐỐI KHÔNG NẰM NGỬA!\n\n"
+                f"Trợ lý AI luôn túc trực hỗ trợ bạn trong lúc chờ nhân viên y tế đến. Vui lòng giữ liên lạc!"
             )
             return {
                 "response": action_text,
@@ -75,10 +83,10 @@ class AftercareRAGService:
         # 2. RULE CẢNH BÁO HEN TRỞ NẶNG (VÙNG VÀNG): Phản xạ bằng CODE thuần túy theo Kế hoạch hành động cá nhân
         if safety_status == "YELLOW_ZONE":
             action_text = (
-                f"⚠️ CẢNH BÁO HEN TRỞ NẶNG (VÙNG VÀNG): Bác/Bạn {p_info['full_name']} đang có dấu hiệu hen bùng phát hoặc kiểm soát kém.\n\n"
-                f"1. DÙNG THUỐC CẮT CƠN: Dùng ngay {meds.get('reliever_med', 'Thuốc cắt cơn')} theo đúng chỉ định Vùng Vàng: {plan['yellow_zone']}\n"
+                f"⚠️ CẢNH BÁO HEN TRỞ NẶNG (VÙNG VÀNG): Bác/Bạn {patient_name} đang có dấu hiệu hen bùng phát hoặc kiểm soát kém.\n\n"
+                f"1. DÙNG THUỐC CẮT CƠN: Dùng ngay {reliever_med} theo đúng chỉ định Vùng Vàng: {yellow_action}\n"
                 f"2. NGHỈ NGƠI TẠI CHỖ: Tránh xa môi trường khói bụi, máy lạnh hoặc tác nhân dị nguyên.\n"
-                f"3. THEO DÕI ĐÁNH GIÁ LẠI: Sau 20-30 phút nếu cơn khó thở không giảm hoặc xuất hiện dấu hiệu nguy cấp, cần liên hệ cơ sở y tế ({follow.get('hospital', 'bệnh viện theo dõi')}) ngay."
+                f"3. THEO DÕI ĐÁNH GIÁ LẠI: Sau 20-30 phút nếu cơn khó thở không giảm hoặc xuất hiện dấu hiệu nguy cấp, cần liên hệ cơ sở y tế ({hospital_name}) ngay."
             )
             return {
                 "response": action_text,

@@ -18,6 +18,11 @@
     "comorbidity_med": "Esomeprazole 40mg uống trước ăn sáng 30 phút (điều trị GERD)."
   },
   "special_instructions": "Tránh ăn mặn, không ăn muộn trước khi ngủ 3 tiếng để hạn chế kích phát cơn hen do trào ngược.",
+  "action_plan_rules": {
+    "green_zone": "PEF >= 320 (>=80%). Duy trì Fluticasone/Salmeterol 250mcg sáng/tối và Esomeprazole trước ăn.",
+    "yellow_zone": "PEF 240 - 319 (60-80%). Dùng 2 nhát Salbutamol, ngồi thẳng người và đo lại sau 20 phút.",
+    "red_zone": "PEF < 240 (<60%). Dùng ngay 2-4 nhát Salbutamol và gọi 115 hoặc di chuyển đến BV Đại học Y Dược TP.HCM."
+  },
   "follow_up": {
     "next_appointment": "2026-11-05",
     "hospital": "Bệnh viện Đại học Y Dược TP.HCM"

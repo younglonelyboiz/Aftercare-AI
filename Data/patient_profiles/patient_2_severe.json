@@ -21,6 +21,11 @@
     "frequent_exacerbations": true,
     "note": "Thuộc nhóm nguy cơ cao đợt cấp tử vong do hen."
   },
+  "action_plan_rules": {
+    "green_zone": "PEF >= 224 (>=80%). Tiếp tục duy trì Symbicort 160/4.5mcg 2 nhát x 2 lần/ngày.",
+    "yellow_zone": "PEF 168 - 223 (60-80%). Xịt ngay 2 nhát Ventolin 100mcg qua buồng đệm, nghỉ ngơi tại chỗ và đo lại sau 20 phút.",
+    "red_zone": "PEF < 168 (<60%) hoặc khó thở nhiều. Xịt ngay 2-4 nhát Ventolin, gọi ngay 115 và đưa đến Bệnh viện Bạch Mai."
+  },
   "follow_up": {
     "next_appointment": "2026-11-15",
     "hospital": "Khoa Hô hấp - Bệnh viện Bạch Mai"
