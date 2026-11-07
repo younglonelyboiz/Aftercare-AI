@@ -1,0 +1,30 @@
+{
+  "benchmark_timestamp": "2026-11-06T08:31:54.863189",
+  "criteria": {
+    "escalation_latency": {
+      "target": "< 1000ms",
+      "measured_avg_ms": 47.43,
+      "measured_p95_ms": 47.43,
+      "measured_max_ms": 47.43,
+      "status": "PASSED",
+      "compliance_rate": "100%"
+    },
+    "non_response_trigger_rate": {
+      "target": "100%",
+      "measured_rate": "100.0%",
+      "detected": 1,
+      "total_overdue_cases": 1,
+      "false_positives": 0,
+      "status": "PASSED"
+    },
+    "yellow_zone_followup": {
+      "target": "100%",
+      "measured_rate": "100.0%",
+      "detected": 1,
+      "status": "PASSED"
+    },
+    "closed_loop_resolution": {
+      "status": "PASSED"
+    }
+  }
+}

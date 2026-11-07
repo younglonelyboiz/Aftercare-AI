@@ -1,0 +1,24 @@
+2026-11-06 15:31:54,599 [INFO] ================================================================================
+2026-11-06 15:31:54,599 [INFO] BẮT ĐẦU THỰC THI BỘ KIỂM THỬ MINH CHỨNG TUẦN 06 (W06 EVIDENCE SUITE)
+2026-11-06 15:31:54,599 [INFO] ================================================================================
+2026-11-06 15:31:54,637 [INFO] 
+--- TEST 1: ĐO LƯỜNG ĐỘ TRỄ LEO THANG (ESCALATION LATENCY) ---
+2026-11-06 15:31:54,685 [INFO] ✓ Check-in đã phân vùng RED chính xác. Thời gian xử lý: 47.43ms
+2026-11-06 15:31:54,689 [INFO] ✓ AlertTicket P0 đã được tạo thành công: ticket-59c32496e099 | Trạng thái: OPEN
+2026-11-06 15:31:54,689 [INFO] ✓ Độ trễ leo thang ghi nhận nội bộ: 0ms (Đạt mục tiêu < 1000ms)
+2026-11-06 15:31:54,695 [INFO] 
+--- TEST 2: ĐỘNG CƠ PHÁT HIỆN MẤT LIÊN LẠC (NON-RESPONSE 24H) ---
+2026-11-06 15:31:54,755 [INFO] Kết quả quét worker: {'yellow_followup_triggered': 1, 'non_response_24h_triggered': 1, 'non_response_12h_triggered': 0, 'scanned_patients': 5}
+2026-11-06 15:31:54,758 [INFO] ✓ Đã phát hiện chính xác ca quá hạn 24h: ticket-83e6ff655f97 cho BN-TEST-OVERDUE-24H
+2026-11-06 15:31:54,760 [INFO] ✓ Xác nhận ZERO False-Positive: Bệnh nhân tuân thủ BN-TEST-ONTIME không bị báo động giả.
+2026-11-06 15:31:54,764 [INFO] 
+--- TEST 3: THEO DÕI VÙNG VÀNG 20 PHÚT (YELLOW-ZONE FOLLOW-UP) ---
+2026-11-06 15:31:54,791 [INFO] ✓ Đã tự động kích hoạt vé theo dõi Vùng Vàng sau 20 phút: ticket-97d7e62fcd02
+2026-11-06 15:31:54,795 [INFO] 
+--- TEST 4: BỆNH NHÂN XÁC NHẬN AN TOÀN SAU 20 PHÚT ---
+2026-11-06 15:31:54,812 [INFO] ✓ Vé ticket-97d7e62fcd02 đã tự động chuyển sang trạng thái RESOLVED sau phản hồi của bệnh nhân.
+2026-11-06 15:31:54,816 [INFO] 
+--- TEST 5: VÒNG LẶP ĐIỀU DƯỠNG TIẾP NHẬN & KÝ BIÊN BẢN (CLOSED-LOOP) ---
+2026-11-06 15:31:54,843 [INFO] ✓ Điều dưỡng đã tiếp nhận ca: ticket-59c32496e099 (Trạng thái chuyển sang ACKNOWLEDGED)
+2026-11-06 15:31:54,860 [INFO] ✓ Đã ký biên bản can thiệp và đóng ca thành công 100%: ticket-59c32496e099
+2026-11-06 15:31:54,863 [INFO] ✓ Đã xuất bảng minh chứng chỉ số: D:\Aftercare-AI\Evidence\W06\metrics.json
