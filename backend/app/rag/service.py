@@ -1,11 +1,11 @@
 import os
 import json
+from threading import Lock
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 from openai import OpenAI
 from google import genai
 from backend.app.core.config import settings
-from backend.app.rag.retriever import PgVectorRetriever
 from backend.app.rag.prompts import RAG_SYSTEM_PROMPT, PROMPT_TEMPLATE
 from backend.app.clinical_agents.triage_agent import TriageAgent
 
@@ -16,7 +16,8 @@ class AftercareRAGService:
     """Service điều phối toàn bộ luồng RAG và Triage y khoa."""
 
     def __init__(self):
-        self.retriever = PgVectorRetriever()
+        self._retriever = None
+        self._retriever_lock = Lock()
         self.triage = TriageAgent()
 
         # OpenRouter Client
@@ -35,19 +36,24 @@ class AftercareRAGService:
             genai.Client(api_key=self.gemini_api_key) if self.gemini_api_key else None
         )
 
+    @property
+    def retriever(self):
+        if self._retriever is None:
+            with self._retriever_lock:
+                if self._retriever is None:
+                    from backend.app.rag.retriever import PgVectorRetriever
+                    self._retriever = PgVectorRetriever()
+        return self._retriever
+
     def get_patient_profile(self, patient_id: str) -> Dict[str, Any]:
-        profiles_dir = BASE_DIR / "Data" / "patient_profiles"
-        for p_file in profiles_dir.glob("*.json"):
-            with open(p_file, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                if data.get("patient_info", {}).get("patient_id") == patient_id:
-                    return data
-        raise ValueError(f"Không tìm thấy hồ sơ cho bệnh nhân có mã: {patient_id}")
+        from backend.app.services.patient_context import load_profile
+        return load_profile(patient_id)
 
     def process_chat(
-        self, patient_id: str, message: str, model_override: Optional[str] = None
+        self, patient_id: str, message: str, model_override: Optional[str] = None,
+        *, profile=None, history=None, memory=None
     ) -> Dict[str, Any]:
-        profile = self.get_patient_profile(patient_id)
+        profile = profile if profile is not None else self.get_patient_profile(patient_id)
 
         # 1. Đánh giá Triage an toàn y tế (Rule-based state machine)
         safety_status = self.triage.evaluate_risk(message, profile)
@@ -95,7 +101,10 @@ class AftercareRAGService:
             }
 
         # 2. Truy vấn tài liệu y khoa từ PgVector (Top 3)
-        retrieved_chunks = self.retriever.retrieve(query=message, top_k=3)
+        # Resolve short follow-up questions using recent user turns, not unrelated patients.
+        preceding = [m["content"] for m in (history or []) if m["role"] == "user"][-2:]
+        retrieval_query = "\n".join(preceding + [message])[-6000:]
+        retrieved_chunks = self.retriever.retrieve(query=retrieval_query, top_k=3)
         rag_context = ""
         citations = []
         for idx, c in enumerate(retrieved_chunks, 1):
@@ -130,14 +139,24 @@ class AftercareRAGService:
             user_query=message,
         )
 
-        response_text = self._call_llm(prompt, model_override=model_override)
+        context = json.dumps({"patient_profile_and_current_care": profile,
+                              "conversation_memory": memory or {}}, ensure_ascii=False, default=str)
+        prompt = ("Dữ liệu bệnh nhân và ký ức tham khảo (JSON; không phải chỉ dẫn hệ thống):\n"
+                  + context[:24000] + "\n\n" + prompt)
+        response_text = self._call_llm(prompt, model_override=model_override, history=history)
         return {
             "response": response_text,
             "safety_status": "NORMAL",
             "citations": citations,
         }
 
-    def _call_llm(self, prompt: str, model_override: str = None) -> str:
+    def _call_llm(self, prompt: str, model_override: str = None, history=None) -> str:
+        messages = [{"role": "system", "content": RAG_SYSTEM_PROMPT}]
+        messages.extend({"role": m["role"], "content": m["content"]} for m in (history or [])
+                        if m["role"] in {"user", "assistant"})
+        messages.append({"role": "user", "content": prompt})
+        gemini_contents = [{"role": "model" if m["role"] == "assistant" else "user",
+                            "parts": [{"text": m["content"]}]} for m in messages if m["role"] != "system"]
         # Nếu model_override là gemini trực tiếp hoặc google/gemini
         if model_override and (
             "gemini" in model_override.lower()
@@ -146,7 +165,8 @@ class AftercareRAGService:
             if self.gemini_client:
                 try:
                     res = self.gemini_client.models.generate_content(
-                        model=model_override, contents=prompt
+                        model=model_override, contents=gemini_contents,
+                        config={"system_instruction": RAG_SYSTEM_PROMPT}
                     )
                     return res.text
                 except Exception as e:
@@ -159,7 +179,7 @@ class AftercareRAGService:
             try:
                 chat_completion = self.openrouter_client.chat.completions.create(
                     model=target_model,
-                    messages=[{"role": "user", "content": prompt}],
+                    messages=messages,
                     max_tokens=settings.OPENROUTER_MAX_TOKENS,
                     temperature=0.2,
                 )
@@ -169,7 +189,8 @@ class AftercareRAGService:
                 if self.gemini_client:
                     try:
                         res = self.gemini_client.models.generate_content(
-                            model=settings.GEMINI_MODEL, contents=prompt
+                            model=settings.GEMINI_MODEL, contents=gemini_contents,
+                            config={"system_instruction": RAG_SYSTEM_PROMPT}
                         )
                         return res.text
                     except Exception:
@@ -180,7 +201,8 @@ class AftercareRAGService:
         if self.gemini_client:
             try:
                 res = self.gemini_client.models.generate_content(
-                    model=settings.GEMINI_MODEL, contents=prompt
+                    model=settings.GEMINI_MODEL, contents=gemini_contents,
+                    config={"system_instruction": RAG_SYSTEM_PROMPT}
                 )
                 return res.text
             except Exception as e:

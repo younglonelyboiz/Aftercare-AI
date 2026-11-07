@@ -7,73 +7,28 @@ import CareCalendar from './components/CareTracker/CareCalendar';
 import CarePlanChecklist from './components/CareTracker/CarePlanChecklist';
 import MedicationReminderBanner from './components/CareTracker/MedicationReminderBanner';
 import NurseCommandCenter from './components/Nurse/NurseCommandCenter';
-import { 
-  getPatients, 
-  getPatientDetail, 
-  getCarePlan, 
-  getCheckinHistory, 
-  getActiveReminders, 
-  actOnReminder, 
+import AdminPanel from './components/Auth/AdminPanel';
+import {
+  getPatients,
+  getPatientDetail,
+  getCarePlan,
+  getCheckinHistory,
+  getActiveReminders,
+  actOnReminder,
   submitCheckin,
   resetDemoData
 } from './services/api';
 
-export default function App() {
-  const [currentPortal, setCurrentPortal] = useState('nurse'); // 'patient' hoặc 'nurse'
+export default function App({ user, onLogout }) {
+  const [currentPortal, setCurrentPortal] = useState(user.role === 'admin' ? 'admin' : user.role === 'nurse' ? 'nurse' : 'patient');
   const [patients, setPatients] = useState([]);
-  const [selectedPatientId, setSelectedPatientId] = useState('BN-2026-ASTHMA-01');
+  const [selectedPatientId, setSelectedPatientId] = useState(user.patient_id || '');
   const [isResetting, setIsResetting] = useState(false);
-  const [patientProfile, setPatientProfile] = useState({
-    patient_info: {
-      patient_id: 'BN-2026-ASTHMA-01',
-      full_name: 'Nguyễn Văn An',
-      age: 28,
-      gender: 'Nam',
-      discharge_date: '2026-10-01'
-    },
-    clinical_status: {
-      diagnosis: 'Hen phế quản nhẹ - Đã kiểm soát tốt',
-      known_triggers: ['Phấn hoa', 'Khói bụi đường phố'],
-      personal_best_pef: 520,
-      baseline_spo2: 98
-    },
-    current_medications: {
-      controller_med: 'Không dùng thuốc duy trì hàng ngày (Bậc 1 hoặc Bậc 2).',
-      reliever_med: 'Budesonide/Formoterol 80/4.5mcg (hoặc SABA) hít/xịt khi có triệu chứng hoặc trước khi tiếp xúc dị nguyên.'
-    },
-    follow_up: {
-      next_appointment: '2026-12-01',
-      hospital: 'Bệnh viện Phổi Trung ương'
-    },
-    action_plan_rules: {
-      green_zone: "✅ TÌNH TRẠNG HIỆN TẠI ỔN ĐỊNH: Các chỉ số và triệu chứng của Nguyễn Văn An đều nằm trong vùng an toàn (Vùng Xanh).\n\n• Tiếp tục duy trì xịt thuốc kiểm soát định kỳ đúng liều lượng.\n• Giữ ấm đường thở, uống đủ nước ấm và theo dõi chỉ số PEF hàng ngày.",
-      yellow_zone: "⚠️ CẢNH BÁO HEN TRỞ NẶNG (VÙNG VÀNG): Bệnh nhân có dấu hiệu hen bùng phát.\n\n1. SỬ DỤNG THUỐC CẮT CƠN: Dùng thuốc cắt cơn tác dụng nhanh theo đúng phác đồ Vùng Vàng.\n2. NGHỈ NGƠI TẠI CHỖ: Tránh tiếp xúc khói bụi, dị nguyên.\n3. THEO DÕI: Đánh giá lại nhịp thở sau 20-30 phút.",
-      red_zone: "🚨 CẢNH BÁO CỜ ĐỎ CẤP CỨU: Bệnh nhân đang có dấu hiệu nguy kịch cần hỗ trợ y tế khẩn cấp!\n\n1. DÙNG THUỐC CẮT CƠN KHẨN CẤP: Dùng ngay 2-4 nhát thuốc cắt cơn.\n2. TƯ THẾ: Ngồi thẳng lưng, hơi cúi người ra trước, tuyệt đối không nằm ngửa.\n3. CẤP CỨU: Gọi ngay 115 hoặc di chuyển tới cơ sở y tế gần nhất!"
-    }
-  });
-  const [carePlan, setCarePlan] = useState({
-    id: "plan-BN-2026-ASTHMA-01",
-    patient_id: "BN-2026-ASTHMA-01",
-    personal_best_pef: 520,
-    baseline_spo2: 98,
-    action_plan_green: "PEF >= 416 (>=80%). Sinh hoạt bình thường.",
-    action_plan_yellow: "PEF 312 - 415 (60-80%). Dùng thuốc cắt cơn theo chỉ định.",
-    action_plan_red: "PEF < 312 (<60%). Dùng thuốc cắt cơn ngay, gọi 115.",
-    items: [
-      {
-        id: "item-1",
-        item_type: "PEF_MEASURE",
-        title: "Thổi lưu lượng đỉnh (PEF) buổi sáng",
-        dosage: "Thổi 3 lần lấy số lớn nhất",
-        instructions: "Thổi lúc mới thức dậy trước khi vận động",
-        schedule_times: ["07:00"],
-        is_active: true
-      }
-    ]
-  });
+  const [patientProfile, setPatientProfile] = useState(null);
+  const [carePlan, setCarePlan] = useState(null);
   const [history, setHistory] = useState([]);
   const [reminders, setReminders] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Check-in State
   const [pef, setPef] = useState(480);
@@ -90,26 +45,36 @@ export default function App() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [initialAlertMessage, setInitialAlertMessage] = useState(null);
 
+  const selectPatient = (pid) => {
+    if (pid !== selectedPatientId) {
+      setInitialAlertMessage(null);
+      setIsChatOpen(false);
+      setSelectedPatientId(pid);
+    }
+  };
+
   // 1. Load sample patients
   useEffect(() => {
     const fetchPatients = async () => {
       try {
         const data = await getPatients();
         setPatients(data);
-        const initialId = (data.length > 0 && data[0].patient_id) ? data[0].patient_id : 'BN-2026-ASTHMA-01';
+        const initialId = user.patient_id || data[0]?.patient_id || '';
         setSelectedPatientId(initialId);
-        loadPatientData(initialId);
+        if (!initialId) setLoading(false);
       } catch (err) {
         console.error('Lỗi tải danh sách bệnh nhân:', err);
-        loadPatientData('BN-2026-ASTHMA-01');
+        setLoading(false);
       }
     };
     fetchPatients();
-  }, []);
+  }, [user.patient_id]);
 
   // 2. Load detailed profile, Care Plan, Reminders & History when patient changes
   const loadPatientData = async (pid) => {
     if (!pid) return;
+    setLoading(true);
+    setPatientProfile(null); setCarePlan(null); setHistory([]); setReminders([]);
     try {
       const [detail, plan, hist, rems] = await Promise.allSettled([
         getPatientDetail(pid),
@@ -264,9 +229,11 @@ export default function App() {
     <div className="app-container">
       {/* 1. Header & Switcher */}
       <Header
+        user={user}
+        onLogout={onLogout}
         patients={patients}
         selectedPatientId={selectedPatientId}
-        onSelectPatient={setSelectedPatientId}
+        onSelectPatient={selectPatient}
         currentPortal={currentPortal}
         onSwitchPortal={setCurrentPortal}
         onResetDemo={handleResetDemo}
@@ -275,7 +242,7 @@ export default function App() {
 
       {/* 2. Banner Nhắc thuốc / Đo PEF nổi bật (In-app notification) */}
       {currentPortal === 'patient' && (
-        <MedicationReminderBanner 
+        <MedicationReminderBanner
           reminders={reminders}
           onAcknowledge={handleAcknowledgeReminder}
           onSnooze={handleSnoozeReminder}
@@ -283,13 +250,13 @@ export default function App() {
       )}
 
       {/* 3. Conditional Portal Rendering */}
-      {currentPortal === 'nurse' ? (
+      {currentPortal === 'admin' && user.role === 'admin' ? <AdminPanel user={user} patients={patients} /> : !selectedPatientId ? <p>Chưa có bệnh nhân trong phạm vi truy cập. Vui lòng liên hệ quản trị viên để được phân công.</p> : currentPortal === 'nurse' && user.role !== 'patient' ? (
         /* PORTAL ĐIỀU DƯỠNG (CLINICAL COMMAND CENTER) */
         <main className="nurse-portal-wrap">
-          <NurseCommandCenter 
+          <NurseCommandCenter
             patients={patients}
             selectedPatientId={selectedPatientId}
-            onSelectPatientId={setSelectedPatientId} 
+            onSelectPatientId={selectPatient}
           />
         </main>
       ) : (
@@ -335,13 +302,14 @@ export default function App() {
       )}
 
       {/* 4. Floating Popup Chatbot Widget */}
-      <FloatingChatWidget
+      {selectedPatientId && <FloatingChatWidget
+        key={`${user.id}:${selectedPatientId}`}
         patientId={selectedPatientId}
         patientName={patientProfile?.patient_info?.full_name}
         isOpen={isChatOpen}
         setIsOpen={setIsChatOpen}
         initialAlertMessage={initialAlertMessage}
-      />
+      />}
     </div>
   );
 }

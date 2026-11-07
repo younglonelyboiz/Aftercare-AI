@@ -31,95 +31,14 @@ import NotificationToast from '../Common/NotificationToast';
 import { medicalAudioAlert } from '../../utils/audioAlert';
 
 export default function NurseCommandCenter({ patients = [], selectedPatientId, onSelectPatientId }) {
-  const [patientsOverview, setPatientsOverview] = useState([
-    {
-      patient_id: "BN-2026-ASTHMA-02",
-      personal_best_pef: 280,
-      baseline_spo2: 95,
-      doctor_notes: "Bệnh nhân có tiền sử cấp cứu ICU năm ngoái, nhạy cảm với thời tiết lạnh và mạt bụi nhà.",
-      adherence_rate_7d: 85,
-      priority_score: 30,
-      has_overdue_reminders: true,
-      latest_checkin: {
-        time: "2026-10-22T19:28:56.213794+00:00",
-        pef_value: 250,
-        pef_percent: 89.3,
-        spo2_value: 95,
-        action_zone: "GREEN",
-        reliever_puffs: 0
-      }
-    },
-    {
-      patient_id: "BN-2026-ASTHMA-01",
-      personal_best_pef: 520,
-      baseline_spo2: 98,
-      doctor_notes: "Bệnh nhân trẻ tuổi, tuân thủ tốt. Hạn chế tiếp xúc phấn hoa và khói bụi.",
-      adherence_rate_7d: 92,
-      priority_score: 0,
-      has_overdue_reminders: false,
-      latest_checkin: {
-        time: "2026-10-22T20:28:56.214072+00:00",
-        pef_value: 503,
-        pef_percent: 96.7,
-        spo2_value: 98,
-        action_zone: "GREEN",
-        reliever_puffs: 0
-      }
-    },
-    {
-      patient_id: "BN-2026-ASTHMA-03",
-      personal_best_pef: 400,
-      baseline_spo2: 97,
-      doctor_notes: "Có trào ngược dạ dày thực quản (GERD), uống Esomeprazole trước ăn sáng, không ăn sát giờ ngủ.",
-      adherence_rate_7d: 70,
-      priority_score: 0,
-      has_overdue_reminders: false,
-      latest_checkin: null
-    }
-  ]);
+  const [patientsOverview, setPatientsOverview] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedPid, setSelectedPid] = useState(selectedPatientId || 'BN-2026-ASTHMA-02');
-  const [selectedPlan, setSelectedPlan] = useState({
-    id: "plan-BN-2026-ASTHMA-02",
-    patient_id: "BN-2026-ASTHMA-02",
-    personal_best_pef: 280,
-    baseline_spo2: 95,
-    doctor_notes: "Bệnh nhân có tiền sử cấp cứu ICU năm ngoái, nhạy cảm với thời tiết lạnh và mạt bụi nhà.",
-    items: [
-      {
-        id: "item-1",
-        item_type: "CONTROLLER_MED",
-        title: "Xịt Symbicort 160/4.5mcg",
-        dosage: "2 nhát/lần",
-        instructions: "Hít sâu qua buồng đệm, nín thở 10s, súc miệng nước ấm sạch",
-        schedule_times: ["08:00", "20:00"],
-        is_active: true
-      },
-      {
-        id: "item-2",
-        item_type: "PEF_MEASURE",
-        title: "Đo lưu lượng đỉnh (PEF) 2 lần/ngày",
-        dosage: "Thổi 3 lần",
-        instructions: "Đo vào lúc 07:30 sáng và 19:30 tối trước khi xịt thuốc",
-        schedule_times: ["07:30", "19:30"],
-        is_active: true
-      }
-    ]
-  });
-  const [patientHistory, setPatientHistory] = useState([
-    { date: "2026-10-16", pef_value: 210, action_zone: "YELLOW" },
-    { date: "2026-10-17", pef_value: 220, action_zone: "YELLOW" },
-    { date: "2026-10-18", pef_value: 265, action_zone: "GREEN" },
-    { date: "2026-10-19", pef_value: 270, action_zone: "GREEN" },
-    { date: "2026-10-20", pef_value: 160, action_zone: "RED" },
-    { date: "2026-10-21", pef_value: 215, action_zone: "YELLOW" },
-    { date: "2026-10-22", pef_value: 250, action_zone: "GREEN" }
-  ]);
-
-  // Form edit care plan
+  const [selectedPlan, setSelectedPlan] = useState(null);
   const [bestPefInput, setBestPefInput] = useState(280);
-  const [notesInput, setNotesInput] = useState("Bệnh nhân có tiền sử cấp cứu ICU năm ngoái, nhạy cảm với thời tiết lạnh và mạt bụi nhà.");
+  const [notesInput, setNotesInput] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [patientHistory, setPatientHistory] = useState([]);
 
   // REAL-TIME ESCALATION & ALERT TICKETS STATES (W06)
   const [tickets, setTickets] = useState([]);
@@ -210,7 +129,9 @@ export default function NurseCommandCenter({ patients = [], selectedPatientId, o
   useEffect(() => {
     fetchTickets();
 
-    const wsUrl = `ws://${window.location.hostname || 'localhost'}:8000/api/v1/escalations/ws/nurse-alerts`;
+    const apiBase = new URL(import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1');
+    apiBase.protocol = apiBase.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${apiBase.href.replace(/\/$/, '')}/escalations/ws/nurse-alerts`;
     let ws = null;
     let pingInterval = null;
 

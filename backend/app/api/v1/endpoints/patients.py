@@ -1,4 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from sqlalchemy.orm import Session
+from backend.app.core.database import get_db
+from backend.app.core.security import current_user, allowed_patient_ids, ensure_patient_access
+from backend.app.models.identity import User
 from typing import List, Dict, Any
 import json
 from pathlib import Path
@@ -7,7 +11,7 @@ router = APIRouter()
 PROFILES_DIR = Path(__file__).resolve().parents[5] / "Data" / "patient_profiles"
 
 @router.get("/", response_model=List[Dict[str, Any]])
-def list_patients():
+def list_patients(user: User = Depends(current_user), db: Session = Depends(get_db)):
     """Lấy danh sách tóm tắt tất cả các bệnh nhân mẫu."""
     patients = []
     if not PROFILES_DIR.exists():
@@ -26,11 +30,13 @@ def list_patients():
                 "baseline_spo2": data["clinical_status"]["baseline_spo2"],
                 "file_name": p_file.name
             })
-    return patients
+    allowed = allowed_patient_ids(db, user)
+    return patients if allowed is None else [p for p in patients if p["patient_id"] in allowed]
 
 @router.get("/{patient_id}", response_model=Dict[str, Any])
-def get_patient_detail(patient_id: str):
+def get_patient_detail(patient_id: str, user: User = Depends(current_user), db: Session = Depends(get_db)):
     """Lấy toàn bộ hồ sơ chi tiết của bệnh nhân theo ID."""
+    ensure_patient_access(db, user, patient_id)
     if not PROFILES_DIR.exists():
         raise HTTPException(status_code=404, detail="Thư mục hồ sơ không tồn tại.")
         
