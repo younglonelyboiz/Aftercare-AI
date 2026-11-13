@@ -46,3 +46,7 @@ class ChatResponse(BaseModel):
     response: str
     safety_status: str # NORMAL | YELLOW_ZONE | RED_ZONE
     citations: List[CitationItem] = []
+    # [W07-T0.2] True khi hệ thống trả thông điệp an toàn dự phòng do LLM/hệ thống lỗi
+    degraded: bool = False
+    # [W07-T0.1] Mã AlertTicket được tạo/cập nhật khi chat phát hiện Vùng Đỏ/Vàng
+    escalation_ticket_id: Optional[str] = None
