@@ -49,3 +49,7 @@ class ChatResponse(BaseModel):
     citations: List[CitationItem] = []
     conversation_id: Optional[str] = None
     message_id: Optional[str] = None
+    # [W07-T0.2] True khi hệ thống trả thông điệp an toàn dự phòng do LLM/hệ thống lỗi
+    degraded: bool = False
+    # [W07-T0.1] Mã AlertTicket được tạo/cập nhật khi chat phát hiện Vùng Đỏ/Vàng
+    escalation_ticket_id: Optional[str] = None

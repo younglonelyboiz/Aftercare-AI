@@ -26,6 +26,18 @@ class Settings:
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
     GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", os.getenv("LLM_CLINICAL_MODEL", "gemini-2.5-flash"))
 
+    # [W07-T0.4] Whitelist model LLM được phép dùng khi có model_override nội bộ.
+    # Danh sách phân tách bằng dấu phẩy. Model mặc định (OPENROUTER_MODEL, GEMINI_MODEL) luôn được phép.
+    ALLOWED_LLM_MODELS: list = [
+        m.strip() for m in os.getenv("ALLOWED_LLM_MODELS", "").split(",") if m.strip()
+    ]
+    # [W07-T0.2] Timeout (giây) cho mỗi lần gọi LLM bên ngoài.
+    LLM_TIMEOUT_SECONDS: float = float(os.getenv("LLM_TIMEOUT_SECONDS", "20"))
+
+    @property
+    def allowed_llm_models(self) -> set:
+        return {self.OPENROUTER_MODEL, self.GEMINI_MODEL, *self.ALLOWED_LLM_MODELS}
+
     # Embedding Model (BAAI/bge-m3)
     EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "BAAI/bge-m3")
     EMBEDDING_DIM: int = int(os.getenv("EMBEDDING_DIM", "1024"))

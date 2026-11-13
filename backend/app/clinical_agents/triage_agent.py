@@ -21,6 +21,15 @@ class TriageAgent:
         result: ScreenerResult = self.screener.evaluate(screener_input, profile=profile)
         return result.risk_level
 
+    def evaluate_full_text(self, user_query: str, profile: Dict[str, Any]) -> ScreenerResult:
+        """[W07-T0.1] Đánh giá câu chat tự do, trả về ScreenerResult đầy đủ (cờ + lý do)
+        để tầng API dùng khi tạo AlertTicket cho điều dưỡng."""
+        screener_input = ScreenerInput(
+            patient_id=profile.get("patient_info", {}).get("patient_id"),
+            free_text=user_query
+        )
+        return self.screener.evaluate(screener_input, profile=profile)
+
     def evaluate_full(self, screener_input: ScreenerInput, profile: Optional[Dict[str, Any]] = None) -> ScreenerResult:
         """Đánh giá đầy đủ (trả về ScreenerResult gồm chỉ dẫn, cờ rủi ro và lý do)."""
         return self.screener.evaluate(screener_input, profile=profile)
