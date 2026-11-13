@@ -28,7 +28,10 @@ class SymptomScreenerEngine:
     SEVERE_DYSPNEA_FLAGS = [
         "không thở được", "nghẹt thở", "ngạt thở", "ngộp thở", "thở không nổi",
         "không nói nổi", "thều thào", "nói không ra hơi", "hụt hơi liên tục",
-        "rút lõm ngực", "ngực thít chặt", "ngừng thở", "sắp ngất"
+        "rút lõm ngực", "rút lõm lồng ngực", "co kéo hõm ức", "co kéo cơ hô hấp",
+        "ngực thít chặt", "ngừng thở", "sắp ngất", "khó thở dữ dội",
+        "nói được từng từ", "nói từng từ", "nói đứt quãng", "thở rít nặng",
+        "ngồi chồm ra trước", "ngồi cúi gập người"
     ]
     EMERGENCY_CALLS = [
         "cấp cứu", "gọi 115", "115", "đi viện gấp", "cứu với", "nguy kịch", "khẩn cấp"
@@ -44,8 +47,13 @@ class SymptomScreenerEngine:
     # Danh mục dấu hiệu hen bùng phát / trở nặng (YELLOW FLAGS)
     YELLOW_FLAGS = [
         "thức giấc ban đêm", "thức giấc nửa đêm", "tỉnh giấc nửa đêm", "thức giấc vì ho",
-        "ho nhiều về đêm", "khò khè tăng", "nặng ngực", "tức ngực", "thấy hơi mệt",
-        "phải xịt cắt cơn", "cần xịt thuốc", "vùng vàng", "thở khò khè", "nặng ngực khi đi lại"
+        "ho nhiều về đêm", "ho đêm", "lên cơn ho khò khè lúc nửa đêm", "mất ngủ vì lên cơn ho",
+        "khò khè tăng", "khò khè nhiều hơn", "khò khè nghe rõ", "ho đờm tăng",
+        "nặng ngực", "tức ngực", "thấy hơi mệt", "hạn chế vận động",
+        "khó thở khi làm việc nhà", "khó thở tăng khi vận động nhẹ", "đi bộ nhẹ trong nhà tôi cũng thấy hụt hơi",
+        "phải xịt cắt cơn", "cần xịt thuốc", "dùng ống xịt xanh liên tục",
+        "xịt thuốc cắt cơn saba hơn", "xịt ventolin nhiều lần trong ngày",
+        "cơn hen đang bùng phát nhẹ", "vùng vàng", "thở khò khè", "nặng ngực khi đi lại"
     ]
 
     @staticmethod

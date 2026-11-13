@@ -180,7 +180,7 @@ rules:
       - "(?i)(?:không\\s+được|tuyệt\\s+đối\\s+không|không\\s+nên|tránh)\\s+(?:tự\\s+ý\\s+)?(?:ngưng|bỏ|dừng|cắt)\\s+thuốc"
     patterns:
       - "(?i)(?:bạn|bác|anh|chị|người\\s+bệnh)\\s+(?:nên|hãy|có\\s+thể|cứ)\\s+(?:tự\\s+ý\\s+|tạm\\s+)?(?:ngưng|bỏ|dừng\\s+hẳn|cắt\\s+bỏ)\\s+(?:dùng\\s+|xịt\\s+|hít\\s+)?thuốc"
-      - "(?i)(?:hãy|nên)\\s+(?:ngưng|bỏ|dừng\\s+hẳn)\\s+(?:thuốc\\s+dự\\s+phòng|thuốc\\s+duy\\s+trì|thuốc\\s+hít|symbicort|seretide|pulmicort)\\s+ngay"
+      - "(?i)(?<!không\\s)(?:hãy|nên|có\\s+thể|cứ)\\s+(?:tự\\s+ý\\s+|tạm\\s+)?(?:ngưng|bỏ|dừng\\s+hẳn)\\s+(?:thuốc\\s+dự\\s+phòng|thuốc\\s+duy\\s+trì|thuốc\\s+kiểm\\s+soát|thuốc\\s+hít|symbicort|seretide|pulmicort)"
       - "(?i)không\\s+cần\\s+(?:phải\\s+)?(?:dùng|xịt|hít|uống)\\s+thuốc\\s+(?:dự\\s+phòng|duy\\s+trì|kiểm\\s+soát|hàng\\s+ngày)\\s+nữa"
     positive_samples:
       - "Khi thấy hết ho, bác có thể ngưng dùng thuốc dự phòng hàng ngày."

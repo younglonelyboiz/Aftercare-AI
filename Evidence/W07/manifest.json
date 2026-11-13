@@ -1,0 +1,73 @@
+{
+  "milestone": "Tuan 7",
+  "package": "W07-AGENT-ORCHESTRATION-GUARDRAILS",
+  "generated_at": "2026-11-13",
+  "total_files": 13,
+  "artifacts": [
+    {
+      "file": "evidence_gate_calibration.json",
+      "size_bytes": 14085,
+      "sha256": "3a1f5adb7e0add8fe1ebadde6c783fdc66a31503388434bb0f3cd57d0b4e78b8"
+    },
+    {
+      "file": "figures/orchestration_graph.mmd",
+      "size_bytes": 1833,
+      "sha256": "9965bd8c9a282fb5575fa5da5ce911c7e4ebb61f3b791bd200fbfc5313b84783"
+    },
+    {
+      "file": "metrics.json",
+      "size_bytes": 2150,
+      "sha256": "24b69ab8a14105ddc5b187bb33e0fe45a7baa5348d0d1f9fcd13542c36d89ba9"
+    },
+    {
+      "file": "README.md",
+      "size_bytes": 4905,
+      "sha256": "2b351b4e26ea033f2971042dc6ca8dc05ec8b4062685c105a375e02ab9f9735e"
+    },
+    {
+      "file": "redteam_evaluation_report.json",
+      "size_bytes": 1245,
+      "sha256": "a44581b93e1413e0e0c6b2709f04825447fb9fc12786d5bd44243c5f42aeca15"
+    },
+    {
+      "file": "W07_Clinical_Review_Signoff.md",
+      "size_bytes": 4152,
+      "sha256": "485ef8c9d1eece34127ccd7481628e6419a71cbcdcb498202600d2f83eed8f90"
+    },
+    {
+      "file": "W07_Phase0_Safety_Fixes.md",
+      "size_bytes": 13041,
+      "sha256": "4d65fd687b2ed3be8320af87a0c5e9acf6ec7319efeec5fcddc82e887f0e6edf"
+    },
+    {
+      "file": "W07_Phase1_Orchestration_Foundation.md",
+      "size_bytes": 9335,
+      "sha256": "e8cbb99fc73abd64794160727a1b0bb6dabefd0f936d0985469cefc1ef1a6b26"
+    },
+    {
+      "file": "W07_Phase2_Input_Guardrails.md",
+      "size_bytes": 8834,
+      "sha256": "f219f4ba910f29b4c11bf6a2a3332a380307695137d743366124b30762c03e7d"
+    },
+    {
+      "file": "W07_Phase3_Evidence_And_Generation.md",
+      "size_bytes": 10022,
+      "sha256": "8445c96687d9dcee01437cbe164711548d1c35ee41c1424247706ce182567664"
+    },
+    {
+      "file": "W07_Phase4_Output_Guardrails.md",
+      "size_bytes": 6964,
+      "sha256": "6a988518c756cb6e1a3e18d85c354be4decf2e88a8676bdf674b8cb989b7ae25"
+    },
+    {
+      "file": "W07_Phase5_Audit_And_Escalation.md",
+      "size_bytes": 7517,
+      "sha256": "49abaf90fbce6947957f5c7256369a5000faa333ba14d788454586985142f32d"
+    },
+    {
+      "file": "W07_Phase6_RedTeam_And_Evidence.md",
+      "size_bytes": 9012,
+      "sha256": "c26bd59f753c8ea5e1bfa20169984a043c44116aa0dda3b6a4fd2be9f52d4975"
+    }
+  ]
+}

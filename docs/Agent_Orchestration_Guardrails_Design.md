@@ -519,5 +519,5 @@ flowchart LR
 - [x] **Giai đoạn 3:** T3.1 · T3.2 · T3.3 · T3.4 · T3.5 · T3.6 — xem [W07_Phase3_Evidence_And_Generation.md](../Evidence/W07/W07_Phase3_Evidence_And_Generation.md)
 - [x] **Giai đoạn 4:** T4.1 · T4.2 · T4.3 · (T4.4 tùy chọn) — xem [W07_Phase4_Output_Guardrails.md](../Evidence/W07/W07_Phase4_Output_Guardrails.md)
 - [x] **Giai đoạn 5:** T5.1 · T5.2 · T5.3 · T5.4 · T5.5 — xem [W07_Phase5_Audit_And_Escalation.md](../Evidence/W07/W07_Phase5_Audit_And_Escalation.md)
-- [ ] **Giai đoạn 6:** T6.1 · T6.2 · T6.3 · T6.4 · T6.5 · T6.6
+- [x] **Giai đoạn 6:** T6.1 · T6.2 · T6.3 · T6.4 · T6.5 · T6.6 — xem [W07_Phase6_RedTeam_And_Evidence.md](../Evidence/W07/W07_Phase6_RedTeam_And_Evidence.md)
 

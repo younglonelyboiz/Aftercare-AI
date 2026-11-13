@@ -7,7 +7,7 @@ import json
 import logging
 import math
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from threading import Lock
 from typing import Any, Callable, Dict, List, Optional
@@ -201,7 +201,7 @@ def persist_audit_trace(
         "escalation_ticket_id": state.get("ticket_id"),
         "latency_ms": latency_map,
         "total_latency_ms": total_latency_ms,
-        "created_at": datetime.utcnow().isoformat(),
+        "created_at": datetime.now(timezone.utc).replace(tzinfo=None).isoformat(),
     }
 
     event_dicts: List[Dict[str, Any]] = []
@@ -224,7 +224,10 @@ def persist_audit_trace(
                 "decision": str(ev.get("decision") or "PASSED"),
                 "detail": redacted_detail,
                 "latency_ms": node_lat,
-                "created_at": str(ev.get("timestamp") or datetime.utcnow().isoformat()),
+                "created_at": str(
+                    ev.get("timestamp")
+                    or datetime.now(timezone.utc).replace(tzinfo=None).isoformat()
+                ),
             }
         )
 

@@ -13,7 +13,7 @@ Bộ điều phối leo thang cảnh báo kèm Hàng đợi Dự phòng Bền v�
 import json
 import logging
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
@@ -100,7 +100,7 @@ class EscalationOutboxDispatcher:
                 else:
                     existing.attempts = (existing.attempts or 0) + 1
                     existing.last_error = error_msg[:1000]
-                    existing.updated_at = datetime.utcnow()
+                    existing.updated_at = datetime.now(timezone.utc).replace(tzinfo=None)
                 session.commit()
                 if own_session:
                     session.close()
@@ -147,7 +147,7 @@ class EscalationOutboxDispatcher:
             "alert_type": alert_type,
             "trigger_reason": trigger_reason,
             "clinical_data": clinical_data or {},
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).replace(tzinfo=None).isoformat(),
         }
         try:
             ticket = await escalation_service.create_or_escalate_ticket(
@@ -238,13 +238,13 @@ class EscalationOutboxDispatcher:
                     row.status = "SENT"
                     row.ticket_id = ticket.id
                     row.attempts = (row.attempts or 0) + 1
-                    row.updated_at = datetime.utcnow()
+                    row.updated_at = datetime.now(timezone.utc).replace(tzinfo=None)
                     recovered_ticket_ids.append(ticket.id)
                 except Exception as retry_exc:
                     all_succeeded = False
                     row.attempts = (row.attempts or 0) + 1
                     row.last_error = str(retry_exc)[:1000]
-                    row.updated_at = datetime.utcnow()
+                    row.updated_at = datetime.now(timezone.utc).replace(tzinfo=None)
 
             session.commit()
 
