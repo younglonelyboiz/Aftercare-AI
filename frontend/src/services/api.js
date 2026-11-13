@@ -155,4 +155,31 @@ export const triggerNonResponseScan = async () => {
   return response.data;
 };
 
+// -------------------------------------------------------------
+// SYSTEM-WIDE AUDIT LOG & OBSERVABILITY APIS (ADMIN READ-ONLY)
+// -------------------------------------------------------------
+export const getAuditEvents = async (params = {}) => {
+  const cleanParams = Object.fromEntries(
+    Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== '')
+  );
+  const response = await apiClient.get('/audit/events', { params: cleanParams });
+  return response.data;
+};
+
+export const getAuditTrace = async (traceId) => {
+  const response = await apiClient.get(`/audit/traces/${encodeURIComponent(traceId)}`);
+  return response.data;
+};
+
+export const verifyAuditChain = async (limit = 1000) => {
+  const response = await apiClient.get('/audit/verify-chain', { params: { limit } });
+  return response.data;
+};
+
+export const getAuditMetrics = async () => {
+  const response = await apiClient.get('/audit/metrics');
+  return response.data;
+};
+
+
 

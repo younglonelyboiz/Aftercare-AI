@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.app.core.config import settings
 from backend.app.api.v1.router import api_router
+from backend.app.services.audit_service import AuditRequestMiddleware
 from backend.app.workers.non_response_worker import non_response_worker
 
 @asynccontextmanager
@@ -27,6 +28,7 @@ app = FastAPI(
 )
 
 # Cấu hình CORS để Frontend (React/Next.js/Vite) gọi API dễ dàng
+app.add_middleware(AuditRequestMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,

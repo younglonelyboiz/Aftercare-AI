@@ -159,6 +159,9 @@ def set_audit_session_factory(factory: Optional[Callable[[], Session]]) -> None:
     """Cấu hình factory tạo Session cơ sở dữ liệu cho việc ghi nhật ký kiểm toán."""
     global _audit_session_factory
     _audit_session_factory = factory
+    from backend.app.services.audit_service import set_system_audit_session_factory
+
+    set_system_audit_session_factory(factory)
 
 
 def get_cached_trace(trace_id: str) -> Optional[Dict[str, Any]]:
@@ -299,6 +302,35 @@ def persist_audit_trace(
                     session.close()
                 except Exception:
                     pass
+
+    from backend.app.services.audit_service import default_audit_service
+
+    default_audit_service.record_event(
+        category="AGENT",
+        action_code="AGENT.GRAPH_TURN_COMPLETED",
+        actor_id="aftercare_graph",
+        actor_role="agent",
+        patient_id=patient_id,
+        session_id=session_id,
+        trace_id=trace_id,
+        resource_type="ChatTurn",
+        resource_id=trace_id,
+        severity=(
+            "CRITICAL"
+            if action_dict["risk_level"] == "RED_ZONE"
+            else ("HIGH" if action_dict["risk_level"] == "YELLOW_ZONE" else "INFO")
+        ),
+        after_state={
+            "risk_level": action_dict["risk_level"],
+            "policy_decision": action_dict["policy_decision"],
+            "policy_rule_id": action_dict["policy_rule_id"],
+            "evidence_ok": action_dict["evidence_ok"],
+            "output_guard_decision": action_dict["output_guard_decision"],
+            "degraded": action_dict["degraded"],
+            "total_latency_ms": total_latency_ms,
+        },
+        profile=profile,
+    )
 
     return trace_bundle
 
