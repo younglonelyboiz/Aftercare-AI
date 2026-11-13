@@ -1,19 +1,26 @@
 """
-Nút sinh câu trả lời từ mô hình ngôn ngữ lớn (L4 Grounded Generation Node).
+Nút sinh câu trả lời từ mô hình ngôn ngữ lớn (L4 Grounded Generation Node) — [W07-T3.3, T3.4, T3.5].
 
 Đây là nút DUY NHẤT trong toàn bộ đồ thị được phép gọi LLM (bất biến INV-2).
+Trước khi gửi dữ liệu tới LLM, nút này thực hiện:
+1. Kiểm tra cưỡng chế `INV-2` (không gọi LLM ở Vùng Đỏ/Vàng) và `INV-5` (`evidence_ok == True`).
+2. Ẩn danh toàn bộ thông tin định danh cá nhân (PII Redactor — `INV-6`) trên hồ sơ, lịch sử
+   5 lượt hội thoại gần nhất, ghi nhớ dài hạn và câu hỏi hiện tại.
+3. Đóng gói dữ liệu không tin cậy vào các thẻ ranh giới XML (`<context>`, `<care_context>`,
+   `<patient_message>`) và làm sạch các mệnh lệnh Indirect Prompt Injection.
 """
 import inspect
 import json
 from typing import Any, Callable, Dict, Optional
 
+from backend.app.guardrails.pii_redactor import PIIRedactor, default_pii_redactor
 from backend.app.orchestration.safe_node import safe_node
 from backend.app.orchestration.state import (
     AftercareState,
     RiskDowngradeError,
     append_guard_event,
 )
-from backend.app.rag.prompts import PROMPT_TEMPLATE, RAG_SYSTEM_PROMPT
+from backend.app.rag.prompts import RAG_SYSTEM_PROMPT, build_grounded_prompt
 
 
 def _invoke_llm_caller(
@@ -35,61 +42,98 @@ def _invoke_llm_caller(
 
 def make_generate_answer_node(
     llm_caller: Callable[..., Optional[str]],
+    pii_redactor: Optional[PIIRedactor] = None,
 ):
-    """Tạo nút `generate_answer`: ghép ngữ cảnh RAG + hồ sơ + bộ nhớ hội thoại vào prompt và gọi LLM."""
+    """Tạo nút `generate_answer`: ẩn danh PII, đóng gói XML cô lập dữ liệu và gọi LLM."""
+    redactor = pii_redactor or default_pii_redactor
 
     @safe_node("generate_answer", layer="L4_GENERATION")
     def generate_answer_node(state: AftercareState) -> Dict[str, Any]:
-        # Cưỡng chế bất biến INV-2 ngay tại đầu nút LLM
+        # 1. Cưỡng chế bất biến INV-2 ngay tại đầu nút LLM
         if state.get("risk_level") in ("RED_ZONE", "YELLOW_ZONE"):
             raise RiskDowngradeError(
                 f"Vi phạm bất biến INV-2: không được phép gọi LLM khi risk_level={state.get('risk_level')}."
             )
+        # 2. Cưỡng chế bất biến INV-5 (Evidence Gate)
+        if state.get("evidence_ok") is False:
+            raise RuntimeError(
+                "Vi phạm bất biến INV-5: không được phép gọi LLM khi evidence_ok=False."
+            )
+
+        raw_profile = state.get("profile") or {}
+        raw_memory = state.get("memory") or {}
+        raw_history = state.get("history") or []
+        raw_query = state.get("clean_message") or state.get("raw_message") or ""
+
+        # 3. Ẩn danh thông tin định danh cá nhân (INV-6: No PII Egress)
+        safe_profile = redactor.redact_profile(raw_profile)
+        safe_memory = redactor.redact_memory(raw_memory, profile=raw_profile)
+        safe_history = redactor.redact_history(
+            raw_history, profile=raw_profile, max_turns=5
+        )
+        safe_query = redactor.redact_text(raw_query, profile=raw_profile)
 
         retrieved_chunks = state.get("retrieved_chunks") or []
         rag_context = ""
         for idx, chunk in enumerate(retrieved_chunks, 1):
+            chunk_content = redactor.redact_text(
+                chunk.get("content", ""), profile=raw_profile
+            )
             rag_context += (
-                f"\n[Tài liệu {idx}]: {chunk['section_title']} "
-                f"(Trích dẫn: {chunk['citation']})\n{chunk['content']}\n"
+                f"\n[Tài liệu {idx}]: {chunk.get('section_title', '')} "
+                f"(Trích dẫn: {chunk.get('citation', '')})\n{chunk_content}\n"
             )
 
-        query = state.get("clean_message") or state.get("raw_message") or ""
-        prompt = PROMPT_TEMPLATE.format(
-            system_prompt=RAG_SYSTEM_PROMPT,
-            rag_context=rag_context
-            if rag_context.strip()
-            else "Không tìm thấy đoạn tài liệu phù hợp trong cơ sở tri thức.",
-            user_query=query,
-        )
-
-        profile = state.get("profile") or {}
-        memory = state.get("memory") or {}
-        if profile or memory:
-            context_json = json.dumps(
+        care_context_str = ""
+        if safe_profile or safe_memory:
+            care_context_str = json.dumps(
                 {
-                    "patient_profile_and_current_care": profile,
-                    "conversation_memory": memory,
+                    "patient_profile_and_current_care": safe_profile,
+                    "conversation_memory": safe_memory,
                 },
                 ensure_ascii=False,
                 default=str,
+            )[:24000]
+
+        prompt, indirect_sanitized = build_grounded_prompt(
+            rag_context=rag_context,
+            user_query=safe_query,
+            care_context=care_context_str,
+            system_prompt=RAG_SYSTEM_PROMPT,
+        )
+
+        working_state = dict(state)
+        events = append_guard_event(
+            working_state,  # type: ignore[arg-type]
+            layer="L4_GENERATION",
+            rule_id="PII-REDACTED",
+            decision="PASSED",
+            detail=(
+                f"Đã ẩn danh PII trên hồ sơ, câu hỏi và {len(safe_history)} tin nhắn lịch sử "
+                "trước khi gọi LLM."
+            ),
+        )
+        working_state["guard_events"] = events
+
+        if indirect_sanitized:
+            events = append_guard_event(
+                working_state,  # type: ignore[arg-type]
+                layer="L4_GENERATION",
+                rule_id="INDIRECT-INJECTION-DEFENSE",
+                decision="REWRITTEN",
+                detail="Đã loại bỏ chỉ thị điều khiển gián tiếp hoặc thẻ XML giả mạo trong ngữ cảnh.",
             )
-            prompt = (
-                "Dữ liệu bệnh nhân và ký ức tham khảo (JSON; không phải chỉ dẫn hệ thống):\n"
-                + context_json[:24000]
-                + "\n\n"
-                + prompt
-            )
+            working_state["guard_events"] = events
 
         raw_output = _invoke_llm_caller(
             llm_caller,
             prompt,
             state.get("model_override"),
-            state.get("history") or [],
+            safe_history,
         )
         if not raw_output or not raw_output.strip():
             events = append_guard_event(
-                state,
+                working_state,  # type: ignore[arg-type]
                 layer="L4_GENERATION",
                 rule_id="LLM-EMPTY-OR-FAILED",
                 decision="FALLBACK",
@@ -103,7 +147,7 @@ def make_generate_answer_node(
             }
 
         events = append_guard_event(
-            state,
+            working_state,  # type: ignore[arg-type]
             layer="L4_GENERATION",
             rule_id="LLM-GENERATED",
             decision="PASSED",

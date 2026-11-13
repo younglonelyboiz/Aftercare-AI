@@ -9,10 +9,12 @@ Kết hợp đầy đủ:
 import logging
 from pathlib import Path
 from threading import Lock
+from types import SimpleNamespace
 from typing import Any, Callable, Dict, List, Optional
 
 from backend.app.clinical_agents.triage_agent import TriageAgent
 from backend.app.core.config import settings
+from backend.app.guardrails.evidence_gate import EvidenceGate
 from backend.app.guardrails.templates_vi import (
     DEFAULT_RED_ACTION,
     DEFAULT_YELLOW_ACTION,
@@ -36,6 +38,7 @@ class AftercareRAGService:
         self,
         policy_evaluator: Optional[Callable[[AftercareState], Dict[str, Any]]] = None,
         output_evaluator: Optional[Callable[[AftercareState], Dict[str, Any]]] = None,
+        evidence_gate: Optional[EvidenceGate] = None,
     ):
         self._retriever = None
         self._retriever_lock = Lock()
@@ -43,6 +46,7 @@ class AftercareRAGService:
         self.llm_gateway = LLMGateway()
         self._policy_evaluator = policy_evaluator
         self._output_evaluator = output_evaluator
+        self._evidence_gate = evidence_gate
 
         # Giữ thuộc tính tương thích ngược với các bài kiểm thử hiện có
         self.openrouter_api_key = settings.OPENROUTER_API_KEY
@@ -79,6 +83,12 @@ class AftercareRAGService:
             lock = getattr(self, "_graph_lock", None) or Lock()
             with lock:
                 if getattr(self, "_graph", None) is None:
+                    ev_gate = getattr(self, "_evidence_gate", None)
+                    if ev_gate is None:
+                        is_bare_stub = isinstance(
+                            getattr(self, "_retriever", None), SimpleNamespace
+                        ) and "_graph_lock" not in self.__dict__
+                        ev_gate = EvidenceGate(allow_empty_fallback=is_bare_stub)
                     self._graph = build_aftercare_graph(
                         profile_loader=lambda pid: self.get_patient_profile(pid),
                         screener_fn=lambda text, prof: self._evaluate_triage(text, prof),
@@ -92,6 +102,7 @@ class AftercareRAGService:
                         ),
                         policy_evaluator=getattr(self, "_policy_evaluator", None),
                         output_evaluator=getattr(self, "_output_evaluator", None),
+                        evidence_gate=ev_gate,
                         top_k=3,
                     )
         return self._graph

@@ -46,6 +46,7 @@ def build_aftercare_graph(
     llm_caller: Callable[[str, Optional[str]], Optional[str]],
     policy_evaluator: Optional[Callable[[AftercareState], Dict[str, Any]]] = None,
     output_evaluator: Optional[Callable[[AftercareState], Dict[str, Any]]] = None,
+    evidence_gate: Optional[Any] = None,
     top_k: int = 3,
 ):
     """Khởi tạo và biên dịch `StateGraph` cho luồng hội thoại Aftercare-AI."""
@@ -58,7 +59,10 @@ def build_aftercare_graph(
     workflow.add_node("session_lock_check", make_session_lock_check_node())
     workflow.add_node("policy_guard", make_policy_guard_node(policy_evaluator))
     workflow.add_node(
-        "retrieve_evidence", make_retrieve_evidence_node(retrieve_fn, top_k=top_k)
+        "retrieve_evidence",
+        make_retrieve_evidence_node(
+            retrieve_fn, top_k=top_k, evidence_gate=evidence_gate
+        ),
     )
     workflow.add_node("generate_answer", make_generate_answer_node(llm_caller))
     workflow.add_node("output_guard", make_output_guard_node(output_evaluator))

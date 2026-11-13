@@ -33,6 +33,8 @@ class Settings:
     ]
     # [W07-T0.2] Timeout (giây) cho mỗi lần gọi LLM bên ngoài.
     LLM_TIMEOUT_SECONDS: float = float(os.getenv("LLM_TIMEOUT_SECONDS", "20"))
+    # [W07-T3.1 & T3.2] Ngưỡng điểm tối thiểu của cổng bằng chứng (Evidence Gate threshold tau).
+    EVIDENCE_MIN_SCORE: float = float(os.getenv("EVIDENCE_MIN_SCORE", "0.35"))
 
     @property
     def allowed_llm_models(self) -> set:

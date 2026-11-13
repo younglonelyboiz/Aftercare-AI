@@ -84,7 +84,8 @@ class PgVectorRetriever:
                 "document_tag": c["document_tag"],
                 "document_name": c["document_name"],
                 "pdf_page": c["pdf_page"],
-                "similarity_score": score
+                "similarity_score": score,
+                "rerank_score": score,
             })
 
         return results
