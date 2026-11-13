@@ -4,16 +4,15 @@
 **Mã phân hệ:** `W07-AGENT-ORCHESTRATION-GUARDRAILS`
 **Tiêu chuẩn tham chiếu:** GINA 2024 · QĐ 1851/QĐ-BYT · Nghị định 13/2023/NĐ-CP (bảo vệ dữ liệu cá nhân) · OWASP Top 10 for LLM Applications (2025) · NIST AI RMF
 **Nhánh đề xuất:** `feat/w07-agent-orchestration`
-**Trạng thái:** Đề xuất (Proposal) — chờ duyệt
 
 ---
 
 ## 0. TÓM TẮT ĐIỀU HÀNH (EXECUTIVE SUMMARY)
 
-**Phương án được chọn:** **"Guarded Deterministic Graph"** — điều phối bằng **LangGraph `StateGraph`** (đã có sẵn trong `requirements.txt` nhưng chưa dùng), trong đó **toàn bộ quyết định định tuyến là code tất định (deterministic)**, và LLM chỉ được phép chạy trong **một node duy nhất, bị “kẹp” giữa hai lớp guardrail** (Input Guard phía trước, Output Guard phía sau).
+**Phương án được chọn:** **"Guarded Deterministic Graph"** — điều phối bằng **LangGraph `StateGraph`**  LLM chỉ được phép chạy trong **một node duy nhất, bị “kẹp” giữa hai lớp guardrail** (Input Guard phía trước, Output Guard phía sau).
 
-> [!IMPORTANT]
-> Đây **không phải** kiến trúc multi-agent tự trị (autonomous agents, LLM tự chọn tool như CrewAI/AutoGen/ReAct). Với một hệ thống y tế có ca **Đỏ đe dọa tính mạng**, việc để LLM quyết định luồng xử lý là vi phạm nguyên tắc **Rule-before-Model**. Ở đây, “agent” là các **node chuyên trách có ranh giới rõ ràng**, còn “orchestrator” là một **máy trạng thái có thể kiểm thử 100%**.
+
+> Đây **không phải** kiến trúc multi-agent (autonomous agents, LLM tự chọn tool như CrewAI/AutoGen/ReAct). Với một hệ thống y tế có ca **Đỏ đe dọa tính mạng**, việc để LLM quyết định luồng xử lý là vi phạm nguyên tắc **Rule-before-Model**. Ở đây, “agent” là các **node chuyên trách có ranh giới rõ ràng**, còn “orchestrator” là một **máy trạng thái có thể kiểm thử 100%**.
 
 **Lý do chọn:**
 
