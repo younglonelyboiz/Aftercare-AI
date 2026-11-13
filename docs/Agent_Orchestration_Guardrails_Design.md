@@ -4,16 +4,15 @@
 **Mã phân hệ:** `W07-AGENT-ORCHESTRATION-GUARDRAILS`
 **Tiêu chuẩn tham chiếu:** GINA 2024 · QĐ 1851/QĐ-BYT · Nghị định 13/2023/NĐ-CP (bảo vệ dữ liệu cá nhân) · OWASP Top 10 for LLM Applications (2025) · NIST AI RMF
 **Nhánh đề xuất:** `feat/w07-agent-orchestration`
-**Trạng thái:** Đề xuất (Proposal) — chờ duyệt
 
 ---
 
 ## 0. TÓM TẮT ĐIỀU HÀNH (EXECUTIVE SUMMARY)
 
-**Phương án được chọn:** **"Guarded Deterministic Graph"** — điều phối bằng **LangGraph `StateGraph`** (đã có sẵn trong `requirements.txt` nhưng chưa dùng), trong đó **toàn bộ quyết định định tuyến là code tất định (deterministic)**, và LLM chỉ được phép chạy trong **một node duy nhất, bị “kẹp” giữa hai lớp guardrail** (Input Guard phía trước, Output Guard phía sau).
+**Phương án được chọn:** **"Guarded Deterministic Graph"** — điều phối bằng **LangGraph `StateGraph`**  LLM chỉ được phép chạy trong **một node duy nhất, bị “kẹp” giữa hai lớp guardrail** (Input Guard phía trước, Output Guard phía sau).
 
-> [!IMPORTANT]
-> Đây **không phải** kiến trúc multi-agent tự trị (autonomous agents, LLM tự chọn tool như CrewAI/AutoGen/ReAct). Với một hệ thống y tế có ca **Đỏ đe dọa tính mạng**, việc để LLM quyết định luồng xử lý là vi phạm nguyên tắc **Rule-before-Model**. Ở đây, “agent” là các **node chuyên trách có ranh giới rõ ràng**, còn “orchestrator” là một **máy trạng thái có thể kiểm thử 100%**.
+
+> Đây **không phải** kiến trúc multi-agent (autonomous agents, LLM tự chọn tool như CrewAI/AutoGen/ReAct). Với một hệ thống y tế có ca **Đỏ đe dọa tính mạng**, việc để LLM quyết định luồng xử lý là vi phạm nguyên tắc **Rule-before-Model**. Ở đây, “agent” là các **node chuyên trách có ranh giới rõ ràng**, còn “orchestrator” là một **máy trạng thái có thể kiểm thử 100%**.
 
 **Lý do chọn:**
 
@@ -513,8 +512,8 @@ flowchart LR
 
 ## 10. CHECKLIST TỔNG HỢP
 
-- [x] **Giai đoạn 0:** T0.1 · T0.2 · T0.3 · T0.4 — xem [W07_Phase0_Safety_Fixes.md](./W07_Phase0_Safety_Fixes.md)
-- [ ] **Giai đoạn 1:** T1.1 · T1.2 · T1.3 · T1.4 · T1.5 · T1.6 · T1.7
+- [x] **Giai đoạn 0:** T0.1 · T0.2 · T0.3 · T0.4 — xem [W07_Phase0_Safety_Fixes.md](../Evidence/W07/W07_Phase0_Safety_Fixes.md)
+- [x] **Giai đoạn 1:** T1.1 · T1.2 · T1.3 · T1.4 · T1.5 · T1.6 · T1.7 — xem [W07_Phase1_Orchestration_Foundation.md](../Evidence/W07/W07_Phase1_Orchestration_Foundation.md)
 - [ ] **Giai đoạn 2:** T2.1 · T2.2 · T2.3 · T2.4 · T2.5
 - [ ] **Giai đoạn 3:** T3.1 · T3.2 · T3.3 · T3.4 · T3.5 · T3.6
 - [ ] **Giai đoạn 4:** T4.1 · T4.2 · T4.3 · (T4.4 tùy chọn)

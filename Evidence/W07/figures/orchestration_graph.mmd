@@ -1,0 +1,56 @@
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	load_context(load_context)
+	sanitize_input(sanitize_input)
+	safety_triage(safety_triage)
+	session_lock_check(session_lock_check)
+	policy_guard(policy_guard)
+	retrieve_evidence(retrieve_evidence)
+	generate_answer(generate_answer)
+	output_guard(output_guard)
+	emergency_response(emergency_response)
+	action_plan_response(action_plan_response)
+	safe_refusal(safe_refusal)
+	no_evidence_response(no_evidence_response)
+	safe_fallback(safe_fallback)
+	finalize(finalize)
+	audit(audit)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> load_context;
+	action_plan_response --> finalize;
+	emergency_response --> finalize;
+	finalize --> audit;
+	generate_answer -.-> output_guard;
+	generate_answer -.-> safe_fallback;
+	load_context -.-> safe_fallback;
+	load_context -.-> sanitize_input;
+	no_evidence_response --> finalize;
+	output_guard -.-> action_plan_response;
+	output_guard -.-> finalize;
+	output_guard -.-> safe_fallback;
+	policy_guard -.-> retrieve_evidence;
+	policy_guard -.-> safe_fallback;
+	policy_guard -.-> safe_refusal;
+	retrieve_evidence -.-> generate_answer;
+	retrieve_evidence -.-> no_evidence_response;
+	retrieve_evidence -.-> safe_fallback;
+	safe_fallback --> finalize;
+	safe_refusal --> finalize;
+	safety_triage -.-> action_plan_response;
+	safety_triage -.-> emergency_response;
+	safety_triage -.-> safe_fallback;
+	safety_triage -.-> session_lock_check;
+	sanitize_input -.-> safe_fallback;
+	sanitize_input -.-> safety_triage;
+	session_lock_check -.-> emergency_response;
+	session_lock_check -.-> policy_guard;
+	session_lock_check -.-> safe_fallback;
+	audit --> __end__;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc
