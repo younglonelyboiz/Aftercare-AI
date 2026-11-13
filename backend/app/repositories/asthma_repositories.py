@@ -157,7 +157,7 @@ class AlertTicketRepository:
         stmt = select(AlertTicket).where(AlertTicket.id == ticket_id)
         return self.db.scalars(stmt).first()
 
-    def get_active_tickets(self, limit: int = 50) -> List[AlertTicket]:
+    def get_active_tickets(self, limit: int = 50, patient_ids=None) -> List[AlertTicket]:
         """Lấy danh sách các vé đang mở hoặc đang tiếp nhận, ưu tiên P0 lên đầu."""
         stmt = (
             select(AlertTicket)
@@ -174,11 +174,15 @@ class AlertTicketRepository:
             )
             .limit(limit)
         )
+        if patient_ids is not None:
+            stmt = stmt.where(AlertTicket.patient_id.in_(patient_ids))
         return list(self.db.scalars(stmt).all())
 
-    def get_recent_tickets(self, limit: int = 50) -> List[AlertTicket]:
+    def get_recent_tickets(self, limit: int = 50, patient_ids=None) -> List[AlertTicket]:
         """Lấy toàn bộ vé gần đây kể cả đã RESOLVED."""
         stmt = select(AlertTicket).order_by(desc(AlertTicket.created_at)).limit(limit)
+        if patient_ids is not None:
+            stmt = stmt.where(AlertTicket.patient_id.in_(patient_ids))
         return list(self.db.scalars(stmt).all())
 
     def find_recent_open_ticket(self, patient_id: str, alert_type: str, window_minutes: int = 5) -> Optional[AlertTicket]:
