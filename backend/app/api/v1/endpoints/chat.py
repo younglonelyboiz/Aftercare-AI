@@ -90,21 +90,40 @@ async def escalate_chat_result(
     result: Dict[str, Any],
     patient_name: Optional[str] = None,
 ) -> Optional[str]:
-    """[W07-T0.1] Tạo/cập nhật AlertTicket khi chat phát hiện Vùng Đỏ/Vàng (Non-blocking)."""
+    """[W07-T0.1 & T2.5] Tạo/cập nhật AlertTicket khi chat phát hiện Vùng Đỏ/Vàng
+    hoặc vi phạm chính sách cần cảnh báo điều dưỡng (POL-MED-STOP, POL-SELFHARM)."""
     policy = CHAT_ESCALATION_POLICY.get(result.get("safety_status", ""))
+    policy_esc = result.get("policy_escalation")
+    policy_rule_id = result.get("policy_rule_id")
+
+    if not policy and policy_esc:
+        policy = {
+            "priority": policy_esc["priority"],
+            "alert_type": policy_esc["alert_type"],
+        }
+
     if not policy:
         return None
 
     screener = result.get("screener") or {}
     reasons = screener.get("matched_reasons") or []
-    trigger_reason = (
-        "Phát hiện qua Chatbot: " + "; ".join(reasons)
-        if reasons
-        else f"Phát hiện qua Chatbot: tin nhắn của bệnh nhân khớp quy tắc {result['safety_status']}."
-    )
+    if reasons:
+        trigger_reason = "Phát hiện qua Chatbot: " + "; ".join(reasons)
+    elif policy_rule_id:
+        trigger_reason = (
+            f"Phát hiện qua Chatbot (quy tắc {policy_rule_id}): "
+            f"{message[:MAX_MESSAGE_EXCERPT]}"
+        )
+    else:
+        trigger_reason = (
+            f"Phát hiện qua Chatbot: tin nhắn của bệnh nhân khớp quy tắc "
+            f"{result.get('safety_status')}."
+        )
+
     clinical_data = {
         "source": "CHAT",
-        "safety_status": result["safety_status"],
+        "safety_status": result.get("safety_status"),
+        "policy_rule_id": policy_rule_id,
         "matched_flags": screener.get("matched_flags") or [],
         "matched_reasons": reasons,
         "message_excerpt": message[:MAX_MESSAGE_EXCERPT],

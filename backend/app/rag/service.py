@@ -148,6 +148,8 @@ class AftercareRAGService:
             "trace_id": final_state.get("trace_id"),
             "guard_events": list(final_state.get("guard_events") or []),
             "latency_ms": dict(final_state.get("latency_ms") or {}),
+            "policy_rule_id": final_state.get("policy_rule_id"),
+            "policy_escalation": final_state.get("policy_escalation"),
             "screener": final_state.get("screener_result")
             or {"matched_flags": [], "matched_reasons": []},
         }
