@@ -4,10 +4,36 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
+apiClient.interceptors.response.use(response => response, error => {
+  if (error.response?.status === 401 && !error.config?.url?.startsWith('/auth/')) {
+    window.dispatchEvent(new Event('aftercare-session-expired'));
+  }
+  return Promise.reject(error);
+});
+
+export const getCurrentUser = () => apiClient.get('/auth/me').then(r => r.data);
+export const getDemoAccounts = () => apiClient.get('/auth/demo-accounts').then(r => r.data);
+export const login = (username, password) => apiClient.post('/auth/login', { username, password }).then(r => r.data);
+export const demoLogin = userId => apiClient.post('/auth/demo-login', { user_id: userId }).then(r => r.data);
+export const logout = () => apiClient.post('/auth/logout');
+export const getUsers = () => apiClient.get('/admin/users').then(r => r.data);
+export const createUser = data => apiClient.post('/admin/users', data).then(r => r.data);
+export const updateUser = (id, data) => apiClient.patch(`/admin/users/${id}`, data).then(r => r.data);
+export const updateAssignments = (id, patientIds) => apiClient.put(`/admin/users/${id}/assignments`, { patient_ids: patientIds }).then(r => r.data);
+export const getConversations = patientId => apiClient.get('/chat/conversations', { params: { patient_id: patientId } }).then(r => r.data);
+export const createConversation = patientId => apiClient.post('/chat/conversations', { patient_id: patientId }).then(r => r.data);
+export const getConversation = (id, before) => apiClient.get(`/chat/conversations/${id}`, { params: { before } }).then(r => r.data);
+export const deleteConversation = id => apiClient.delete(`/chat/conversations/${id}`);
+export const getMemory = patientId => apiClient.get('/chat/memory', { params: { patient_id: patientId } }).then(r => r.data);
+export const deleteMemory = id => apiClient.delete(`/chat/memory/${id}`);
+export const errorMessage = error => typeof error.response?.data?.detail === 'string'
+  ? error.response.data.detail : 'Không thể thực hiện. Vui lòng thử lại.';
 
 export const getPatients = async () => {
   const response = await apiClient.get('/patients/');
@@ -19,10 +45,11 @@ export const getPatientDetail = async (patientId) => {
   return response.data;
 };
 
-export const sendChatMessage = async (patientId, message) => {
+export const sendChatMessage = async (patientId, message, conversationId) => {
   const response = await apiClient.post('/chat/chat', {
     patient_id: patientId,
     message: message,
+    conversation_id: conversationId || null,
   });
   return response.data;
 };

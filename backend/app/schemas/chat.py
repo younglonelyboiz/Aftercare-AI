@@ -27,8 +27,9 @@ class PatientProfile(BaseModel):
     follow_up: Dict[str, str]
 
 class ChatRequest(BaseModel):
-    patient_id: str
-    message: str
+    patient_id: str = Field(min_length=1, max_length=100)
+    message: str = Field(min_length=1, max_length=6000)
+    conversation_id: Optional[str] = Field(default=None, max_length=32)
 
 class CitationItem(BaseModel):
     chunk_id: str
@@ -46,6 +47,8 @@ class ChatResponse(BaseModel):
     response: str
     safety_status: str # NORMAL | YELLOW_ZONE | RED_ZONE
     citations: List[CitationItem] = []
+    conversation_id: Optional[str] = None
+    message_id: Optional[str] = None
     # [W07-T0.2] True khi hệ thống trả thông điệp an toàn dự phòng do LLM/hệ thống lỗi
     degraded: bool = False
     # [W07-T0.1] Mã AlertTicket được tạo/cập nhật khi chat phát hiện Vùng Đỏ/Vàng

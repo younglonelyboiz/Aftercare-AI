@@ -9,6 +9,12 @@ class Settings:
     PROJECT_NAME: str = "Aftercare-AI"
     VERSION: str = "1.0.0"
     API_V1_STR: str = "/api/v1"
+    DEMO_LOGIN_ENABLED: bool = os.getenv("DEMO_LOGIN_ENABLED", "false").lower() == "true"
+    COOKIE_SECURE: bool = os.getenv("COOKIE_SECURE", "false").lower() == "true"
+    SESSION_HOURS: int = int(os.getenv("SESSION_HOURS", "8"))
+    CORS_ORIGINS: list[str] = [v.strip() for v in os.getenv(
+        "CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173"
+    ).split(",") if v.strip()]
 
     # OpenRouter & Gemini LLM
     OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "")

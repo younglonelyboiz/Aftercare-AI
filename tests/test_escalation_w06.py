@@ -8,6 +8,7 @@ import time
 import json
 import logging
 import uuid
+import tempfile
 from datetime import datetime, timedelta
 
 import pytest
@@ -19,7 +20,7 @@ from backend.app.models.asthma import AsthmaCarePlan, AsthmaCheckinLog, AlertTic
 from backend.app.workers.non_response_worker import non_response_worker
 
 # Thiết lập Logger ghi vào thư mục Evidence/W06/logs
-EVIDENCE_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "Evidence", "W06")
+EVIDENCE_DIR = os.environ.get("W06_EVIDENCE_DIR") or tempfile.mkdtemp(prefix="aftercare-w06-evidence-")
 LOGS_DIR = os.path.join(EVIDENCE_DIR, "logs")
 os.makedirs(LOGS_DIR, exist_ok=True)
 
@@ -36,6 +37,53 @@ logger = logging.getLogger("W06_Verification")
 
 client = TestClient(app)
 
+
+@pytest.fixture(scope="module")
+def isolated_database():
+    """W06 must never delete real alert tickets; authenticate against a temporary DB."""
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+    from sqlalchemy.pool import StaticPool
+    from sqlalchemy.ext.compiler import compiles
+    from sqlalchemy.dialects.postgresql import JSONB
+    from backend.app.core.database import Base, get_db
+    from backend.app.core.security import hash_password
+    from backend.app.models.identity import User
+    from backend.app.core.config import settings
+    from backend.app.api.v1.endpoints import escalations
+    import backend.app.workers.non_response_worker as worker_module
+
+    @compiles(JSONB, "sqlite")
+    def compile_jsonb(element, compiler, **kw):
+        return "JSON"
+
+    engine = create_engine("sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool)
+    Base.metadata.create_all(engine)
+    factory = sessionmaker(bind=engine)
+    with factory() as db:
+        db.add(User(id="w06-admin", username="w06-admin", full_name="W06 tester", role="admin",
+                    is_demo=True, password_hash=hash_password("W06-test-only-password")))
+        for n, pef in [(1, 520), (2, 280), (3, 400)]:
+            db.add(AsthmaCarePlan(id=f"w06-plan-{n}", patient_id=f"BN-2026-ASTHMA-0{n}", personal_best_pef=pef))
+        db.commit()
+
+    def override_db():
+        with factory() as db:
+            yield db
+
+    patch = pytest.MonkeyPatch()
+    patch.setattr(sys.modules[__name__], "SessionLocal", factory)
+    patch.setattr(worker_module, "SessionLocal", factory)
+    patch.setattr(escalations, "SessionLocal", factory)
+    patch.setattr(settings, "DEMO_LOGIN_ENABLED", True)
+    app.dependency_overrides[get_db] = override_db
+    assert client.post("/api/v1/auth/demo-login", json={"user_id": "w06-admin"}).status_code == 200
+    yield
+    client.cookies.clear()
+    app.dependency_overrides.pop(get_db, None)
+    patch.undo()
+    engine.dispose()
+
 metrics_collector = {
     "escalation_latencies_ms": [],
     "red_zone_tests_total": 0,
@@ -49,7 +97,7 @@ metrics_collector = {
 }
 
 @pytest.fixture(scope="module", autouse=True)
-def setup_database_fixture():
+def setup_database_fixture(isolated_database):
     logger.info("================================================================================")
     logger.info("BẮT ĐẦU THỰC THI BỘ KIỂM THỬ MINH CHỨNG TUẦN 06 (W06 EVIDENCE SUITE)")
     logger.info("================================================================================")
