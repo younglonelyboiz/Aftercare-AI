@@ -50,3 +50,6 @@ class ChatResponse(BaseModel):
     degraded: bool = False
     # [W07-T0.1] Mã AlertTicket được tạo/cập nhật khi chat phát hiện Vùng Đỏ/Vàng
     escalation_ticket_id: Optional[str] = None
+    # [W07-T1.6] Mã truy vết lượt xử lý trên đồ thị LangGraph và danh sách sự kiện Guardrail
+    trace_id: Optional[str] = None
+    guard_events: List[Dict[str, Any]] = []

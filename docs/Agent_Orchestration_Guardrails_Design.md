@@ -513,8 +513,8 @@ flowchart LR
 
 ## 10. CHECKLIST TỔNG HỢP
 
-- [x] **Giai đoạn 0:** T0.1 · T0.2 · T0.3 · T0.4 — xem [W07_Phase0_Safety_Fixes.md](./W07_Phase0_Safety_Fixes.md)
-- [ ] **Giai đoạn 1:** T1.1 · T1.2 · T1.3 · T1.4 · T1.5 · T1.6 · T1.7
+- [x] **Giai đoạn 0:** T0.1 · T0.2 · T0.3 · T0.4 — xem [W07_Phase0_Safety_Fixes.md](../Evidence/W07/W07_Phase0_Safety_Fixes.md)
+- [x] **Giai đoạn 1:** T1.1 · T1.2 · T1.3 · T1.4 · T1.5 · T1.6 · T1.7 — xem [W07_Phase1_Orchestration_Foundation.md](../Evidence/W07/W07_Phase1_Orchestration_Foundation.md)
 - [ ] **Giai đoạn 2:** T2.1 · T2.2 · T2.3 · T2.4 · T2.5
 - [ ] **Giai đoạn 3:** T3.1 · T3.2 · T3.3 · T3.4 · T3.5 · T3.6
 - [ ] **Giai đoạn 4:** T4.1 · T4.2 · T4.3 · (T4.4 tùy chọn)

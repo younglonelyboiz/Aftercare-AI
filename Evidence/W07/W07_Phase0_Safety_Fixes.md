@@ -1,7 +1,7 @@
 # W07 · Giai đoạn 0 — Vá lỗ hổng an toàn khẩn cấp (Phase 0 Safety Gaps)
 
 **Nhánh:** `fix/w07-phase0-safety-gaps` (tách từ `feat/w06-frontend-alerts`)
-**Tài liệu thiết kế gốc:** [Agent_Orchestration_Guardrails_Design.md](./Agent_Orchestration_Guardrails_Design.md) — Mục 1.2 (G1, G2, G7, G10) và Mục 6 (T0.1 → T0.4)
+**Tài liệu thiết kế gốc:** [Agent_Orchestration_Guardrails_Design.md](../../docs/Agent_Orchestration_Guardrails_Design.md) — Mục 1.2 (G1, G2, G7, G10) và Mục 6 (T0.1 → T0.4)
 **Kết quả kiểm thử:** `tests/test_phase0_safety.py` — **12/12 passed**; hồi quy `tests/test_safety` — **9/9 passed**
 
 
@@ -193,7 +193,7 @@ M  backend/app/rag/service.py                    # T0.1, T0.2, T0.4
 M  backend/app/schemas/chat.py                   # degraded, escalation_ticket_id
 A  backend/app/rag/safe_messages.py              # T0.2: SAFE_FALLBACK_MESSAGE
 A  tests/test_phase0_safety.py                   # 12 test
-A  docs/W07_Phase0_Safety_Fixes.md               # tài liệu này
+A  Evidence/W07/W07_Phase0_Safety_Fixes.md       # tài liệu này
 A  docs/Agent_Orchestration_Guardrails_Design.md # thiết kế tổng thể
 ```
 
