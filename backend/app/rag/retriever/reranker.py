@@ -42,10 +42,13 @@ class RerankEngine:
         if not candidate_ids:
             return []
 
-        if len(candidate_ids) == 1:
-            return [(candidate_ids[0], 1.0)]
-
         pairs = [[query, chunk_by_id[cid]["content"]] for cid in candidate_ids]
         scores = self.reranker.predict(pairs, batch_size=4)
-        reranked = sorted(zip(candidate_ids, scores), key=lambda x: x[1], reverse=True)
+        if hasattr(scores, "tolist"):
+            scores_list = scores.tolist()
+            if isinstance(scores_list, (int, float)):
+                scores_list = [float(scores_list)]
+        else:
+            scores_list = [float(s) for s in scores]
+        reranked = sorted(zip(candidate_ids, scores_list), key=lambda x: x[1], reverse=True)
         return [(cid, float(score)) for cid, score in reranked[:top_k]]

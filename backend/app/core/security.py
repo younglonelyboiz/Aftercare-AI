@@ -110,3 +110,16 @@ def start_session(db: Session, user: User, response, previous: str | None = None
     db.commit()
     response.set_cookie(COOKIE_NAME, raw, httponly=True, secure=settings.COOKIE_SECURE,
                         samesite="lax", max_age=settings.SESSION_HOURS * 3600, path="/")
+    try:
+        from backend.app.services.audit_service import current_actor_var
+
+        current_actor_var.set(
+            {
+                "actor_id": str(user.username or user.id),
+                "actor_role": str(user.role),
+                "session_id": token_hash(raw)[:16],
+                "patient_id": user.patient_id,
+            }
+        )
+    except Exception:
+        pass

@@ -45,6 +45,17 @@ export default function LiveAlertBanner({
   if (!currentTicket) return null;
 
   const isP0 = currentTicket.priority === 'P0_CRITICAL';
+  const isChatbotSource =
+    currentTicket.source_channel === 'CHATBOT' ||
+    currentTicket.clinical_data?.source === 'CHAT' ||
+    [
+      'CHAT_RED_FLAG_DETECTION',
+      'CHAT_YELLOW_ZONE_ALERT',
+      'MEDICATION_NONADHERENCE_INTENT',
+      'MENTAL_HEALTH_CONCERN',
+      'SYSTEM_DEGRADED_PATIENT_UNSERVED',
+    ].includes(currentTicket.alert_type);
+
   const formatTime = (secs) => {
     const mins = Math.floor(secs / 60);
     const s = secs % 60;
@@ -61,6 +72,22 @@ export default function LiveAlertBanner({
           <div className="banner-headline">
             <strong>{isP0 ? '🚨 BÁO ĐỘNG ĐỎ CẤP CỨU P0:' : '⚠️ CẢNH BÁO LEO THANG P1:'}</strong>{' '}
             <span>{currentTicket.patient_name || currentTicket.patient_id}</span>
+            {isChatbotSource && (
+              <span
+                className="source-chatbot-badge"
+                style={{
+                  marginLeft: 8,
+                  padding: '2px 8px',
+                  borderRadius: 999,
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  backgroundColor: '#ffffff',
+                  color: isP0 ? '#b91c1c' : '#92400e',
+                }}
+              >
+                Nguồn: Chatbot
+              </span>
+            )}
             <span className="latency-tag">
               Độ trễ: {currentTicket.escalation_latency_ms || '<50'}ms
             </span>

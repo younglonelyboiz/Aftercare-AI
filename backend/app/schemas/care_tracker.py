@@ -1,6 +1,27 @@
 from datetime import date, datetime
 from typing import List, Optional, Dict, Any
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
+
+# [W07-T5.1] Danh sách mã loại cảnh báo sinh từ luồng hội thoại Chatbot và nhãn hiển thị tiếng Việt
+CHAT_ALERT_TYPES = {
+    "CHAT_RED_FLAG_DETECTION",
+    "CHAT_YELLOW_ZONE_ALERT",
+    "MEDICATION_NONADHERENCE_INTENT",
+    "MENTAL_HEALTH_CONCERN",
+    "SYSTEM_DEGRADED_PATIENT_UNSERVED",
+}
+
+ALERT_TYPE_LABELS_VI: Dict[str, str] = {
+    "RED_ZONE_DETECTION": "Phát hiện Vùng Đỏ qua biểu mẫu theo dõi",
+    "YELLOW_ZONE_FOLLOWUP_OVERDUE": "Quá hạn 20 phút theo dõi Vùng Vàng",
+    "NON_RESPONSE_24H": "Mất liên lạc quá 24 giờ",
+    "NON_RESPONSE_12H": "Chưa cập nhật chỉ số sau 12 giờ",
+    "CHAT_RED_FLAG_DETECTION": "Phát hiện Cờ Đỏ cấp cứu qua Chatbot",
+    "CHAT_YELLOW_ZONE_ALERT": "Cảnh báo Vùng Vàng qua Chatbot",
+    "MEDICATION_NONADHERENCE_INTENT": "Ý định tự ý ngưng thuốc (Chatbot)",
+    "MENTAL_HEALTH_CONCERN": "Nguy cơ khủng hoảng tâm lý (Chatbot)",
+    "SYSTEM_DEGRADED_PATIENT_UNSERVED": "Hệ thống gián đoạn liên tiếp khi phục vụ bệnh nhân",
+}
 
 class CarePlanItemDTO(BaseModel):
     id: Optional[str] = None
@@ -97,11 +118,13 @@ class AlertTicketDTO(BaseModel):
     patient_id: str
     patient_name: Optional[str] = None
     checkin_id: Optional[str] = None
-    priority: str # P0_CRITICAL | P1_HIGH | P2_MEDIUM
-    alert_type: str # RED_ZONE_DETECTION | YELLOW_ZONE_FOLLOWUP_OVERDUE | NON_RESPONSE_24H | NON_RESPONSE_12H
+    priority: str  # P0_CRITICAL | P1_HIGH | P2_MEDIUM
+    alert_type: str
+    alert_type_label: Optional[str] = None
+    source_channel: Optional[str] = None
     trigger_reason: str
     clinical_data: Dict[str, Any] = Field(default_factory=dict)
-    status: str # OPEN | ACKNOWLEDGED | RESOLVED
+    status: str  # OPEN | ACKNOWLEDGED | RESOLVED
     escalation_latency_ms: int = 0
     created_at: str
     acknowledged_at: Optional[str] = None
@@ -109,6 +132,20 @@ class AlertTicketDTO(BaseModel):
     resolved_at: Optional[str] = None
     resolved_by: Optional[str] = None
     resolution_notes: Optional[str] = None
+
+    @model_validator(mode="after")
+    def _populate_channel_and_label(self) -> "AlertTicketDTO":
+        is_chat = (
+            self.alert_type in CHAT_ALERT_TYPES
+            or (self.clinical_data or {}).get("source") == "CHAT"
+        )
+        if not self.source_channel:
+            self.source_channel = "CHATBOT" if is_chat else "CHECKIN"
+        if not self.alert_type_label:
+            self.alert_type_label = ALERT_TYPE_LABELS_VI.get(
+                self.alert_type, self.alert_type
+            )
+        return self
 
     class Config:
         from_attributes = True

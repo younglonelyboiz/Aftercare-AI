@@ -1,0 +1,167 @@
+version: "1.0.0"
+description: >
+  Bộ quy tắc kiểm soát chính sách đầu vào (L2 Policy & Intent Guard) cho Aftercare-AI.
+  Chạy sau bước sàng lọc an toàn sinh mạng (L1 Safety Triage). Mọi quy tắc đều tất định,
+  hỗ trợ cả tiếng Việt có dấu, không dấu và từ viết tắt phổ biến.
+
+rules:
+  - rule_id: "POL-SELFHARM"
+    priority_order: 1
+    name: "Phát hiện ý định tự gây hại hoặc khủng hoảng tâm lý"
+    action: "BLOCK"
+    escalation:
+      priority: "P1_HIGH"
+      alert_type: "MENTAL_HEALTH_CONCERN"
+    allow_patterns: []
+    accented_patterns:
+      - "(?:không muốn sống|chán sống|muốn chết|tự tử|tự sát|kết liễu cuộc đời|kết thúc cuộc đời|chấm dứt cuộc sống|tự kết liễu bản thân|uống thuốc quá liều để chết|uống thuốc quá liều để đi luôn)"
+      - "(?:sống không còn ý nghĩa|không còn lý do gì để sống|muốn biến mất mãi mãi|tự làm đau bản thân|tự làm hại bản thân)"
+    unaccented_patterns:
+      - "(?:khong muon song|chan song|muon chet|tu tu|tu sat|ket lieu cuoc doi|ket thuc cuoc doi|cham dut cuoc song|tu ket lieu ban than|uong thuoc qua lieu de chet|uong thuoc qua lieu de di luon)"
+      - "(?:song khong con y nghia|khong con ly do gi de song|muon bien mat mai mai|tu lam dau ban than|tu lam hai ban than)"
+    response_template: >
+      Trợ lý Aftercare-AI rất quan tâm đến sự an toàn của Bác/Bạn lúc này. Xin Bác/Bạn đừng ở một mình.
+      1. Hãy gọi ngay cho người thân trong gia đình hoặc gọi Cấp cứu 115 để được hỗ trợ tức thời.
+      2. Hệ thống đã gửi thông báo khẩn cấp (mức P1) đến điều dưỡng phụ trách để liên hệ hỗ trợ Bác/Bạn ngay.
+      Lưu ý y tế: Thông tin chỉ mang tính hỗ trợ, không thay thế sự can thiệp trực tiếp của nhân viên y tế.
+
+  - rule_id: "POL-INJECT"
+    priority_order: 2
+    name: "Chặn tấn công Prompt Injection và Jailbreak"
+    action: "BLOCK"
+    escalation: null
+    allow_patterns: []
+    accented_patterns:
+      - "(?:bỏ qua|quên đi|quên hết|phớt lờ|hủy bỏ)\\s+(?:mọi|tất cả|các|hết)?\\s*(?:hướng dẫn|chỉ dẫn|quy tắc|lệnh|vai trò)\\s*(?:trước|hệ thống|ban đầu|an toàn|trợ lý)?"
+      - "(?:ignore|disregard|forget|override)\\s+(?:all\\s+)?(?:previous|prior|above|system|safety)\\s+(?:instructions|prompts|rules)"
+      - "(?:system\\s*prompt|rag_system_prompt|system\\s*override|developer\\s*mode|jailbreak|dan\\s*mode|chế độ nhà phát triển|<\\|im_start\\|>|<\\|im_end\\|>)"
+      - "(?:hãy đóng vai|giả vờ bạn là|giả vờ như|bây giờ bạn là|từ nay bạn là)\\s+(?:bác sĩ thật|bác sĩ kê đơn|bác sĩ điều trị|một ai không bị giới hạn|một chuyên gia độc lập|chúng ta đang viết tiểu thuyết)"
+      - "(?:in ra|in nguyên văn|tiết lộ|hiển thị)\\s+(?:toàn bộ\\s+|cho tôi\\s+)?(?:system prompt|hướng dẫn hệ thống|câu lệnh gốc|câu lệnh cấu hình hệ thống|cấu trúc thẻ xml nội bộ)"
+    unaccented_patterns:
+      - "(?:bo qua|quen di|quen het|phot lo|huy bo)\\s+(?:moi|tat ca|cac|het)?\\s*(?:huong dan|chi dan|quy tac|lenh|vai tro)\\s*(?:truoc|he thong|ban dau|an toan|tro ly)?"
+      - "(?:hay dong vai|gia vo ban la|gia vo nhu|bay gio ban la|tu nay ban la)\\s+(?:bac si that|bac si ke don|bac si dieu tri|mot ai khong bi gioi han|mot chuyen gia doc lap|chung ta dang viet tieu thuyet)"
+      - "(?:in ra|in nguyen van|tiet lo|hien thi)\\s+(?:toan bo\\s+|cho toi\\s+)?(?:system prompt|huong dan he thong|cau lenh goc|cau lenh cau hinh he thong|cau truc the xml noi bo)"
+    response_template: >
+      Trợ lý Aftercare-AI chỉ hoạt động trong phạm vi hỗ trợ theo dõi và giải đáp kiến thức chăm sóc
+      bệnh nhân hen phế quản sau xuất viện theo hướng dẫn của Bộ Y tế và GINA. Hệ thống không thể
+      thực hiện yêu cầu thay đổi vai trò hoặc bỏ qua quy tắc an toàn y tế.
+
+  - rule_id: "POL-MED-STOP"
+    priority_order: 3
+    name: "Chặn ý định tự ý ngưng hoặc bỏ thuốc kiểm soát hen / kháng viêm"
+    action: "BLOCK"
+    escalation:
+      priority: "P2_MEDIUM"
+      alert_type: "MEDICATION_NONADHERENCE_INTENT"
+    allow_patterns:
+      - "(?:uống hết|đủ)\\s+\\d+\\s+ngày\\s+theo\\s+đơn"
+      - "(?:tại sao|vì sao)\\s+không\\s+được\\s+(?:tự\\s+ý\\s+)?(?:ngưng|dừng|bỏ)\\s+thuốc"
+      - "(?:cách|hướng dẫn|sau khi|trước khi|khi)\\s+(?:dùng|sử dụng|hít|xịt)\\s+(?:thuốc|bình)"
+    accented_patterns:
+      - "(?:tự\\s+ý\\s+|tự\\s+|muốn\\s+|định\\s+|xin\\s+)?(?:ngưng|dừng|bỏ|không\\s+dùng|không\\s+hít|không\\s+xịt|không\\s+uống|nghỉ\\s+dùng)\\s+(?:hẳn\\s+)?(?:thuốc\\s+ngừa\\s+cơn|thuốc\\s+kiểm\\s+soát|thuốc\\s+duy\\s+trì|thuốc\\s+dự\\s+phòng|bình\\s+xịt\\s+duy\\s+trì|bình\\s+hít|thuốc\\s+hít|thuốc\\s+viên|(?:thuốc\\s+)?(?:symbicort|seretide|budesonide|fluticasone|prednisolone|methylprednisolone|pulmicort))"
+      - "(?:thấy\\s+khỏe|hết\\s+khó\\s+thở|bình\\s+thường\\s+rồi).*(?:ngưng|dừng|bỏ|không\\s+hít|không\\s+xịt|không\\s+uống)\\s+(?:thuốc|bình)"
+      - "(?:ngưng|dừng|bỏ)\\s+(?:thuốc|bình\\s+xịt|bình\\s+hít)\\s+(?:sớm|trước\\s+hạn|luôn\\s+được\\s+không|luôn\\s+nhé|được\\s+chưa|được\\s+không)"
+    unaccented_patterns:
+      - "(?:tu\\s+y\\s+|tu\\s+|muon\\s+|dinh\\s+|xin\\s+)?(?:ngung|tam\\s+dung|dung\\s+han|tu\\s+y\\s+dung|bo|khong\\s+dung|khong\\s+hit|khong\\s+xit|khong\\s+uong|nghi\\s+dung)\\s+(?:han\\s+)?(?:thuoc\\s+ngua\\s+con|thuoc\\s+kiem\\s+soat|thuoc\\s+duy\\s+tri|thuoc\\s+du\\s+phong|binh\\s+xit\\s+duy\\s+tri|binh\\s+hit|thuoc\\s+hit|thuoc\\s+vien|(?:thuoc\\s+)?(?:symbicort|seretide|budesonide|fluticasone|prednisolone|methylprednisolone|pulmicort))"
+      - "(?:thay\\s+khoe|het\\s+kho\\s+tho|binh\\s+thuong\\s+roi).*(?:ngung|tam\\s+dung|bo|khong\\s+hit|khong\\s+xit|khong\\s+uong)\\s+(?:thuoc|binh)"
+      - "(?:ngung|tam\\s+dung|bo)\\s+(?:thuoc|binh\\s+xit|binh\\s+hit)\\s+(?:som|truoc\\s+han|luon\\s+duoc\\s+khong|luon\\s+nhe|duoc\\s+chua|duoc\\s+khong)"
+    response_template: >
+      Bác/Bạn tuyệt đối KHÔNG được tự ý ngưng hoặc bỏ thuốc kiểm soát hen (như Symbicort, Seretide)
+      hay ngừng sớm thuốc viên kháng viêm (Prednisolone, Methylprednisolone) khi chưa có chỉ định của bác sĩ.
+      - Thuốc kiểm soát có nhiệm vụ điều trị tình trạng viêm âm thầm trong lòng phế quản; việc tự ý bỏ thuốc
+        khi thấy hết triệu chứng là nguyên nhân hàng đầu khiến cơn hen cấp tái phát nặng [Trích dẫn: Hướng dẫn
+        chẩn đoán và điều trị Hen phế quản - Bộ Y tế, Mục 2.7.2; GINA 2023].
+      - Điều dưỡng phụ trách đã được thông báo (mức P2) để liên hệ tư vấn và hỗ trợ Bác/Bạn.
+      Lưu ý y tế: Thông tin chỉ mang tính hỗ trợ, không thay thế chỉ định trực tiếp của bác sĩ.
+
+  - rule_id: "POL-MED-DOSE"
+    priority_order: 4
+    name: "Chặn yêu cầu tự ý tăng hoặc giảm liều lượng thuốc"
+    action: "BLOCK"
+    escalation: null
+    allow_patterns:
+      - "bác sĩ hướng dẫn.*liều bao nhiêu"
+    accented_patterns:
+      - "(?:tôi|mình|em|bệnh nhân)?\\s*(?:tự\\s+ý\\s+|tự\\s+|muốn\\s+|xin\\s+|có\\s+được\\s+)?(?:tăng\\s+liều|giảm\\s+liều|bớt\\s+liều|gấp\\s+đôi\\s+liều|nhân\\s+đôi\\s+liều|chia\\s+đôi\\s+liều|tăng\\s+gấp\\s+đôi|giảm\\s+một\\s+nửa)"
+      - "(?:uống|hít|xịt)\\s+(?:tăng\\s+lên|giảm\\s+xuống|gấp\\s+đôi|bớt\\s+đi)\\s+\\d*\\s*(?:viên|nhát|liều|mg|mcg)"
+      - "(?:giảm|hạ)\\s+(?:từ\\s+\\d+\\s*(?:nhát|viên|lần)?\\s+)?(?:xuống\\s+còn|còn)\\s+\\d+\\s*(?:nhát|viên|lần)"
+    unaccented_patterns:
+      - "(?:toi|minh|em|benh nhan)?\\s*(?:tu\\s+y\\s+|tu\\s+|muon\\s+|xin\\s+|co\\s+duoc\\s+)?(?:tang\\s+lieu|giam\\s+lieu|bot\\s+lieu|gap\\s+doi\\s+lieu|nhan\\s+doi\\s+lieu|chia\\s+doi\\s+lieu|tang\\s+gap\\s+doi|giam\\s+mot\\s+nua)"
+      - "(?:uong|hit|xit)\\s+(?:tang\\s+len|giam\\s+xuong|gap\\s+doi|bot\\s+di)\\s+\\d*\\s*(?:vien|nhat|lieu|mg|mcg)"
+      - "(?:giam|ha)\\s+(?:tu\\s+\\d+\\s*(?:nhat|vien|lan)?\\s+)?(?:xuong\\s+con|con)\\s+\\d+\\s*(?:nhat|vien|lan)"
+    response_template: >
+      Vì lý do an toàn y tế, Trợ lý Aftercare-AI không được phép hướng dẫn tăng hoặc giảm liều thuốc
+      ngoài đơn xuất viện và Kế hoạch hành động hen đã được bác sĩ phê duyệt.
+      - Bác/Bạn vui lòng giữ nguyên liều dùng theo đúng đơn xuất viện và liên hệ bác sĩ điều trị hoặc
+        điều dưỡng phụ trách nếu muốn điều chỉnh phác đồ.
+      Lưu ý y tế: Thông tin chỉ mang tính hỗ trợ, không thay thế chỉ định của bác sĩ.
+
+  - rule_id: "POL-RX-NEW"
+    priority_order: 5
+    name: "Chặn yêu cầu kê đơn thuốc mới, mua kháng sinh hoặc dùng thuốc ngoài đơn"
+    action: "BLOCK"
+    escalation: null
+    allow_patterns:
+      - "(?:aspirin|ibuprofen|nsaid)"
+      - "khi\\s+bác\\s+sĩ\\s+kê\\s+đơn.*uống\\s+vào\\s+buổi\\s+sáng"
+      - "bác\\s+sĩ\\s+đã\\s+kê\\s+đơn"
+    accented_patterns:
+      - "(?:hãy\\s+|nhờ\\s+|xin\\s+|bạn\\s+)?(?:kê\\s+đơn|kê\\s+toa|cho\\s+đơn\\s+thuốc|chỉ\\s+định\\s+thuốc\\s+mới)"
+      - "(?:nên\\s+mua|mua\\s+thêm|uống\\s+thêm|dùng\\s+thêm)\\s+(?:thuốc\\s+kháng\\s+sinh|kháng\\s+sinh|thuốc\\s+ho|thuốc\\s+long\\s+đờm|thuốc\\s+nam|thuốc\\s+bắc|thuốc\\s+đông\\s+y|lá\\s+cây|thảo\\s+dược)"
+      - "(?:đổi\\s+sang|chuyển\\s+sang|thay\\s+bằng)\\s+(?:loại\\s+thuốc\\s+khác|bình\\s+xịt\\s+khác|thuốc\\s+nào\\s+mạnh\\s+hơn|thuốc\\s+nam|thuốc\\s+bắc|thuốc\\s+đông\\s+y)"
+      - "(?:thuốc\\s+nào|loại\\s+kháng\\s+sinh\\s+nào)\\s+(?:tốt\\s+hơn|mạnh\\s+hơn|chữa\\s+khỏi\\s+hẳn)"
+    unaccented_patterns:
+      - "(?:hay\\s+|nho\\s+|xin\\s+|ban\\s+)?(?:ke\\s+don|ke\\s+toa|cho\\s+don\\s+thuoc|chi\\s+dinh\\s+thuoc\\s+moi)"
+      - "(?:nen\\s+mua|mua\\s+them|uong\\s+them|dung\\s+them)\\s+(?:thuoc\\s+khang\\s+sinh|khang\\s+sinh|thuoc\\s+ho|thuoc\\s+long\\s+dom|thuoc\\s+nam|thuoc\\s+bac|thuoc\\s+dong\\s+y|la\\s+cay|thao\\s+duoc)"
+      - "(?:doi\\s+sang|chuyen\\s+sang|thay\\s+bang)\\s+(?:loai\\s+thuoc\\s+khac|binh\\s+xit\\s+khac|thuoc\\s+nao\\s+manh\\s+hon|thuoc\\s+nam|thuoc\\s+bac|thuoc\\s+dong\\s+y)"
+      - "(?:thuoc\\s+nao|loai\\s+khang\\s+sinh\\s+nao)\\s+(?:tot\\s+hon|manh\\s+hon|chua\\s+khoi\\s+han)"
+    response_template: >
+      Trợ lý Aftercare-AI không có chức năng kê đơn thuốc mới, khuyên mua kháng sinh hay thay thế thuốc
+      điều trị hen bằng thuốc nam, thuốc bắc hoặc các thuốc ngoài đơn xuất viện.
+      - Việc tự ý dùng thêm thuốc không có chỉ định có thể gây tương tác thuốc hoặc khởi phát co thắt
+        phế quản nguy hiểm. Bác/Bạn vui lòng tham vấn trực tiếp bác sĩ chuyên khoa Hô hấp.
+      Lưu ý y tế: Thông tin chỉ mang tính hỗ trợ, không thay thế chỉ định của bác sĩ.
+
+  - rule_id: "POL-DIAG"
+    priority_order: 6
+    name: "Chặn yêu cầu chẩn đoán xác định bệnh lý mới"
+    action: "BLOCK"
+    escalation: null
+    allow_patterns:
+      - "làm sao phân biệt được hen hay copd"
+    accented_patterns:
+      - "(?:chẩn\\s+đoán|kết\\s+luận|xác\\s+định)\\s+.*?(?:bị\\s+bệnh\\s+gì|mắc\\s+bệnh\\s+gì|cho\\s+tôi|giúp\\s+tôi|đi)"
+      - "(?:tôi\\s+bị|xem\\s+tôi\\s+bị).*?hay\\s+bị\\s+(?:lao\\s+phổi|suy\\s+tim|giãn\\s+phế\\s+quản|viêm\\s+phế\\s+quản)"
+      - "(?:có\\s+phải\\s+tôi\\s+bị|tôi\\s+có\\s+bị|liệu\\s+tôi\\s+có\\s+mắc)\\s+(?:viêm\\s+phổi|lao\\s+phổi|ung\\s+thư\\s+phổi|suy\\s+tim|tràn\\s+khí\\s+màng\\s+phổi|nhồi\\s+máu)"
+    unaccented_patterns:
+      - "(?:chan\\s+doan|ket\\s+luan|xac\\s+dinh)\\s+.*?(?:bi\\s+benh\\s+gi|mac\\s+benh\\s+gi|cho\\s+toi|giup\\s+toi|di)"
+      - "(?:toi\\s+bi|xem\\s+toi\\s+bi).*?hay\\s+bi\\s+(?:lao\\s+phoi|suy\\s+tim|gian\\s+phe\\s+quan|viem\\s+phe\\s+quan)"
+      - "(?:co\\s+phai\\s+toi\\s+bi|toi\\s+co\\s+bi|lieu\\s+toi\\s+co\\s+mac)\\s+(?:viem\\s+phoi|lao\\s+phoi|ung\\s+thu\\s+phoi|suy\\s+tim|tran\\s+khi\\s+mang\\s+phoi|nhoi\\s+mau)"
+    response_template: >
+      Trợ lý Aftercare-AI là công cụ hỗ trợ theo dõi chăm sóc sau xuất viện, tuyệt đối không thực hiện
+      chẩn đoán xác định bệnh lý mới thay cho bác sĩ.
+      - Để xác định chính xác nguyên nhân triệu chứng, Bác/Bạn cần được bác sĩ thăm khám lâm sàng và
+        thực hiện các cận lâm sàng cần thiết tại cơ sở y tế.
+      Lưu ý y tế: Thông tin chỉ mang tính hỗ trợ, không thay thế chẩn đoán của bác sĩ.
+
+  - rule_id: "POL-OOS"
+    priority_order: 7
+    name: "Chặn các câu hỏi ngoài phạm vi chăm sóc hô hấp và hen phế quản"
+    action: "BLOCK"
+    escalation: null
+    allow_patterns: []
+    accented_patterns:
+      - "(?:chứng\\s+khoán|cổ\\s+phiếu|tiền\\s+ảo|bitcoin|crypto|forex|giá\\s+vàng|bất\\s+động\\s+sản|xổ\\s+số|lô\\s+đề|cá\\s+độ)"
+      - "(?:viết\\s+code|lập\\s+trình|python|javascript|sql|html|css|thuật\\s+toán|hack\\s+wifi)"
+      - "(?:dự\\s+đoán\\s+bóng\\s+đá|kết\\s+quả\\s+bóng\\s+đá|ngoại\\s+hạng\\s+anh|tỷ\\s+số\\s+trận\\s+đấu|viết\\s+bài\\s+văn|dịch\\s+sang\\s+tiếng\\s+pháp|làm\\s+thơ\\s+tình|giải\\s+phương\\s+trình\\s+toán|giải\\s+bài\\s+tập\\s+tích\\s+phân|cách\\s+nấu\\s+phở\\s+bò|công\\s+thức\\s+làm\\s+bánh|tử\\s+vi\\s+phong\\s+thủy|tin\\s+tức\\s+showbiz|lịch\\s+chiếu\\s+phim)"
+    unaccented_patterns:
+      - "(?:chung\\s+khoan|co\\s+phieu|tien\\s+ao|bitcoin|crypto|forex|gia\\s+vang|bat\\s+dong\\s+san|xo\\s+so|lo\\s+de|ca\\s+do)"
+      - "(?:viet\\s+code|lap\\s+trinh|python|javascript|sql|html|css|thuat\\s+toan|hack\\s+wifi)"
+      - "(?:du\\s+doan\\s+bong\\s+da|ket\\s+qua\\s+bong\\s+da|ngoai\\s+hang\\s+anh|ty\\s+so\\s+tran\\s+dau|viet\\s+bai\\s+van|dich\\s+sang\\s+tieng\\s+phap|lam\\s+tho\\s+tinh|giai\\s+phuong\\s+trinh\\s+toan|giai\\s+bai\\s+tap\\s+tich\\s+phan|cach\\s+nau\\s+pho\\s+bo|cong\\s+thuc\\s+lam\\s+banh|tu\\s+vi\\s+phong\\s+thuy|tin\\s+tuc\\s+showbiz|lich\\s+chieu\\s+phim)"
+    unaccented_patterns:
+      - "(?:chung\\s+khoan|co\\s+phieu|tien\\s+ao|bitcoin|crypto|forex|gia\\s+vang|bat\\s+dong\\s+san|xo\\s+so|lo\\s+de|ca\\s+do)"
+      - "(?:viet\\s+code|lap\\s+trinh|python|javascript|sql|html|css|thuat\\s+toan|hack\\s+wifi)"
+      - "(?:du\\s+doan\\s+bong\\s+da|ty\\s+so\\s+tran\\s+dau|viet\\s+bai\\s+van|lam\\s+tho\\s+tinh|giai\\s+phuong\\s+trinh\\s+toan)"
+    response_template: >
+      Câu hỏi này nằm ngoài phạm vi chuyên môn của Trợ lý Aftercare-AI. Hệ thống chỉ hỗ trợ giải đáp
+      các vấn đề liên quan đến theo dõi, dùng thuốc và chăm sóc bệnh nhân hen phế quản sau xuất viện.

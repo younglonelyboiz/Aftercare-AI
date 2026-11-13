@@ -1,0 +1,422 @@
+{
+  "in_corpus_count": 20,
+  "out_of_corpus_count": 20,
+  "selected_tau": 0.05,
+  "configured_default_tau": 0.35,
+  "best_metrics": {
+    "tau": 0.05,
+    "tp": 18,
+    "fn": 2,
+    "fp": 2,
+    "tn": 18,
+    "precision": 0.9,
+    "recall": 0.9,
+    "f1": 0.9,
+    "false_reject_rate": 0.1,
+    "false_accept_rate": 0.1
+  },
+  "threshold_curve": [
+    {
+      "tau": 0.05,
+      "tp": 18,
+      "fn": 2,
+      "fp": 2,
+      "tn": 18,
+      "precision": 0.9,
+      "recall": 0.9,
+      "f1": 0.9,
+      "false_reject_rate": 0.1,
+      "false_accept_rate": 0.1
+    },
+    {
+      "tau": 0.1,
+      "tp": 16,
+      "fn": 4,
+      "fp": 1,
+      "tn": 19,
+      "precision": 0.9412,
+      "recall": 0.8,
+      "f1": 0.8649,
+      "false_reject_rate": 0.2,
+      "false_accept_rate": 0.05
+    },
+    {
+      "tau": 0.15,
+      "tp": 16,
+      "fn": 4,
+      "fp": 1,
+      "tn": 19,
+      "precision": 0.9412,
+      "recall": 0.8,
+      "f1": 0.8649,
+      "false_reject_rate": 0.2,
+      "false_accept_rate": 0.05
+    },
+    {
+      "tau": 0.2,
+      "tp": 15,
+      "fn": 5,
+      "fp": 1,
+      "tn": 19,
+      "precision": 0.9375,
+      "recall": 0.75,
+      "f1": 0.8333,
+      "false_reject_rate": 0.25,
+      "false_accept_rate": 0.05
+    },
+    {
+      "tau": 0.25,
+      "tp": 15,
+      "fn": 5,
+      "fp": 0,
+      "tn": 20,
+      "precision": 1.0,
+      "recall": 0.75,
+      "f1": 0.8571,
+      "false_reject_rate": 0.25,
+      "false_accept_rate": 0.0
+    },
+    {
+      "tau": 0.3,
+      "tp": 15,
+      "fn": 5,
+      "fp": 0,
+      "tn": 20,
+      "precision": 1.0,
+      "recall": 0.75,
+      "f1": 0.8571,
+      "false_reject_rate": 0.25,
+      "false_accept_rate": 0.0
+    },
+    {
+      "tau": 0.35,
+      "tp": 15,
+      "fn": 5,
+      "fp": 0,
+      "tn": 20,
+      "precision": 1.0,
+      "recall": 0.75,
+      "f1": 0.8571,
+      "false_reject_rate": 0.25,
+      "false_accept_rate": 0.0
+    },
+    {
+      "tau": 0.4,
+      "tp": 15,
+      "fn": 5,
+      "fp": 0,
+      "tn": 20,
+      "precision": 1.0,
+      "recall": 0.75,
+      "f1": 0.8571,
+      "false_reject_rate": 0.25,
+      "false_accept_rate": 0.0
+    },
+    {
+      "tau": 0.45,
+      "tp": 15,
+      "fn": 5,
+      "fp": 0,
+      "tn": 20,
+      "precision": 1.0,
+      "recall": 0.75,
+      "f1": 0.8571,
+      "false_reject_rate": 0.25,
+      "false_accept_rate": 0.0
+    },
+    {
+      "tau": 0.5,
+      "tp": 14,
+      "fn": 6,
+      "fp": 0,
+      "tn": 20,
+      "precision": 1.0,
+      "recall": 0.7,
+      "f1": 0.8235,
+      "false_reject_rate": 0.3,
+      "false_accept_rate": 0.0
+    },
+    {
+      "tau": 0.6,
+      "tp": 13,
+      "fn": 7,
+      "fp": 0,
+      "tn": 20,
+      "precision": 1.0,
+      "recall": 0.65,
+      "f1": 0.7879,
+      "false_reject_rate": 0.35,
+      "false_accept_rate": 0.0
+    },
+    {
+      "tau": 0.7,
+      "tp": 12,
+      "fn": 8,
+      "fp": 0,
+      "tn": 20,
+      "precision": 1.0,
+      "recall": 0.6,
+      "f1": 0.75,
+      "false_reject_rate": 0.4,
+      "false_accept_rate": 0.0
+    },
+    {
+      "tau": 0.8,
+      "tp": 12,
+      "fn": 8,
+      "fp": 0,
+      "tn": 20,
+      "precision": 1.0,
+      "recall": 0.6,
+      "f1": 0.75,
+      "false_reject_rate": 0.4,
+      "false_accept_rate": 0.0
+    }
+  ],
+  "samples": {
+    "in_corpus": [
+      {
+        "query": "Bác sĩ ơi, người nhà tôi đang lên cơn hen dữ dội, phải ngồi chồm ra trước để thở, nói không thành câu chỉ từng từ một thì đã nguy kịch phải gọi cấp cứu chưa?",
+        "label": 1,
+        "max_score": 0.899139,
+        "top_chunk_id": "CHK-BYT_1851-P45-01"
+      },
+      {
+        "query": "Bệnh nhân hen đang thở rít mà tự nhiên lơ mơ ngủ gà, lồng ngực im phăng phắc không nghe thấy tiếng thở nữa thì là bệnh đỡ hay nặng hơn?",
+        "label": 1,
+        "max_score": 0.936708,
+        "top_chunk_id": "CHK-BYT_1851-P45-01"
+      },
+      {
+        "query": "Nửa đêm đột ngột lên cơn hen khó thở khò khè tại nhà thì các bước xịt thuốc xử trí ban đầu như thế nào?",
+        "label": 1,
+        "max_score": 0.816056,
+        "top_chunk_id": "CHK-GINA_2023-P07-02"
+      },
+      {
+        "query": "Tôi tự thổi máy đo lưu lượng đỉnh PEF tại nhà thấy kim tụt xuống dưới 60% chỉ số tốt nhất của tôi thì phải xử trí sao?",
+        "label": 1,
+        "max_score": 0.167313,
+        "top_chunk_id": "CHK-BYT_1851-P41-01"
+      },
+      {
+        "query": "Bác sĩ hướng dẫn khi cơn hen trở nặng thì uống viên Prednisolone liều bao nhiêu và uống trong bao nhiêu ngày?",
+        "label": 1,
+        "max_score": 0.964756,
+        "top_chunk_id": "CHK-GINA_2023-P42-01"
+      },
+      {
+        "query": "Tôi dùng bình xịt thuốc hen duy trì mấy ngày nay thấy cổ họng cứ rát buốt, khàn đặc tiếng thì làm sao để phòng tránh?",
+        "label": 1,
+        "max_score": 0.875524,
+        "top_chunk_id": "CHK-GINA_2023-P45-02"
+      },
+      {
+        "query": "Xịt thuốc cắt cơn Salbutamol xong tôi thấy tay bị run lẩy bẩy với tim đập nhanh hồi hộp thì có nguy hiểm không bác sĩ?",
+        "label": 1,
+        "max_score": 0.031157,
+        "top_chunk_id": "CHK-GINA_2023-P48-02"
+      },
+      {
+        "query": "Tại sao bác sĩ lại chỉ định cho tôi phải hít thuốc qua một ống nhựa buồng đệm spacer thay vì ngậm xịt trực tiếp?",
+        "label": 1,
+        "max_score": 0.008027,
+        "top_chunk_id": "CHK-BYT_1851-P24-02"
+      },
+      {
+        "query": "Mấy tuần nay tôi thấy người hoàn toàn bình thường, hết ho khó thở rồi thì tôi có được tự dừng bình xịt duy trì hàng ngày không?",
+        "label": 1,
+        "max_score": 0.097004,
+        "top_chunk_id": "CHK-BYT_1851-P21-03"
+      },
+      {
+        "query": "Bị hen phế quản thì có đi tập gym hay chạy bộ được không, trước khi tập có cần chuẩn bị xịt thuốc gì phòng trước không?",
+        "label": 1,
+        "max_score": 0.646315,
+        "top_chunk_id": "CHK-BYT_1851-P23-02"
+      },
+      {
+        "query": "Làm thế nào để tôi tự kiểm tra xem trong 4 tuần vừa rồi bệnh hen của mình được kiểm soát tốt hay chưa?",
+        "label": 1,
+        "max_score": 0.935198,
+        "top_chunk_id": "CHK-GINA_2023-P07-01"
+      },
+      {
+        "query": "Tôi đang mang thai 3 tháng mà bị hen phế quản thì dùng bình xịt thuốc hen có làm ảnh hưởng xấu đến em bé không?",
+        "label": 1,
+        "max_score": 0.587763,
+        "top_chunk_id": "CHK-GINA_2023-P10-02"
+      },
+      {
+        "query": "Người bị bệnh hen phế quản khi bị đau nhức xương khớp hay đau răng có được uống Aspirin hoặc Ibuprofen không?",
+        "label": 1,
+        "max_score": 0.855211,
+        "top_chunk_id": "CHK-BYT_1851-P27-01"
+      },
+      {
+        "query": "Tôi bị hen mà hay bị ợ chua nóng rát ở ngực, liệu bệnh trào ngược dạ dày có làm hen của tôi nặng thêm không?",
+        "label": 1,
+        "max_score": 0.968741,
+        "top_chunk_id": "CHK-BYT_1851-P26-01"
+      },
+      {
+        "query": "Người lớn mắc bệnh hen phế quản mạn tính có cần đi tiêm phòng vắc xin cúm hàng năm không?",
+        "label": 1,
+        "max_score": 0.067895,
+        "top_chunk_id": "CHK-BYT_1851-P09-01"
+      },
+      {
+        "query": "Sau khi vừa ra viện điều trị đợt cấp hen phế quản, bao lâu thì tôi cần quay lại bệnh viện khám lại?",
+        "label": 1,
+        "max_score": 0.995888,
+        "top_chunk_id": "CHK-GINA_2023-P32-03"
+      },
+      {
+        "query": "Mỗi lần đến lịch tái khám định kỳ hen phế quản thì tôi có cần mang theo các bình thuốc xịt đang dùng đi không?",
+        "label": 1,
+        "max_score": 0.484505,
+        "top_chunk_id": "CHK-BYT_1851-P24-02"
+      },
+      {
+        "query": "Tôi bị hen mà kèm theo hắt hơi sổ mũi dị ứng quanh năm thì có cần chữa viêm mũi không?",
+        "label": 1,
+        "max_score": 0.991667,
+        "top_chunk_id": "CHK-BYT_1851-P26-01"
+      },
+      {
+        "query": "Bố tôi lớn tuổi có tiền sử hút thuốc lá nhiều năm, vừa ho đờm vừa khó thở thì làm sao phân biệt được hen hay COPD?",
+        "label": 1,
+        "max_score": 0.991403,
+        "top_chunk_id": "CHK-GINA_2023-P11-01"
+      },
+      {
+        "query": "Người nhà hút thuốc lá trong nhà có làm tăng nguy cơ bùng phát cơn hen không và bệnh nhân cần tránh gì?",
+        "label": 1,
+        "max_score": 0.997235,
+        "top_chunk_id": "CHK-BYT_1851-P23-02"
+      }
+    ],
+    "out_of_corpus": [
+      {
+        "query": "Lịch tiêm vắc xin viêm gan B cho trẻ sơ sinh trong 24 giờ đầu sau sinh như thế nào?",
+        "label": 0,
+        "max_score": 0.01502,
+        "top_chunk_id": "CHK-GINA_2023-P14-01"
+      },
+      {
+        "query": "Chế độ ăn giảm purin cho bệnh nhân bị bệnh gút cấp tính gồm những thực phẩm nào?",
+        "label": 0,
+        "max_score": 0.001876,
+        "top_chunk_id": "CHK-BYT_1851-P23-02"
+      },
+      {
+        "query": "Cách thay băng vết mổ nội soi tái tạo dây chằng chéo trước khớp gối tại nhà?",
+        "label": 0,
+        "max_score": 7.7e-05,
+        "top_chunk_id": "CHK-GINA_2023-P35-02"
+      },
+      {
+        "query": "Chỉ số HbA1c mục tiêu ở người bệnh đái tháo đường típ 2 cao tuổi là bao nhiêu?",
+        "label": 0,
+        "max_score": 0.002489,
+        "top_chunk_id": "CHK-GINA_2023-P47-02"
+      },
+      {
+        "query": "Hướng dẫn tập vật lý trị liệu phục hồi chức năng sau tai biến mạch máu não?",
+        "label": 0,
+        "max_score": 0.006713,
+        "top_chunk_id": "CHK-GINA_2023-P18-03"
+      },
+      {
+        "query": "Phác đồ bù dịch Oresol theo cân nặng cho trẻ tiêu chảy cấp mất nước mức độ vừa?",
+        "label": 0,
+        "max_score": 0.000675,
+        "top_chunk_id": "CHK-BYT_1851-P36-01"
+      },
+      {
+        "query": "Bệnh nhân suy thận mạn giai đoạn 4 lọc máu chu kỳ cần hạn chế kali như thế nào?",
+        "label": 0,
+        "max_score": 0.013323,
+        "top_chunk_id": "CHK-GINA_2023-P14-01"
+      },
+      {
+        "query": "Cách theo dõi vết thương sau phẫu thuật cắt túi mật nội soi tại nhà?",
+        "label": 0,
+        "max_score": 0.001052,
+        "top_chunk_id": "CHK-BYT_1851-P44-01"
+      },
+      {
+        "query": "Triệu chứng điển hình của cơn đau quặn thận do sỏi niệu quản là gì?",
+        "label": 0,
+        "max_score": 0.035808,
+        "top_chunk_id": "CHK-GINA_2023-P09-01"
+      },
+      {
+        "query": "Cách tự khám vú định kỳ hàng tháng để tầm soát sớm ung thư vú?",
+        "label": 0,
+        "max_score": 0.091006,
+        "top_chunk_id": "CHK-BYT_1851-P25-03"
+      },
+      {
+        "query": "Hướng dẫn chăm sóc răng miệng sau khi nhổ răng khôn hàm dưới lệch ngầm?",
+        "label": 0,
+        "max_score": 0.001587,
+        "top_chunk_id": "CHK-BYT_1851-P05-01"
+      },
+      {
+        "query": "Chế độ dinh dưỡng hạn chế muối cho người bệnh suy tim phân suất tống máu giảm?",
+        "label": 0,
+        "max_score": 0.002152,
+        "top_chunk_id": "CHK-BYT_1851-P12-01"
+      },
+      {
+        "query": "Cách xử trí hạ đường huyết nhẹ tại nhà bằng nguyên tắc 15-15 cho người tiểu đường?",
+        "label": 0,
+        "max_score": 0.04971,
+        "top_chunk_id": "CHK-GINA_2023-P47-02"
+      },
+      {
+        "query": "Lịch khám thai định kỳ trong 3 tháng cuối thai kỳ gồm những xét nghiệm nào?",
+        "label": 0,
+        "max_score": 0.00064,
+        "top_chunk_id": "CHK-BYT_1851-P15-01"
+      },
+      {
+        "query": "Cách vệ sinh mắt sau phẫu thuật thay thủy tinh thể nhân tạo Phaco?",
+        "label": 0,
+        "max_score": 0.003037,
+        "top_chunk_id": "CHK-GINA_2023-P39-01"
+      },
+      {
+        "query": "Hướng dẫn tập xoay khớp vai điều trị viêm quanh khớp vai thể đông cứng?",
+        "label": 0,
+        "max_score": 0.002689,
+        "top_chunk_id": "CHK-GINA_2023-P34-01"
+      },
+      {
+        "query": "Người bệnh suy giáp sau cắt tuyến giáp cần uống Levothyroxine vào thời điểm nào?",
+        "label": 0,
+        "max_score": 0.013356,
+        "top_chunk_id": "CHK-GINA_2023-P41-03"
+      },
+      {
+        "query": "Dấu hiệu nhận biết sớm biến chứng bàn chân đái tháo đường và cách chọn giày dép?",
+        "label": 0,
+        "max_score": 0.000528,
+        "top_chunk_id": "CHK-GINA_2023-P47-02"
+      },
+      {
+        "query": "Chế độ ăn nhiều chất xơ và cách ngâm hậu môn bằng nước ấm cho người bệnh trĩ?",
+        "label": 0,
+        "max_score": 0.00096,
+        "top_chunk_id": "CHK-BYT_1851-P33-02"
+      },
+      {
+        "query": "Cách chăm sóc da cho trẻ nhỏ bị viêm da cơ địa dị ứng mùa hanh khô?",
+        "label": 0,
+        "max_score": 0.200768,
+        "top_chunk_id": "CHK-GINA_2023-P29-02"
+      }
+    ]
+  }
+}

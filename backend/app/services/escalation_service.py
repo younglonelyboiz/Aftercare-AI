@@ -9,6 +9,7 @@ from backend.app.models.asthma import AlertTicket
 from backend.app.repositories.asthma_repositories import AlertTicketRepository
 from backend.app.schemas.care_tracker import AlertTicketDTO
 from backend.app.core.websocket_manager import nurse_ws_manager
+from backend.app.services.audit_service import default_audit_service
 
 logger = logging.getLogger("EscalationService")
 
@@ -69,6 +70,24 @@ class EscalationService:
 
         dto = self._map_to_dto(ticket_entity, patient_name)
 
+        default_audit_service.record_event(
+            category="ESCALATION",
+            action_code=(
+                "ESCALATION.TICKET_UPGRADED" if existing else "ESCALATION.TICKET_CREATED"
+            ),
+            patient_id=patient_id,
+            resource_type="AlertTicket",
+            resource_id=ticket_entity.id,
+            severity="CRITICAL" if priority == "P0_CRITICAL" else "HIGH",
+            after_state={
+                "ticket_id": ticket_entity.id,
+                "priority": priority,
+                "alert_type": alert_type,
+                "status": ticket_entity.status,
+                "trigger_reason": trigger_reason,
+            },
+        )
+
         # 4. Phát tín hiệu thời gian thực qua WebSocket tới Nurse Station
         await nurse_ws_manager.broadcast_json({
             "event": "NEW_ALERT_TICKET",
@@ -90,6 +109,18 @@ class EscalationService:
         if not ticket:
             return None
         dto = self._map_to_dto(ticket)
+        default_audit_service.record_event(
+            category="ESCALATION",
+            action_code="ESCALATION.TICKET_ACKNOWLEDGED",
+            actor_id=acknowledged_by,
+            actor_role="nurse",
+            patient_id=ticket.patient_id,
+            resource_type="AlertTicket",
+            resource_id=ticket.id,
+            severity="HIGH",
+            before_state={"status": "OPEN"},
+            after_state={"status": ticket.status, "acknowledged_by": acknowledged_by},
+        )
         await nurse_ws_manager.broadcast_json({
             "event": "TICKET_ACKNOWLEDGED",
             "ticket": dto.model_dump()
@@ -101,6 +132,22 @@ class EscalationService:
         if not ticket:
             return None
         dto = self._map_to_dto(ticket)
+        default_audit_service.record_event(
+            category="ESCALATION",
+            action_code="ESCALATION.TICKET_RESOLVED",
+            actor_id=resolved_by,
+            actor_role="nurse",
+            patient_id=ticket.patient_id,
+            resource_type="AlertTicket",
+            resource_id=ticket.id,
+            severity="HIGH",
+            before_state={"status": "ACKNOWLEDGED"},
+            after_state={
+                "status": ticket.status,
+                "resolved_by": resolved_by,
+                "resolution_notes": resolution_notes,
+            },
+        )
         await nurse_ws_manager.broadcast_json({
             "event": "TICKET_RESOLVED",
             "ticket": dto.model_dump()

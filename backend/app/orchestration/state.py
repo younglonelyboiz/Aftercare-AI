@@ -36,6 +36,7 @@ class AftercareState(TypedDict, total=False):
     channel: Literal["CHAT", "CHECKIN"]
     raw_message: str
     clean_message: str
+    input_empty: bool
     model_override: Optional[str]
     profile: Dict[str, Any]
     care_plan_day: Optional[int]
@@ -47,6 +48,7 @@ class AftercareState(TypedDict, total=False):
     policy_decision: Literal["ALLOW", "BLOCK"]
     policy_rule_id: Optional[str]
     policy_reason: Optional[str]
+    policy_escalation: Optional[Dict[str, str]]
     retrieved_chunks: List[Dict[str, Any]]
     evidence_ok: bool
     llm_raw_output: Optional[str]
@@ -114,6 +116,7 @@ def make_initial_state(
         channel=channel,
         raw_message=message or "",
         clean_message=(message or "").strip(),
+        input_empty=not bool((message or "").strip()),
         model_override=model_override,
         profile={},
         care_plan_day=None,
@@ -125,6 +128,7 @@ def make_initial_state(
         policy_decision="ALLOW",
         policy_rule_id=None,
         policy_reason=None,
+        policy_escalation=None,
         retrieved_chunks=[],
         evidence_ok=True,
         llm_raw_output=None,

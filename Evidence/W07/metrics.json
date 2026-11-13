@@ -1,0 +1,110 @@
+{
+  "generated_at": "2026-11-13T12:59:32.801154",
+  "total_traces": 6,
+  "risk_level_total": {
+    "NORMAL": 4,
+    "RED_ZONE": 2
+  },
+  "llm_fallback_total": 0,
+  "evidence_gate_reject_total": 0,
+  "guard_block_total": {
+    "POL-MED-STOP": 1
+  },
+  "guard_rewrite_total": {
+    "OUT-CITE": 3,
+    "OUT-DISCLAIMER": 3
+  },
+  "node_latency_ms": {
+    "emergency_response": {
+      "count": 2,
+      "p50_ms": 0.0,
+      "p95_ms": 0.0,
+      "mean_ms": 0.0,
+      "max_ms": 0
+    },
+    "finalize": {
+      "count": 6,
+      "p50_ms": 0.0,
+      "p95_ms": 0.0,
+      "mean_ms": 0.0,
+      "max_ms": 0
+    },
+    "generate_answer": {
+      "count": 3,
+      "p50_ms": 0.0,
+      "p95_ms": 0.0,
+      "mean_ms": 0.0,
+      "max_ms": 0
+    },
+    "load_context": {
+      "count": 6,
+      "p50_ms": 0.0,
+      "p95_ms": 0.0,
+      "mean_ms": 0.0,
+      "max_ms": 0
+    },
+    "output_guard": {
+      "count": 3,
+      "p50_ms": 1.0,
+      "p95_ms": 1.9,
+      "mean_ms": 1.33,
+      "max_ms": 2
+    },
+    "policy_guard": {
+      "count": 4,
+      "p50_ms": 0.0,
+      "p95_ms": 0.0,
+      "mean_ms": 0.0,
+      "max_ms": 0
+    },
+    "retrieve_evidence": {
+      "count": 3,
+      "p50_ms": 0.0,
+      "p95_ms": 0.0,
+      "mean_ms": 0.0,
+      "max_ms": 0
+    },
+    "safe_refusal": {
+      "count": 1,
+      "p50_ms": 0.0,
+      "p95_ms": 0.0,
+      "mean_ms": 0.0,
+      "max_ms": 0
+    },
+    "safety_triage": {
+      "count": 6,
+      "p50_ms": 0.0,
+      "p95_ms": 0.0,
+      "mean_ms": 0.0,
+      "max_ms": 0
+    },
+    "sanitize_input": {
+      "count": 6,
+      "p50_ms": 0.0,
+      "p95_ms": 0.0,
+      "mean_ms": 0.0,
+      "max_ms": 0
+    },
+    "session_lock_check": {
+      "count": 4,
+      "p50_ms": 0.0,
+      "p95_ms": 0.0,
+      "mean_ms": 0.0,
+      "max_ms": 0
+    }
+  },
+  "end_to_end_latency_by_risk_ms": {
+    "NORMAL": {
+      "count": 4,
+      "p50_ms": 1.0,
+      "p95_ms": 1.85,
+      "mean_ms": 1.0
+    },
+    "RED_ZONE": {
+      "count": 2,
+      "p50_ms": 0.0,
+      "p95_ms": 0.0,
+      "mean_ms": 0.0
+    }
+  }
+}

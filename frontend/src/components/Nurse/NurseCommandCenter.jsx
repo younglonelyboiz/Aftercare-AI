@@ -30,6 +30,24 @@ import TicketResolveModal from './TicketResolveModal';
 import NotificationToast from '../Common/NotificationToast';
 import { medicalAudioAlert } from '../../utils/audioAlert';
 
+// Danh mục nhãn cảnh báo sinh từ Chatbot (W07-T5.1)
+const CHATBOT_ALERT_TYPES = new Set([
+  'CHAT_RED_FLAG_DETECTION',
+  'CHAT_YELLOW_ZONE_ALERT',
+  'MEDICATION_NONADHERENCE_INTENT',
+  'MENTAL_HEALTH_CONCERN',
+  'SYSTEM_DEGRADED_PATIENT_UNSERVED',
+]);
+
+export function isChatbotTicket(ticket) {
+  if (!ticket) return false;
+  return (
+    ticket.source_channel === 'CHATBOT' ||
+    ticket.clinical_data?.source === 'CHAT' ||
+    CHATBOT_ALERT_TYPES.has(ticket.alert_type)
+  );
+}
+
 export default function NurseCommandCenter({ patients = [], selectedPatientId, onSelectPatientId }) {
   const [patientsOverview, setPatientsOverview] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -395,6 +413,8 @@ export default function NurseCommandCenter({ patients = [], selectedPatientId, o
               const zone = item.latest_checkin?.action_zone || 'UNKNOWN';
               const isSelected = selectedPid === item.patient_id;
               const nameDisplay = patientNameMap[item.patient_id] || item.patient_id;
+              const patientTickets = tickets.filter((t) => t.patient_id === item.patient_id && t.status !== 'RESOLVED');
+              const chatTicket = patientTickets.find((t) => isChatbotTicket(t));
 
               return (
                 <div
@@ -446,6 +466,24 @@ export default function NurseCommandCenter({ patients = [], selectedPatientId, o
                       </div>
                     </div>
                   </div>
+
+                  {chatTicket && (
+                    <div
+                      className="chatbot-alert-badge"
+                      style={{
+                        marginTop: 8,
+                        padding: '6px 8px',
+                        borderRadius: 6,
+                        backgroundColor: chatTicket.priority === 'P0_CRITICAL' ? '#fef2f2' : '#fffbeb',
+                        border: chatTicket.priority === 'P0_CRITICAL' ? '1px solid #fecaca' : '1px solid #fde68a',
+                        fontSize: '0.74rem',
+                        color: chatTicket.priority === 'P0_CRITICAL' ? '#991b1b' : '#92400e',
+                        fontWeight: 600,
+                      }}
+                    >
+                      <span>Nguồn: Chatbot ({chatTicket.priority})</span> — <span>{chatTicket.trigger_reason}</span>
+                    </div>
+                  )}
 
                   {item.has_overdue_reminders && (
                     <div
