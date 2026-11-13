@@ -1,4 +1,3 @@
-import React from 'react';
 import { Activity, User, RotateCcw, LogOut, ShieldCheck } from 'lucide-react';
 
 export default function Header({
@@ -12,44 +11,39 @@ export default function Header({
   user,
   onLogout
 }) {
+  const roles = { patient: 'BỆNH NHÂN', nurse: 'ĐIỀU DƯỠNG', admin: 'QUẢN TRỊ' };
   return (
-    <header className="app-header">
-      <div className="brand-section">
-        <div className="brand-icon-box">
-          <Activity size={24} />
-        </div>
-        <div>
-          <h1 className="brand-title">Aftercare-AI</h1>
-          <p className="brand-subtitle">Trợ lý Y tế Sau Xuất Viện Hen Phế Quản (BYT & GINA)</p>
-        </div>
-      </div>
+    <header className="p052-header">
+      <div className="p052-header-inner"><div className="p052-brand"><img src="/pictures/hopi-mascot-clean.png" alt="" width="40" height="40" /><div><div className="p052-brand-line"><h1>AfterCare AI</h1><span>{roles[currentPortal]}</span></div><p>Trợ lý Hopi • Chăm sóc hen phế quản</p></div></div>
 
       {/* PORTAL SWITCHER: BỆNH NHÂN VS ĐIỀU DƯỠNG */}
-      <div className="portal-toggle-group">
+      <div className="p052-header-actions"><div className="p052-portal-tabs">
         <button
-          className={`portal-btn ${currentPortal === 'patient' ? 'active' : ''}`}
+          className={currentPortal === 'patient' ? 'active' : ''}
           onClick={() => onSwitchPortal('patient')}
         >
-          <User size={15} style={{ marginRight: 6, verticalAlign: 'middle' }} />
-          Portal Bệnh Nhân
+          <User size={14} />
+          Bệnh nhân
         </button>
         {user.role !== 'patient' && <button
-          className={`portal-btn ${currentPortal === 'nurse' ? 'active' : ''}`}
+          className={currentPortal === 'nurse' ? 'active' : ''}
           onClick={() => onSwitchPortal('nurse')}
         >
-          <Activity size={15} style={{ marginRight: 6, verticalAlign: 'middle' }} />
-          Portal Điều Dưỡng
+          <Activity size={14} />
+          Điều dưỡng
         </button>}
-        {user.role === 'admin' && <button className={`portal-btn ${currentPortal === 'admin' ? 'active' : ''}`} onClick={() => onSwitchPortal('admin')}><ShieldCheck size={15} /> Quản trị</button>}
-      </div>
+        {user.role === 'admin' && <button className={currentPortal === 'admin' ? 'active' : ''} onClick={() => onSwitchPortal('admin')}><ShieldCheck size={14} />Quản trị</button>}
+      </div></div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        {user.role !== 'patient' && <div className="patient-selector-wrap">
-          <User size={18} color="var(--text-secondary)" />
-          <label htmlFor="patient-select" className="selector-label">Đang xem bệnh nhân:</label>
+        <span className="p052-user"><User size={14} />{user.full_name}</span>
+        {user.role === 'admin' && <button className="p052-reset" onClick={onResetDemo} disabled={isResetting}><RotateCcw size={15} />{isResetting ? 'Đang đặt lại…' : 'Reset Demo'}</button>}
+        <button onClick={onLogout} className="p052-logout" aria-label="Đăng xuất"><LogOut size={16} /><span>Đăng xuất</span></button>
+      </div></div>
+      {user.role !== 'patient' && currentPortal === 'patient' && <div className="p052-patient-select"><label htmlFor="patient-select">Hồ sơ bệnh nhân</label>
           <select
             id="patient-select"
-            className="patient-select"
+            className="p052-select"
             value={selectedPatientId}
             onChange={(e) => onSelectPatient(e.target.value)}
           >
@@ -60,19 +54,6 @@ export default function Header({
             ))}
           </select>
         </div>}
-
-        {/* NÚT RESET DEMO */}
-        {user.role === 'admin' && <button
-          className="demo-reset-btn"
-          onClick={onResetDemo}
-          disabled={isResetting}
-          title="Khôi phục trạng thái ban đầu của cả 3 bệnh nhân để trình diễn demo"
-        >
-          <RotateCcw size={15} className={isResetting ? "spin-icon" : ""} />
-          <span>{isResetting ? "Đang Reset..." : "Reset Demo"}</span>
-        </button>}
-        <div className="session-controls"><span>{user.full_name}</span><button onClick={onLogout}><LogOut size={15} /> Đăng xuất</button></div>
-      </div>
     </header>
   );
 }

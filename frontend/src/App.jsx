@@ -5,9 +5,10 @@ import DailyCheckInForm from './components/DailyCheckInForm';
 import FloatingChatWidget from './components/ChatWidget/FloatingChatWidget';
 import CareCalendar from './components/CareTracker/CareCalendar';
 import CarePlanChecklist from './components/CareTracker/CarePlanChecklist';
-import MedicationReminderBanner from './components/CareTracker/MedicationReminderBanner';
 import NurseCommandCenter from './components/Nurse/NurseCommandCenter';
 import AdminPanel from './components/Auth/AdminPanel';
+import AuthenticatedShell from './components/Layout/AuthenticatedShell';
+import PatientDashboard from './components/Patient/PatientDashboard';
 import {
   getPatients,
   getPatientDetail,
@@ -29,6 +30,7 @@ export default function App({ user, onLogout }) {
   const [history, setHistory] = useState([]);
   const [reminders, setReminders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [patientLoadError, setPatientLoadError] = useState(null);
 
   // Check-in State
   const [pef, setPef] = useState(480);
@@ -71,10 +73,13 @@ export default function App({ user, onLogout }) {
   }, [user.patient_id]);
 
   // 2. Load detailed profile, Care Plan, Reminders & History when patient changes
-  const loadPatientData = async (pid) => {
+  const loadPatientData = async (pid, isInitial = false) => {
     if (!pid) return;
-    setLoading(true);
-    setPatientProfile(null); setCarePlan(null); setHistory([]); setReminders([]);
+    setPatientLoadError(null);
+    if (isInitial || !patientProfile) {
+      setLoading(true);
+      setPatientProfile(null); setCarePlan(null); setHistory([]); setReminders([]);
+    }
     try {
       const [detail, plan, hist, rems] = await Promise.allSettled([
         getPatientDetail(pid),
@@ -85,7 +90,7 @@ export default function App({ user, onLogout }) {
 
       if (detail.status === 'fulfilled') {
         setPatientProfile(detail.value);
-        if (detail.value.clinical_status) {
+        if (detail.value.clinical_status && isInitial) {
           setPef(detail.value.clinical_status.personal_best_pef || 500);
           setSpo2(detail.value.clinical_status.baseline_spo2 || 98);
         }
@@ -93,7 +98,7 @@ export default function App({ user, onLogout }) {
 
       if (plan.status === 'fulfilled') {
         setCarePlan(plan.value);
-      } else {
+      } else if (isInitial) {
         setCarePlan(null);
       }
 
@@ -104,8 +109,13 @@ export default function App({ user, onLogout }) {
       if (rems.status === 'fulfilled') {
         setReminders(rems.value);
       }
+
+      if (detail.status === 'rejected' && hist.status === 'rejected') {
+        setPatientLoadError('Không thể tải dữ liệu bệnh nhân. Vui lòng kiểm tra kết nối và thử lại.');
+      }
     } catch (err) {
       console.error('Lỗi tải dữ liệu bệnh nhân:', err);
+      setPatientLoadError('Không thể tải dữ liệu bệnh nhân. Vui lòng thử lại.');
     } finally {
       setLoading(false);
     }
@@ -113,7 +123,7 @@ export default function App({ user, onLogout }) {
 
   useEffect(() => {
     if (selectedPatientId) {
-      loadPatientData(selectedPatientId);
+      loadPatientData(selectedPatientId, true);
     }
   }, [selectedPatientId]);
 
@@ -225,31 +235,29 @@ export default function App({ user, onLogout }) {
     );
   }
 
-  return (
-    <div className="app-container">
-      {/* 1. Header & Switcher */}
-      <Header
-        user={user}
-        onLogout={onLogout}
-        patients={patients}
-        selectedPatientId={selectedPatientId}
-        onSelectPatient={selectPatient}
-        currentPortal={currentPortal}
-        onSwitchPortal={setCurrentPortal}
-        onResetDemo={handleResetDemo}
-        isResetting={isResetting}
-      />
+  const isPatientPortal =
+    currentPortal === 'patient' &&
+    Boolean(selectedPatientId) &&
+    !(currentPortal === 'admin' && user.role === 'admin');
 
-      {/* 2. Banner Nhắc thuốc / Đo PEF nổi bật (In-app notification) */}
-      {currentPortal === 'patient' && (
-        <MedicationReminderBanner
-          reminders={reminders}
-          onAcknowledge={handleAcknowledgeReminder}
-          onSnooze={handleSnoozeReminder}
+  return (
+    <AuthenticatedShell currentPortal={currentPortal}>
+      {/* 1. Header & Switcher (Patient Portal hosts its own unified Wellness sidebar + topbar) */}
+      {!isPatientPortal && (
+        <Header
+          user={user}
+          onLogout={onLogout}
+          patients={patients}
+          selectedPatientId={selectedPatientId}
+          onSelectPatient={selectPatient}
+          currentPortal={currentPortal}
+          onSwitchPortal={setCurrentPortal}
+          onResetDemo={handleResetDemo}
+          isResetting={isResetting}
         />
       )}
 
-      {/* 3. Conditional Portal Rendering */}
+      {/* 2. Conditional Portal Rendering */}
       {currentPortal === 'admin' && user.role === 'admin' ? <AdminPanel user={user} patients={patients} /> : !selectedPatientId ? <p>Chưa có bệnh nhân trong phạm vi truy cập. Vui lòng liên hệ quản trị viên để được phân công.</p> : currentPortal === 'nurse' && user.role !== 'patient' ? (
         /* PORTAL ĐIỀU DƯỠNG (CLINICAL COMMAND CENTER) */
         <main className="nurse-portal-wrap">
@@ -260,48 +268,37 @@ export default function App({ user, onLogout }) {
           />
         </main>
       ) : (
-        /* PORTAL BỆNH NHÂN (PATIENT AFTERCARE & CHECKIN) */
-        <main className="dashboard-grid">
-          {/* CỘT TRÁI: Hồ sơ bệnh nhân + Lịch theo dõi 14 ngày */}
-          <div className="left-column-stack">
-            <PatientSummaryCard profile={patientProfile} />
-            <CareCalendar 
-              history={history} 
-              onSelectDate={(d) => console.log('Selected date:', d)} 
-            />
-          </div>
-
-          {/* CỘT PHẢI: Kế hoạch chăm sóc + Form Check-in hàng ngày */}
-          <div className="right-column-stack">
-            <CarePlanChecklist 
-              carePlan={carePlan} 
-              onCheckinToday={() => {
-                const el = document.getElementById('pef-input-slider');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
-            />
-
-            <DailyCheckInForm
-              patientId={selectedPatientId}
-              personalBestPef={personalBest}
-              actionPlan={patientProfile?.action_plan_rules}
-              pef={pef}
-              setPef={setPef}
-              spo2={spo2}
-              setSpo2={setSpo2}
-              symptoms={symptoms}
-              setSymptoms={setSymptoms}
-              medsTaken={medsTaken}
-              setMedsTaken={setMedsTaken}
-              currentZone={currentZone}
-              onOpenChatWithAlert={handleOpenChatWithAlert}
-              onSubmitCheckin={handleSubmitCheckin}
-            />
-          </div>
-        </main>
+        /* PORTAL BỆNH NHÂN (PATIENT WELLNESS & CHECKIN) */
+        <PatientDashboard
+          profile={patientProfile}
+          history={history}
+          carePlan={carePlan}
+          checkinProps={{
+            patientId: selectedPatientId,
+            personalBestPef: personalBest,
+            actionPlan: patientProfile?.action_plan_rules,
+            pef, setPef, spo2, setSpo2, symptoms, setSymptoms, medsTaken, setMedsTaken,
+            currentZone, onOpenChatWithAlert: handleOpenChatWithAlert, onSubmitCheckin: handleSubmitCheckin,
+          }}
+          onOpenChat={() => { setInitialAlertMessage(null); setIsChatOpen(true); }}
+          user={user}
+          patients={patients}
+          selectedPatientId={selectedPatientId}
+          onSelectPatient={selectPatient}
+          currentPortal={currentPortal}
+          onSwitchPortal={setCurrentPortal}
+          onResetDemo={handleResetDemo}
+          isResetting={isResetting}
+          onLogout={onLogout}
+          reminders={reminders}
+          onAcknowledgeReminder={handleAcknowledgeReminder}
+          onSnoozeReminder={handleSnoozeReminder}
+          loadError={patientLoadError}
+          onRetryLoad={() => loadPatientData(selectedPatientId, true)}
+        />
       )}
 
-      {/* 4. Floating Popup Chatbot Widget */}
+      {/* 3. Floating Popup Chatbot Widget */}
       {selectedPatientId && <FloatingChatWidget
         key={`${user.id}:${selectedPatientId}`}
         patientId={selectedPatientId}
@@ -309,8 +306,9 @@ export default function App({ user, onLogout }) {
         isOpen={isChatOpen}
         setIsOpen={setIsChatOpen}
         initialAlertMessage={initialAlertMessage}
+        patientLauncher={isPatientPortal}
       />}
-    </div>
+    </AuthenticatedShell>
   );
 }
 

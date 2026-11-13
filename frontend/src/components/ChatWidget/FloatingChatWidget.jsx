@@ -3,7 +3,15 @@ import { MessageSquare, X, Send, ShieldAlert, BookOpen, AlertTriangle, Maximize2
 import { sendChatMessage, getConversations, getConversation, deleteConversation, getMemory, deleteMemory, errorMessage } from '../../services/api';
 import PdfViewerModal from './PdfViewerModal';
 
-export default function FloatingChatWidget({ patientId, patientName, isOpen, setIsOpen, initialAlertMessage }) {
+export default function FloatingChatWidget({
+  patientId,
+  patientName,
+  isOpen,
+  setIsOpen,
+  initialAlertMessage,
+  hideFab = false,
+  patientLauncher = false,
+}) {
   const [messages, setMessages] = useState([]);
   const [conversationId, setConversationId] = useState(null);
   const [conversations, setConversations] = useState([]);
@@ -18,6 +26,10 @@ export default function FloatingChatWidget({ patientId, patientName, isOpen, set
   const [activePdfModal, setActivePdfModal] = useState({ isOpen: false, documentTag: '', documentName: '', pdfPage: 1 });
   const messagesEndRef = useRef(null);
   const busyRef = useRef(false);
+  const inputRef = useRef(null);
+  const closeBtnRef = useRef(null);
+  const lastOpenerRef = useRef(null);
+  const wasOpenRef = useRef(isOpen);
   const asMessage = m => ({ id: m.id, sender: m.role === 'user' ? 'user' : 'bot', text: m.content, safety_status: m.safety_status, citations: m.citations || [], sequence: m.sequence });
 
   useEffect(() => {
@@ -37,6 +49,41 @@ export default function FloatingChatWidget({ patientId, patientName, isOpen, set
 
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, isOpen]);
   useEffect(() => { if (initialAlertMessage) setIsOpen(true); }, [initialAlertMessage, setIsOpen]);
+  useEffect(() => {
+    const wasOpen = wasOpenRef.current;
+    wasOpenRef.current = isOpen;
+    if (!wasOpen && isOpen) {
+      const active = document.activeElement;
+      if (active instanceof HTMLElement && !active.closest('.chat-popup')) {
+        lastOpenerRef.current = active;
+      }
+      requestAnimationFrame(() => {
+        if (inputRef.current && !inputRef.current.disabled) {
+          inputRef.current.focus();
+        } else {
+          closeBtnRef.current?.focus();
+        }
+      });
+    } else if (wasOpen && !isOpen) {
+      const opener = lastOpenerRef.current;
+      lastOpenerRef.current = null;
+      if (opener && opener.isConnected && typeof opener.focus === 'function') {
+        requestAnimationFrame(() => opener.focus());
+      }
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    const onEscape = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('keydown', onEscape);
+    return () => document.removeEventListener('keydown', onEscape);
+  }, [isOpen, setIsOpen]);
 
   const selectConversation = async id => {
     if (busyRef.current) return;
@@ -103,19 +150,33 @@ export default function FloatingChatWidget({ patientId, patientName, isOpen, set
 
   return (
     <>
-      {/* Floating Action Button */}
-      <button
-        className={`chat-fab ${initialAlertMessage?.safety_status === 'RED_ZONE' ? 'pulse-red' : ''}`}
-        onClick={() => setIsOpen(!isOpen)}
-        aria-label="Mở trợ lý AI"
-      >
-        <MessageSquare size={20} />
-        <span>Trợ lý Hen AI</span>
-      </button>
+      {/* Floating Action Button (hidden on Patient Wellness portal where HOPI has dedicated triggers) */}
+      {!hideFab && (
+        <button
+          type="button"
+          className={`chat-fab ${patientLauncher ? 'hopi-patient-launcher' : ''} ${initialAlertMessage?.safety_status === 'RED_ZONE' ? 'pulse-red' : ''}`}
+          onClick={() => setIsOpen(!isOpen)}
+          aria-label={isOpen ? "Đóng trò chuyện HOPI" : "Mở trò chuyện HOPI"}
+          aria-expanded={isOpen}
+        >
+          {patientLauncher ? <img src="/pictures/hopi-mascot-clean.png" width={48} height={48} alt="" /> : <><MessageSquare size={20} /><span>Trợ lý Hen AI</span></>}
+        </button>
+      )}
 
       {/* Pop-up Window */}
       {isOpen && (
-        <div className={`chat-popup ${isExpanded ? 'expanded' : ''}`}>
+        <div
+          className={`chat-popup ${isExpanded ? 'expanded' : ''}`}
+          role="dialog"
+          aria-modal="false"
+          aria-label="Trợ Lý Hen Phế Quản Aftercare-AI"
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              e.stopPropagation();
+              setIsOpen(false);
+            }
+          }}
+        >
           <div className="chat-popup-header">
             <div>
               <div className="chat-header-title">Trợ Lý Hen Phế Quản Aftercare-AI</div>
@@ -131,6 +192,8 @@ export default function FloatingChatWidget({ patientId, patientName, isOpen, set
                 {isExpanded ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
               </button>
               <button
+                ref={closeBtnRef}
+                type="button"
                 className="close-chat-btn"
                 onClick={() => setIsOpen(false)}
                 aria-label="Đóng chat"
@@ -265,6 +328,7 @@ export default function FloatingChatWidget({ patientId, patientName, isOpen, set
           {/* Input Area */}
           <div className="chat-input-area">
             <input
+              ref={inputRef}
               type="text"
               className="chat-input-field"
               placeholder="Nhập câu hỏi hoặc triệu chứng của bạn..."

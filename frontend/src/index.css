@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap');
+@layer theme, base, components, utilities;
 
 :root {
   --font-sans: 'Be Vietnam Pro', 'Inter', system-ui, -apple-system, sans-serif;
@@ -45,10 +46,12 @@
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 }
 
 body {
@@ -965,19 +968,30 @@ body {
 }
 
 .reminder-badge {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 800;
   text-transform: uppercase;
-  padding: 2px 8px;
+  padding: 3px 8px;
   border-radius: 6px;
-  background: #ea580c;
+  background: #9a3412;
   color: #ffffff;
 }
 
+.reminder-badge.overdue {
+  background: #9a3412;
+  color: #ffffff;
+}
+
+.reminder-badge.pending {
+  background: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+}
+
 .reminder-time {
-  font-size: 0.8rem;
-  color: #64748b;
-  font-weight: 500;
+  font-size: 0.8125rem;
+  color: #334155;
+  font-weight: 600;
 }
 
 .reminder-title {
@@ -988,8 +1002,9 @@ body {
 }
 
 .reminder-message {
-  font-size: 0.85rem;
-  color: #475569;
+  font-size: 0.875rem;
+  color: #334155;
+  line-height: 1.5;
 }
 
 .reminder-actions {
