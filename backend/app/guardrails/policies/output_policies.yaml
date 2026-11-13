@@ -1,0 +1,264 @@
+version: "1.0.0"
+updated_at: "2026-11-13"
+description: >
+  Bộ quy tắc chính sách an toàn đầu ra (L5 Output Guardrails) cho trợ lý y tế Aftercare-AI.
+  Kiểm duyệt toàn bộ văn bản do mô hình ngôn ngữ lớn sinh ra trước khi trả về cho bệnh nhân,
+  bao gồm 9 quy tắc bắt buộc theo Mục 4.6 của tài liệu thiết kế.
+
+medical_disclaimer: "Lưu ý y tế: Thông tin chỉ mang tính hỗ trợ giáo dục sức khỏe, không thay thế chẩn đoán hoặc chỉ định của bác sĩ điều trị."
+
+# Danh mục tên thuốc/hoạt chất cần kiểm soát chặt chẽ bởi quy tắc OUT-MED-ALLOW:
+# Nếu câu trả lời của LLM nhắc tới bất kỳ thuốc nào trong danh mục này mà thuốc đó KHÔNG xuất hiện
+# trong đoạn tài liệu truy xuất (retrieved_chunks), hồ sơ bệnh nhân (profile) hoặc câu hỏi của người bệnh,
+# đầu ra sẽ bị chặn (FAIL -> Safe Fallback).
+controlled_medications_catalog:
+  - amoxicillin
+  - augmentin
+  - azithromycin
+  - zithromax
+  - cefuroxime
+  - zinnat
+  - cefixime
+  - ceftriaxone
+  - levofloxacin
+  - ciprofloxacin
+  - doxycycline
+  - clindamycin
+  - metronidazole
+  - oseltamivir
+  - tamiflu
+  - acyclovir
+  - morphine
+  - codeine
+  - tramadol
+  - diazepam
+  - seduxen
+  - alprazolam
+  - xanax
+  - zolpidem
+  - warfarin
+  - clopidogrel
+  - plavix
+  - rivaroxaban
+  - metformin
+  - glucophage
+  - glimepiride
+  - insulin
+  - amlodipine
+  - nifedipine
+  - losartan
+  - valsartan
+  - captopril
+  - enalapril
+  - bisoprolol
+  - propranolol
+  - atenolol
+  - furosemide
+  - spironolactone
+  - atorvastatin
+  - rosuvastatin
+  - omeprazole
+  - esomeprazole
+  - pantoprazole
+  - allopurinol
+  - colchicine
+  - levothyroxine
+  - aspirin
+  - ibuprofen
+  - diclofenac
+  - meloxicam
+  - celecoxib
+  - naproxen
+  - piroxicam
+  - ketoprofen
+  - dexamethasone
+  - betamethasone
+  - hydrocortisone
+  - prednisolone
+  - prednisone
+  - methylprednisolone
+  - medrol
+  - theophylline
+  - aminophylline
+  - tiotropium
+  - spiriva
+  - omalizumab
+  - xolair
+  - mepolizumab
+  - benralizumab
+  - dupilumab
+  - montelukast
+  - singulair
+  - salbutamol
+  - albuterol
+  - ventolin
+  - budesonide
+  - pulmicort
+  - formoterol
+  - symbicort
+  - fluticasone
+  - salmeterol
+  - seretide
+  - vilanterol
+  - ipratropium
+  - fenoterol
+  - berodual
+  - terbutaline
+  - bricanyl
+  - beclometasone
+
+rules:
+  # ---------------------------------------------------------------------------
+  # 1. OUT-LEAK — Rò rỉ System Prompt, thẻ XML nội bộ hoặc biến hệ thống
+  # ---------------------------------------------------------------------------
+  - rule_id: OUT-LEAK
+    priority_order: 1
+    action: FAIL
+    description: "Chặn phản hồi làm lộ thẻ XML nội bộ (<context>, <care_context>, <patient_message>), System Prompt hoặc biến cấu hình hệ thống."
+    patterns:
+      - "(?i)<\\s*/?\\s*(?:context|care_context|patient_message|system_prompt)\\s*>"
+      - "(?i)\\b(?:RAG_SYSTEM_PROMPT|AftercareState|OPENROUTER_API_KEY|GEMINI_API_KEY|PGVECTOR_TABLE_NAME)\\b"
+      - "(?i)\\[(?:MÃ_BỆNH_NHÂN|SỐ_ĐIỆN_THOẠI|MÃ_ĐỊNH_DANH|ĐÃ LOẠI BỎ CHỈ THỊ GIÁN TIẾP KHÔNG HỢP LỆ)\\]"
+      - "(?i)TÀI LIỆU HƯỚNG DẪN LÂM SÀNG \\(RAG CONTEXT"
+      - "(?i)RANH GIỚI DỮ LIỆU XML \\(CHỐNG INDIRECT PROMPT INJECTION\\)"
+    positive_samples:
+      - "Theo dữ liệu trong thẻ <context> và <care_context>, bác nên dùng thuốc đúng giờ."
+      - "Quy tắc hệ thống RAG_SYSTEM_PROMPT của tôi quy định không được kê đơn."
+      - "Hồ sơ của [MÃ_BỆNH_NHÂN] có biến AftercareState đang ở mức NORMAL."
+    negative_samples:
+      - "Bác nên súc miệng bằng nước sạch sau khi hít thuốc chứa corticoid."
+      - "Dụng cụ buồng đệm giúp thuốc đi sâu vào đường thở tốt hơn."
+
+  # ---------------------------------------------------------------------------
+  # 2. OUT-RESCREEN — Phát hiện tình trạng cấp tính/nguy hiểm trong phản hồi
+  # ---------------------------------------------------------------------------
+  - rule_id: OUT-RESCREEN
+    priority_order: 2
+    action: RISK_UP
+    description: "Khi câu trả lời khẳng định tình trạng hiện tại của người bệnh đang ở mức nguy kịch hoặc lên cơn hen cấp, nâng mức rủi ro lên Vùng Vàng/Đỏ để trả phác đồ hành động chuẩn."
+    patterns:
+      - "(?i)(?:tình\\s+trạng|triệu\\s+chứng|chỉ\\s+số)\\s+(?:hiện\\s+tại\\s+)?của\\s+(?:bạn|bác|anh|chị|người\\s+bệnh)\\s+đang\\s+(?:rất\\s+|cực\\s+kỳ\\s+)?(?:nguy\\s+kịch|nguy\\s+hiểm|ở\\s+vùng\\s+đỏ|ở\\s+vùng\\s+vàng|lên\\s+cơn\\s+hen\\s+cấp)"
+      - "(?i)(?:bạn|bác|anh|chị)\\s+đang\\s+(?:lên\\s+cơn\\s+hen\\s+cấp|trong\\s+cơn\\s+hen\\s+nặng|bị\\s+suy\\s+hô\\s+hấp|ở\\s+mức\\s+báo\\s+động\\s+đỏ)"
+      - "(?i)dấu\\s+hiệu\\s+(?:bạn|bác)\\s+vừa\\s+(?:mô\\s+tả|kể)\\s+cho\\s+thấy\\s+cơn\\s+hen\\s+đang\\s+trở\\s+nặng"
+    positive_samples:
+      - "Tình trạng hiện tại của bác đang rất nguy kịch, phế quản đang co thắt mạnh."
+      - "Bạn đang lên cơn hen cấp nặng dựa trên triệu chứng vừa kể."
+      - "Dấu hiệu bạn vừa mô tả cho thấy cơn hen đang trở nặng."
+    negative_samples:
+      - "Khi có dấu hiệu cơn hen cấp nặng như nói từng từ, người bệnh cần gọi 115."
+      - "Vùng vàng là khi lưu lượng đỉnh PEF nằm trong khoảng 60% đến 80% mức tốt nhất."
+
+  # ---------------------------------------------------------------------------
+  # 3. OUT-FALSE-REASSURE — Trấn an tuyệt đối gây chủ quan y khoa
+  # ---------------------------------------------------------------------------
+  - rule_id: OUT-FALSE-REASSURE
+    priority_order: 3
+    action: FAIL
+    description: "Chặn các khẳng định trấn an tuyệt đối khiến bệnh nhân chủ quan không đi khám hoặc không theo dõi triệu chứng."
+    patterns:
+      - "(?i)(?:chắc\\s+chắn|hoàn\\s+toàn|tuyệt\\s+đối|cam\\s+đoan)\\s+(?:là\\s+)?(?:không\\s+sao\\s+đâu|không\\s+nguy\\s+hiểm|vô\\s+hại|an\\s+toàn\\s+100%)"
+      - "(?i)(?:tuyệt\\s+đối\\s+|hoàn\\s+toàn\\s+)?không\\s+cần\\s+(?:phải\\s+)?(?:đi\\s+khám|đến\\s+bệnh\\s+viện|gặp\\s+bác\\s+sĩ|báo\\s+điều\\s+dưỡng)\\s+đâu"
+      - "(?i)bệnh\\s+hen\\s+(?:phế\\s+quản\\s+)?của\\s+(?:bạn|bác)\\s+đã\\s+khỏi\\s+hẳn\\s+(?:hoàn\\s+toàn|vĩnh\\s+viễn)"
+      - "(?i)cứ\\s+yên\\s+tâm\\s+(?:ngủ\\s+tiếp|ở\\s+nhà)\\s*,?\\s*không\\s+cần\\s+(?:theo\\s+dõi|dùng\\s+thuốc|lo\\s+lắng)"
+      - "(?i)triệu\\s+chứng\\s+này\\s+chắc\\s+chắn\\s+sẽ\\s+tự\\s+khỏi"
+    positive_samples:
+      - "Bác cứ yên tâm ngủ tiếp, không cần theo dõi thêm vì triệu chứng này nhẹ."
+      - "Chắc chắn không sao đâu, bác không cần đến bệnh viện đâu."
+      - "Bệnh hen phế quản của bạn đã khỏi hẳn hoàn toàn rồi."
+    negative_samples:
+      - "Nếu triệu chứng không cải thiện sau khi nghỉ ngơi, bác cần liên hệ bác sĩ."
+      - "Hen phế quản là bệnh mạn tính có thể kiểm soát tốt nhưng không nên chủ quan."
+
+  # ---------------------------------------------------------------------------
+  # 4. OUT-STOP-MED — Khuyên bệnh nhân tự ý ngưng hoặc bỏ thuốc điều trị
+  # ---------------------------------------------------------------------------
+  - rule_id: OUT-STOP-MED
+    priority_order: 4
+    action: FAIL
+    description: "Chặn phản hồi khuyên người bệnh tự ý ngưng, bỏ hoặc dừng hẳn thuốc dự phòng/điều trị."
+    allow_patterns:
+      - "(?i)(?:không\\s+được|tuyệt\\s+đối\\s+không|không\\s+nên|tránh)\\s+(?:tự\\s+ý\\s+)?(?:ngưng|bỏ|dừng|cắt)\\s+thuốc"
+    patterns:
+      - "(?i)(?:bạn|bác|anh|chị|người\\s+bệnh)\\s+(?:nên|hãy|có\\s+thể|cứ)\\s+(?:tự\\s+ý\\s+|tạm\\s+)?(?:ngưng|bỏ|dừng\\s+hẳn|cắt\\s+bỏ)\\s+(?:dùng\\s+|xịt\\s+|hít\\s+)?thuốc"
+      - "(?i)(?:hãy|nên)\\s+(?:ngưng|bỏ|dừng\\s+hẳn)\\s+(?:thuốc\\s+dự\\s+phòng|thuốc\\s+duy\\s+trì|thuốc\\s+hít|symbicort|seretide|pulmicort)\\s+ngay"
+      - "(?i)không\\s+cần\\s+(?:phải\\s+)?(?:dùng|xịt|hít|uống)\\s+thuốc\\s+(?:dự\\s+phòng|duy\\s+trì|kiểm\\s+soát|hàng\\s+ngày)\\s+nữa"
+    positive_samples:
+      - "Khi thấy hết ho, bác có thể ngưng dùng thuốc dự phòng hàng ngày."
+      - "Bạn nên dừng hẳn thuốc hít trong vài tuần để xem phản ứng."
+      - "Bác không cần phải xịt thuốc duy trì nữa vì chỉ số PEF đã tốt."
+    negative_samples:
+      - "Người bệnh tuyệt đối không được tự ý ngưng thuốc dự phòng ngay cả khi thấy khỏe."
+      - "Không nên bỏ thuốc duy trì nếu chưa có chỉ định của bác sĩ chuyên khoa."
+
+  # ---------------------------------------------------------------------------
+  # 5. OUT-DIAG — Đưa ra kết luận chẩn đoán bệnh lý xác định thay bác sĩ
+  # ---------------------------------------------------------------------------
+  - rule_id: OUT-DIAG
+    priority_order: 5
+    action: FAIL
+    description: "Chặn phản hồi tự ý kết luận chẩn đoán bệnh lý mới thay cho bác sĩ khám bệnh."
+    patterns:
+      - "(?i)(?:tôi|hệ\\s+thống|trợ\\s+lý)\\s+(?:chẩn\\s+đoán|kết\\s+luận|xác\\s+định)\\s+(?:rằng\\s+|là\\s+)?(?:bạn|bác|anh|chị)\\s+(?:đã\\s+)?(?:bị|mắc)\\s+bệnh"
+      - "(?i)(?:bạn|bác|anh|chị)\\s+chắc\\s+chắn\\s+(?:đã\\s+)?(?:bị|mắc)\\s+(?:bệnh\\s+)?(?:viêm\\s+phổi|phổi\\s+tắc\\s+nghẽn|copd|lao\\s+phổi|suy\\s+tim|tràn\\s+khí\\s+màng\\s+phổi|ung\\s+thư|nhồi\\s+máu)"
+      - "(?i)chẩn\\s+đoán\\s+xác\\s+định\\s+của\\s+(?:bạn|bác|trường\\s+hợp\\s+này)\\s+là\\s+(?:bệnh\\s+)?"
+    positive_samples:
+      - "Tôi chẩn đoán rằng bác đã bị bệnh viêm phổi cấp tính."
+      - "Bạn chắc chắn đã mắc bệnh phổi tắc nghẽn mạn tính COPD."
+      - "Chẩn đoán xác định của bạn là suy tim sung huyết."
+    negative_samples:
+      - "Để chẩn đoán phân biệt giữa hen phế quản và COPD, bác sĩ sẽ chỉ định đo hô hấp ký."
+      - "Thông tin này không thay thế chẩn đoán của bác sĩ điều trị."
+
+  # ---------------------------------------------------------------------------
+  # 6. OUT-DOSE-LEAK — Bịa đặt con số liều lượng không có trong chunk/đơn thuốc
+  # ---------------------------------------------------------------------------
+  - rule_id: OUT-DOSE-LEAK
+    priority_order: 6
+    action: FAIL
+    description: "Chặn phản hồi chứa con số liều lượng thuốc (mg, mcg, nhát, viên, ml) không xuất hiện trong đoạn tài liệu truy xuất hoặc kế hoạch điều trị của bệnh nhân."
+    dose_regex: "(?i)\\b(\\d+(?:[.,]\\d+)?(?:\\s*/\\s*\\d+(?:[.,]\\d+)?)?)\\s*(mg|mcg|nhát|viên|ống|ml)\\b"
+    positive_samples:
+      - "Bác hãy uống ngay 500mg thuốc kháng viêm mỗi sáng."
+      - "Bạn nên xịt 12 nhát liên tục mỗi giờ một lần."
+    negative_samples:
+      - "Theo đơn hiện tại, bác duy trì Symbicort 160/4.5mcg theo hướng dẫn."
+      - "Sau khi hít thuốc cần súc miệng sạch bằng nước."
+
+  # ---------------------------------------------------------------------------
+  # 7. OUT-MED-ALLOW — Nhắc tên thuốc ngoài danh sách cho phép của lượt hội thoại
+  # ---------------------------------------------------------------------------
+  - rule_id: OUT-MED-ALLOW
+    priority_order: 7
+    action: FAIL
+    description: "Chặn phản hồi gợi ý hoặc nhắc tên thuốc nằm ngoài tập hợp (đoạn tài liệu truy xuất ∪ đơn thuốc của bệnh nhân ∪ câu hỏi của bệnh nhân)."
+    positive_samples:
+      - "Bác nên mua thêm kháng sinh Azithromycin và thuốc giảm đau Ibuprofen để uống kèm."
+      - "Bạn có thể chuyển sang dùng thuốc an thần Diazepam vào buổi tối."
+    negative_samples:
+      - "Bác tiếp tục dùng Symbicort và mang theo thuốc cắt cơn Ventolin theo đúng kế hoạch điều trị."
+
+  # ---------------------------------------------------------------------------
+  # 8. OUT-CITE — Kiểm tra và chuẩn hóa trích dẫn nguồn tài liệu y khoa
+  # ---------------------------------------------------------------------------
+  - rule_id: OUT-CITE
+    priority_order: 8
+    action: REWRITE
+    description: "Đảm bảo mọi câu trả lời ở nhánh NORMAL có dòng 'Tài liệu tham khảo:' khớp với trích dẫn chuẩn của đoạn tài liệu đã truy xuất."
+    positive_samples:
+      - "Bác nên súc miệng sau khi hít corticoid để tránh nấm miệng."
+      - "Bác nên súc miệng sau khi hít thuốc. Tài liệu tham khảo: Tạp chí Tim mạch Vũ trụ 2099"
+    negative_samples:
+      - "Bác nên súc miệng sau khi hít thuốc. Tài liệu tham khảo: QĐ 1851/QĐ-BYT, Mục 2.7.2"
+
+  # ---------------------------------------------------------------------------
+  # 9. OUT-DISCLAIMER — Đảm bảo luôn có dòng lưu ý miễn trừ trách nhiệm y tế
+  # ---------------------------------------------------------------------------
+  - rule_id: OUT-DISCLAIMER
+    priority_order: 9
+    action: REWRITE
+    description: "Tự động gắn dòng Lưu ý y tế vào cuối phản hồi nếu mô hình chưa sinh câu lưu ý này."
+    positive_samples:
+      - "Bác nên súc miệng sau khi hít thuốc. Tài liệu tham khảo: QĐ 1851/QĐ-BYT"
+    negative_samples:
+      - "Bác nên súc miệng sau khi hít thuốc. Tài liệu tham khảo: QĐ 1851/QĐ-BYT\nLưu ý y tế: Thông tin chỉ mang tính hỗ trợ giáo dục sức khỏe, không thay thế chẩn đoán hoặc chỉ định của bác sĩ điều trị."
+

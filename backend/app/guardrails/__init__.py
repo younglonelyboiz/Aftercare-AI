@@ -7,6 +7,11 @@ from backend.app.guardrails.evidence_gate import (
     get_chunk_score,
 )
 from backend.app.guardrails.input_guard import InputPolicyGuard, PolicyMatchResult
+from backend.app.guardrails.output_guard import (
+    OutputGuardResult,
+    OutputPolicyGuard,
+    get_default_output_guard,
+)
 from backend.app.guardrails.pii_redactor import PIIRedactor, default_pii_redactor
 from backend.app.guardrails.templates_vi import (
     DEFAULT_RED_ACTION,
@@ -27,6 +32,8 @@ __all__ = [
     "EvidenceGateVerdict",
     "InputPolicyGuard",
     "NO_EVIDENCE_MESSAGE",
+    "OutputGuardResult",
+    "OutputPolicyGuard",
     "PIIRedactor",
     "PolicyMatchResult",
     "SAFE_FALLBACK_MESSAGE",
@@ -35,5 +42,6 @@ __all__ = [
     "build_yellow_zone_response",
     "default_pii_redactor",
     "get_chunk_score",
+    "get_default_output_guard",
 ]
 
