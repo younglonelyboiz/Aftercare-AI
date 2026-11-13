@@ -57,13 +57,13 @@ rules:
       - "(?:uống hết|đủ)\\s+\\d+\\s+ngày\\s+theo\\s+đơn"
       - "(?:tại sao|vì sao)\\s+không\\s+được\\s+(?:tự\\s+ý\\s+)?(?:ngưng|dừng|bỏ)\\s+thuốc"
     accented_patterns:
-      - "(?:tự\\s+ý\\s+|tự\\s+|muốn\\s+|định\\s+|xin\\s+)?(?:ngưng|dừng|bỏ|không\\s+dùng|không\\s+hít|không\\s+xịt|không\\s+uống|nghỉ\\s+dùng)\\s+(?:hẳn\\s+)?(?:thuốc\\s+ngừa\\s+cơn|thuốc\\s+kiểm\\s+soát|thuốc\\s+duy\\s+trì|bình\\s+xịt\\s+duy\\s+trì|bình\\s+hít|thuốc\\s+hít|thuốc\\s+viên|symbicort|seretide|budesonide|fluticasone|prednisolone|methylprednisolone)"
+      - "(?:tự\\s+ý\\s+|tự\\s+|muốn\\s+|định\\s+|xin\\s+)?(?:ngưng|dừng|bỏ|không\\s+dùng|không\\s+hít|không\\s+xịt|không\\s+uống|nghỉ\\s+dùng)\\s+(?:hẳn\\s+)?(?:thuốc\\s+ngừa\\s+cơn|thuốc\\s+kiểm\\s+soát|thuốc\\s+duy\\s+trì|thuốc\\s+dự\\s+phòng|bình\\s+xịt\\s+duy\\s+trì|bình\\s+hít|thuốc\\s+hít|thuốc\\s+viên|(?:thuốc\\s+)?(?:symbicort|seretide|budesonide|fluticasone|prednisolone|methylprednisolone|pulmicort))"
       - "(?:thấy\\s+khỏe|hết\\s+khó\\s+thở|bình\\s+thường\\s+rồi).*(?:ngưng|dừng|bỏ|không\\s+hít|không\\s+xịt|không\\s+uống)\\s+(?:thuốc|bình)"
-      - "(?:ngưng|dừng|bỏ)\\s+(?:thuốc|bình\\s+xịt|bình\\s+hít)\\s+(?:sớm|trước\\s+hạn|luôn\\s+được\\s+không|được\\s+chưa|được\\s+không)"
+      - "(?:ngưng|dừng|bỏ)\\s+(?:thuốc|bình\\s+xịt|bình\\s+hít)\\s+(?:sớm|trước\\s+hạn|luôn\\s+được\\s+không|luôn\\s+nhé|được\\s+chưa|được\\s+không)"
     unaccented_patterns:
-      - "(?:tu\\s+y\\s+|tu\\s+|muon\\s+|dinh\\s+|xin\\s+)?(?:ngung|dung|bo|khong\\s+dung|khong\\s+hit|khong\\s+xit|khong\\s+uong|nghi\\s+dung)\\s+(?:han\\s+)?(?:thuoc\\s+ngua\\s+con|thuoc\\s+kiem\\s+soat|thuoc\\s+duy\\s+tri|binh\\s+xit\\s+duy\\s+tri|binh\\s+hit|thuoc\\s+hit|thuoc\\s+vien|symbicort|seretide|budesonide|fluticasone|prednisolone|methylprednisolone)"
+      - "(?:tu\\s+y\\s+|tu\\s+|muon\\s+|dinh\\s+|xin\\s+)?(?:ngung|dung|bo|khong\\s+dung|khong\\s+hit|khong\\s+xit|khong\\s+uong|nghi\\s+dung)\\s+(?:han\\s+)?(?:thuoc\\s+ngua\\s+con|thuoc\\s+kiem\\s+soat|thuoc\\s+duy\\s+tri|thuoc\\s+du\\s+phong|binh\\s+xit\\s+duy\\s+tri|binh\\s+hit|thuoc\\s+hit|thuoc\\s+vien|(?:thuoc\\s+)?(?:symbicort|seretide|budesonide|fluticasone|prednisolone|methylprednisolone|pulmicort))"
       - "(?:thay\\s+khoe|het\\s+kho\\s+tho|binh\\s+thuong\\s+roi).*(?:ngung|dung|bo|khong\\s+hit|khong\\s+xit|khong\\s+uong)\\s+(?:thuoc|binh)"
-      - "(?:ngung|dung|bo)\\s+(?:thuoc|binh\\s+xit|binh\\s+hit)\\s+(?:som|truoc\\s+han|luon\\s+duoc\\s+khong|duoc\\s+chua|duoc\\s+khong)"
+      - "(?:ngung|dung|bo)\\s+(?:thuoc|binh\\s+xit|binh\\s+hit)\\s+(?:som|truoc\\s+han|luon\\s+duoc\\s+khong|luon\\s+nhe|duoc\\s+chua|duoc\\s+khong)"
     response_template: >
       Bác/Bạn tuyệt đối KHÔNG được tự ý ngưng hoặc bỏ thuốc kiểm soát hen (như Symbicort, Seretide)
       hay ngừng sớm thuốc viên kháng viêm (Prednisolone, Methylprednisolone) khi chưa có chỉ định của bác sĩ.

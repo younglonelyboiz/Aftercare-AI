@@ -24,6 +24,7 @@ from backend.app.core.config import settings
 from backend.app.core.database import get_db
 from backend.app.core.security import COOKIE_NAME, current_user, ensure_patient_access
 from backend.app.models.identity import User
+from backend.app.orchestration.nodes.escalate import default_outbox_dispatcher
 from backend.app.rag.safe_messages import SAFE_FALLBACK_MESSAGE
 from backend.app.rag.service import AftercareRAGService
 from backend.app.repositories.asthma_repositories import AlertTicketRepository
@@ -129,24 +130,16 @@ async def escalate_chat_result(
         "message_excerpt": message[:MAX_MESSAGE_EXCERPT],
     }
 
-    try:
-        ticket = await escalation_service.create_or_escalate_ticket(
-            patient_id=patient_id,
-            priority=policy["priority"],
-            alert_type=policy["alert_type"],
-            trigger_reason=trigger_reason,
-            patient_name=patient_name,
-            clinical_data=clinical_data,
-        )
-        return ticket.id
-    except Exception:
-        logger.critical(
-            "KHÔNG TẠO ĐƯỢC ALERT TICKET %s từ chat cho bệnh nhân %s",
-            policy["priority"],
-            patient_id,
-            exc_info=True,
-        )
-        return None
+    return await default_outbox_dispatcher.dispatch(
+        escalation_service,
+        patient_id=patient_id,
+        priority=policy["priority"],
+        alert_type=policy["alert_type"],
+        trigger_reason=trigger_reason,
+        patient_name=patient_name,
+        clinical_data=clinical_data,
+        trace_id=result.get("trace_id"),
+    )
 
 
 def _call_service_process_chat(

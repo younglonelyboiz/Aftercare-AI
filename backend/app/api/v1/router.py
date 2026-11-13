@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends
-from backend.app.api.v1.endpoints import auth, chat, conversations, patients, documents, care_plans, screener, escalations
+from backend.app.api.v1.endpoints import audit, auth, chat, conversations, patients, documents, care_plans, screener, escalations
 from backend.app.core.security import current_user
 
 api_router = APIRouter()
 api_router.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 api_router.include_router(auth.admin_router, prefix="/admin", tags=["Administration"])
+api_router.include_router(audit.router, prefix="/audit", tags=["Audit & Observability"])
 api_router.include_router(conversations.router, prefix="/chat", tags=["Chat Memory"])
 api_router.include_router(chat.router, prefix="/chat", tags=["Medical Chat"])
 api_router.include_router(patients.router, prefix="/patients", tags=["Patients"])
