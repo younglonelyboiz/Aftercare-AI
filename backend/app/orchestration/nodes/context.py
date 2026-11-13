@@ -12,10 +12,13 @@ from backend.app.orchestration.state import (
 
 
 def make_load_context_node(profile_loader: Callable[[str], Dict[str, Any]]):
-    """Tạo nút `load_context`: nạp hồ sơ bệnh nhân theo `patient_id`."""
+    """Tạo nút `load_context`: nạp hồ sơ bệnh nhân theo `patient_id` nếu chưa được truyền sẵn."""
 
     @safe_node("load_context", layer="L0_CONTEXT")
     def load_context_node(state: AftercareState) -> Dict[str, Any]:
+        existing_profile = state.get("profile")
+        if existing_profile:
+            return {"profile": existing_profile}
         patient_id = state.get("patient_id") or ""
         try:
             profile = profile_loader(patient_id)
@@ -44,4 +47,3 @@ def make_session_lock_check_node():
         return {}
 
     return session_lock_check_node
-

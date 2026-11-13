@@ -77,12 +77,12 @@ class EscalationService:
 
         return dto
 
-    def get_active_tickets(self) -> List[AlertTicketDTO]:
-        tickets = self.ticket_repo.get_active_tickets()
+    def get_active_tickets(self, patient_ids=None) -> List[AlertTicketDTO]:
+        tickets = self.ticket_repo.get_active_tickets(patient_ids=patient_ids)
         return [self._map_to_dto(t) for t in tickets]
 
-    def get_recent_tickets(self, limit: int = 50) -> List[AlertTicketDTO]:
-        tickets = self.ticket_repo.get_recent_tickets(limit=limit)
+    def get_recent_tickets(self, limit: int = 50, patient_ids=None) -> List[AlertTicketDTO]:
+        tickets = self.ticket_repo.get_recent_tickets(limit=limit, patient_ids=patient_ids)
         return [self._map_to_dto(t) for t in tickets]
 
     async def acknowledge_ticket(self, ticket_id: str, acknowledged_by: str) -> Optional[AlertTicketDTO]:

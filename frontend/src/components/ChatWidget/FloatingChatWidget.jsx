@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageSquare, X, Send, ShieldAlert, BookOpen, AlertTriangle, ExternalLink, Maximize2, Minimize2, FileText, PhoneCall } from 'lucide-react';
-import { sendChatMessage, getDocumentPdfUrl } from '../../services/api';
+import { MessageSquare, X, Send, ShieldAlert, BookOpen, AlertTriangle, Maximize2, Minimize2, FileText, PhoneCall, Plus, Trash2 } from 'lucide-react';
+import { sendChatMessage, getConversations, getConversation, deleteConversation, getMemory, deleteMemory, errorMessage } from '../../services/api';
 import PdfViewerModal from './PdfViewerModal';
 
 export default function FloatingChatWidget({
@@ -8,108 +8,138 @@ export default function FloatingChatWidget({
   patientName,
   isOpen,
   setIsOpen,
-  initialAlertMessage
+  initialAlertMessage,
+  hideFab = false,
+  patientLauncher = false,
 }) {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      sender: 'bot',
-      text: `Xin chào ${patientName || 'bác/cô/chú'}. Cháu là Trợ lý AI Chăm sóc Sau Xuất Viện Hen Phế Quản. Mọi tư vấn đều được trích dẫn từ phác đồ Bộ Y Tế & GINA 2023. Hôm nay hô hấp của mình thế nào ạ?`,
-      safety_status: 'NORMAL',
-      citations: []
-    }
-  ]);
+  const [messages, setMessages] = useState([]);
+  const [conversationId, setConversationId] = useState(null);
+  const [conversations, setConversations] = useState([]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [historyLoading, setHistoryLoading] = useState(true);
+  const [hasOlder, setHasOlder] = useState(false);
+  const [error, setError] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
-  const [activePdfModal, setActivePdfModal] = useState({
-    isOpen: false,
-    documentTag: '',
-    documentName: '',
-    pdfPage: 1
-  });
+  const [showMemory, setShowMemory] = useState(false);
+  const [memory, setMemory] = useState([]);
+  const [activePdfModal, setActivePdfModal] = useState({ isOpen: false, documentTag: '', documentName: '', pdfPage: 1 });
   const messagesEndRef = useRef(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const busyRef = useRef(false);
+  const inputRef = useRef(null);
+  const closeBtnRef = useRef(null);
+  const lastOpenerRef = useRef(null);
+  const wasOpenRef = useRef(isOpen);
+  const asMessage = m => ({ id: m.id, sender: m.role === 'user' ? 'user' : 'bot', text: m.content, safety_status: m.safety_status, citations: m.citations || [], sequence: m.sequence });
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, isOpen]);
+    let active = true;
+    if (!patientId) return;
+    getConversations(patientId).then(async list => {
+      if (!active) return;
+      setConversations(list);
+      if (list.length) {
+        const detail = await getConversation(list[0].id);
+        if (!active) return;
+        setConversationId(detail.id); setMessages(detail.messages.map(asMessage)); setHasOlder(detail.has_older);
+      }
+    }).catch(err => { if (active) setError(errorMessage(err)); }).finally(() => { if (active) setHistoryLoading(false); });
+    return () => { active = false; };
+  }, [patientId]);
 
-  // Helper function to format concise citation labels
-  const getConciseCitationLabel = (c) => {
-    const isBYT = c.document_tag?.includes('byt') || c.citation?.includes('1851');
-    const sourceLabel = isBYT ? 'BYT QĐ 1851' : 'GINA 2023';
-    const pageNum = c.pdf_page || c.page_index || 1;
-    return `${sourceLabel} • Tr. ${pageNum}`;
-  };
-
-  const handleOpenPdf = (c) => {
-    setActivePdfModal({
-      isOpen: true,
-      documentTag: c.document_tag || (c.citation?.includes('1851') ? 'byt_1851' : 'gina_2023'),
-      documentName: c.document_name || (c.citation?.includes('1851') ? 'Bộ Y Tế - QĐ 1851/QĐ-BYT (Hen Phế Quản Người Lớn)' : 'GINA 2023 - Hướng Dẫn Chiến Lược Hen Toàn Cầu'),
-      pdfPage: c.pdf_page || 1
-    });
-  };
-
-  // Handle proactive alert triggered from Check-in
+  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, isOpen]);
+  useEffect(() => { if (initialAlertMessage) setIsOpen(true); }, [initialAlertMessage, setIsOpen]);
   useEffect(() => {
-    if (initialAlertMessage) {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now(),
-          sender: 'bot',
-          text: initialAlertMessage.text,
-          safety_status: initialAlertMessage.safety_status,
-          citations: []
+    const wasOpen = wasOpenRef.current;
+    wasOpenRef.current = isOpen;
+    if (!wasOpen && isOpen) {
+      const active = document.activeElement;
+      if (active instanceof HTMLElement && !active.closest('.chat-popup')) {
+        lastOpenerRef.current = active;
+      }
+      requestAnimationFrame(() => {
+        if (inputRef.current && !inputRef.current.disabled) {
+          inputRef.current.focus();
+        } else {
+          closeBtnRef.current?.focus();
         }
-      ]);
-      setIsOpen(true);
+      });
+    } else if (wasOpen && !isOpen) {
+      const opener = lastOpenerRef.current;
+      lastOpenerRef.current = null;
+      if (opener && opener.isConnected && typeof opener.focus === 'function') {
+        requestAnimationFrame(() => opener.focus());
+      }
     }
-  }, [initialAlertMessage, setIsOpen]);
+  }, [isOpen]);
 
-  const handleSend = async (textToSend) => {
-    const query = textToSend || inputText;
-    if (!query.trim() || isLoading) return;
-
-    const userMsg = {
-      id: Date.now(),
-      sender: 'user',
-      text: query
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    const onEscape = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        setIsOpen(false);
+      }
     };
+    document.addEventListener('keydown', onEscape);
+    return () => document.removeEventListener('keydown', onEscape);
+  }, [isOpen, setIsOpen]);
 
-    setMessages((prev) => [...prev, userMsg]);
-    setInputText('');
-    setIsLoading(true);
-
+  const selectConversation = async id => {
+    if (busyRef.current) return;
+    setHistoryLoading(true); setError(''); setShowMemory(false);
     try {
-      const data = await sendChatMessage(patientId, query);
-      const botMsg = {
-        id: Date.now() + 1,
-        sender: 'bot',
-        text: data.response,
-        safety_status: data.safety_status,
-        citations: data.citations || []
-      };
-      setMessages((prev) => [...prev, botMsg]);
+      if (!id) { setConversationId(null); setMessages([]); setHasOlder(false); return; }
+      const detail = await getConversation(id);
+      setConversationId(id); setMessages(detail.messages.map(asMessage)); setHasOlder(detail.has_older);
+    } catch (err) { setError(errorMessage(err)); }
+    finally { setHistoryLoading(false); }
+  };
+  const olderMessages = async () => {
+    setHistoryLoading(true);
+    try {
+      const detail = await getConversation(conversationId, messages[0]?.sequence);
+      setMessages(prev => [...detail.messages.map(asMessage), ...prev]); setHasOlder(detail.has_older);
+    } catch (err) { setError(errorMessage(err)); }
+    finally { setHistoryLoading(false); }
+  };
+  const removeConversation = async () => {
+    if (!conversationId || !window.confirm('Xóa cuộc trò chuyện này và các ghi nhớ phát sinh từ cuộc trò chuyện?')) return;
+    setHistoryLoading(true);
+    try {
+      await deleteConversation(conversationId);
+      setConversations(prev => prev.filter(c => c.id !== conversationId));
+      setConversationId(null); setMessages([]); setHasOlder(false); setShowMemory(false);
+    } catch (err) { setError(errorMessage(err)); }
+    finally { setHistoryLoading(false); }
+  };
+  const toggleMemory = async () => {
+    if (showMemory) { setShowMemory(false); return; }
+    try { setMemory(await getMemory(patientId)); setShowMemory(true); }
+    catch (err) { setError(errorMessage(err)); }
+  };
+  const forget = async id => {
+    try { await deleteMemory(id); setMemory(prev => prev.filter(n => n.id !== id)); }
+    catch (err) { setError(errorMessage(err)); }
+  };
+  const getConciseCitationLabel = c => `${c.document_tag?.includes('byt') || c.citation?.includes('1851') ? 'BYT QĐ 1851' : 'GINA 2023'} • Tr. ${c.pdf_page || 1}`;
+  const handleOpenPdf = c => setActivePdfModal({ isOpen: true, documentTag: c.document_tag || (c.citation?.includes('1851') ? 'byt_1851' : 'gina_2023'), documentName: c.document_name || c.citation || 'Tài liệu y khoa', pdfPage: c.pdf_page || 1 });
+
+  const handleSend = async textToSend => {
+    const query = (textToSend || inputText).trim();
+    if (!query || busyRef.current || historyLoading || !patientId) return;
+    busyRef.current = true; setIsLoading(true); setError(''); setInputText('');
+    const id = crypto.randomUUID();
+    setMessages(prev => [...prev, { id, sender: 'user', text: query }]);
+    try {
+      const data = await sendChatMessage(patientId, query, conversationId);
+      setConversationId(data.conversation_id);
+      setMessages(prev => [...prev, { id: data.message_id, sender: 'bot', text: data.response, safety_status: data.safety_status, citations: data.citations || [] }]);
+      if (showMemory) getMemory(patientId).then(setMemory).catch(() => {});
+      getConversations(patientId).then(setConversations).catch(() => {});
     } catch (err) {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now() + 1,
-          sender: 'bot',
-          text: 'Xin lỗi, hiện tại hệ thống chưa kết nối được tới máy chủ bác sĩ AI. Vui lòng thử lại sau giây lát hoặc liên hệ số cấp cứu nếu nguy hiểm.',
-          safety_status: 'NORMAL',
-          citations: []
-        }
-      ]);
-    } finally {
-      setIsLoading(false);
-    }
+      setMessages(prev => prev.filter(m => m.id !== id)); setInputText(query); setError(errorMessage(err));
+    } finally { busyRef.current = false; setIsLoading(false); }
   };
 
   const quickQuestions = [
@@ -120,19 +150,33 @@ export default function FloatingChatWidget({
 
   return (
     <>
-      {/* Floating Action Button */}
-      <button
-        className={`chat-fab ${initialAlertMessage?.safety_status === 'RED_ZONE' ? 'pulse-red' : ''}`}
-        onClick={() => setIsOpen(!isOpen)}
-        aria-label="Mở trợ lý AI"
-      >
-        <MessageSquare size={20} />
-        <span>Trợ lý Hen AI</span>
-      </button>
+      {/* Floating Action Button (hidden on Patient Wellness portal where HOPI has dedicated triggers) */}
+      {!hideFab && (
+        <button
+          type="button"
+          className={`chat-fab ${patientLauncher ? 'hopi-patient-launcher' : ''} ${initialAlertMessage?.safety_status === 'RED_ZONE' ? 'pulse-red' : ''}`}
+          onClick={() => setIsOpen(!isOpen)}
+          aria-label={isOpen ? "Đóng trò chuyện HOPI" : "Mở trò chuyện HOPI"}
+          aria-expanded={isOpen}
+        >
+          {patientLauncher ? <img src="/pictures/hopi-mascot-clean.png" width={48} height={48} alt="" /> : <><MessageSquare size={20} /><span>Trợ lý Hen AI</span></>}
+        </button>
+      )}
 
       {/* Pop-up Window */}
       {isOpen && (
-        <div className={`chat-popup ${isExpanded ? 'expanded' : ''}`}>
+        <div
+          className={`chat-popup ${isExpanded ? 'expanded' : ''}`}
+          role="dialog"
+          aria-modal="false"
+          aria-label="Trợ Lý Hen Phế Quản Aftercare-AI"
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              e.stopPropagation();
+              setIsOpen(false);
+            }
+          }}
+        >
           <div className="chat-popup-header">
             <div>
               <div className="chat-header-title">Trợ Lý Hen Phế Quản Aftercare-AI</div>
@@ -148,6 +192,8 @@ export default function FloatingChatWidget({
                 {isExpanded ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
               </button>
               <button
+                ref={closeBtnRef}
+                type="button"
                 className="close-chat-btn"
                 onClick={() => setIsOpen(false)}
                 aria-label="Đóng chat"
@@ -158,7 +204,28 @@ export default function FloatingChatWidget({
             </div>
           </div>
 
+          <div className="chat-history-toolbar">
+            <select aria-label="Lịch sử trò chuyện" value={conversationId || ''} onChange={e => selectConversation(e.target.value)} disabled={isLoading || historyLoading}>
+              <option value="">Cuộc trò chuyện mới</option>
+              {conversations.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
+            </select>
+            <button onClick={() => selectConversation('')} disabled={isLoading || historyLoading} aria-label="Tạo cuộc trò chuyện mới" title="Cuộc trò chuyện mới"><Plus size={17} /></button>
+            <button onClick={toggleMemory} disabled={isLoading || historyLoading}>Ghi nhớ</button>
+            <button onClick={removeConversation} disabled={!conversationId || isLoading || historyLoading} aria-label="Xóa cuộc trò chuyện"><Trash2 size={16} /></button>
+          </div>
+          {error && <p className="chat-memory-error" role="alert">{error}</p>}
+          {showMemory && <section className="chat-memory-panel" aria-label="Ghi nhớ dài hạn">
+            <strong>Những điều bạn đã chia sẻ</strong>
+            <p>Lời kể chưa xác minh, không thay thế hồ sơ điều trị. Xóa ghi nhớ không xóa tin nhắn gốc; muốn xóa cả lịch sử, hãy xóa cuộc trò chuyện.</p>
+            {!memory.length && <p>Chưa có ghi nhớ.</p>}
+            {memory.map(note => <article key={note.id}><p>{note.content}</p><small>{new Date(note.created_at + 'Z').toLocaleString('vi-VN')}</small><button onClick={() => forget(note.id)}>Xóa ghi nhớ</button></article>)}
+          </section>}
           <div className="chat-messages-container">
+            {historyLoading && <p role="status">Đang tải lịch sử…</p>}
+            {hasOlder && <button className="chat-load-older" onClick={olderMessages} disabled={historyLoading}>Xem tin nhắn cũ hơn</button>}
+            {!messages.length && !historyLoading && <div className="chat-bubble">Xin chào {patientName || 'bạn'}. Bạn cần hỗ trợ điều gì hôm nay? Các cuộc trò chuyện được lưu để bạn có thể tiếp tục sau.</div>}
+            {initialAlertMessage && <div className={`chat-bubble-wrap bot ${initialAlertMessage.safety_status}`}><div className="chat-bubble">{initialAlertMessage.text}</div></div>}
+
             {messages.map((m) => (
               <div
                 key={m.id}
@@ -216,7 +283,7 @@ export default function FloatingChatWidget({
                 key={idx}
                 className="quick-prompt-chip"
                 onClick={() => handleSend(q)}
-                disabled={isLoading}
+                disabled={isLoading || historyLoading}
               >
                 {q}
               </button>
@@ -261,18 +328,21 @@ export default function FloatingChatWidget({
           {/* Input Area */}
           <div className="chat-input-area">
             <input
+              ref={inputRef}
               type="text"
               className="chat-input-field"
               placeholder="Nhập câu hỏi hoặc triệu chứng của bạn..."
               value={inputText}
+              maxLength={6000}
+              aria-label="Tin nhắn cho trợ lý"
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-              disabled={isLoading}
+              disabled={isLoading || historyLoading}
             />
             <button
               className="chat-submit-btn"
               onClick={() => handleSend()}
-              disabled={isLoading || !inputText.trim()}
+              disabled={isLoading || historyLoading || !inputText.trim()}
               aria-label="Gửi tin nhắn"
             >
               <Send size={16} />

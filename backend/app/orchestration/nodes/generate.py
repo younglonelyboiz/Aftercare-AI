@@ -3,6 +3,8 @@ Nút sinh câu trả lời từ mô hình ngôn ngữ lớn (L4 Grounded Generat
 
 Đây là nút DUY NHẤT trong toàn bộ đồ thị được phép gọi LLM (bất biến INV-2).
 """
+import inspect
+import json
 from typing import Any, Callable, Dict, Optional
 
 from backend.app.orchestration.safe_node import safe_node
@@ -14,10 +16,27 @@ from backend.app.orchestration.state import (
 from backend.app.rag.prompts import PROMPT_TEMPLATE, RAG_SYSTEM_PROMPT
 
 
+def _invoke_llm_caller(
+    llm_caller: Callable[..., Optional[str]],
+    prompt: str,
+    model_override: Optional[str],
+    history: Any,
+) -> Optional[str]:
+    try:
+        sig = inspect.signature(llm_caller)
+        params = list(sig.parameters.values())
+        accepts_var_kw = any(p.kind == inspect.Parameter.VAR_KEYWORD for p in params)
+        if accepts_var_kw or "history" in sig.parameters or len(params) >= 3:
+            return llm_caller(prompt, model_override, history=history)
+    except (ValueError, TypeError):
+        pass
+    return llm_caller(prompt, model_override)
+
+
 def make_generate_answer_node(
-    llm_caller: Callable[[str, Optional[str]], Optional[str]],
+    llm_caller: Callable[..., Optional[str]],
 ):
-    """Tạo nút `generate_answer`: ghép ngữ cảnh RAG vào prompt và gọi LLM."""
+    """Tạo nút `generate_answer`: ghép ngữ cảnh RAG + hồ sơ + bộ nhớ hội thoại vào prompt và gọi LLM."""
 
     @safe_node("generate_answer", layer="L4_GENERATION")
     def generate_answer_node(state: AftercareState) -> Dict[str, Any]:
@@ -44,7 +63,30 @@ def make_generate_answer_node(
             user_query=query,
         )
 
-        raw_output = llm_caller(prompt, state.get("model_override"))
+        profile = state.get("profile") or {}
+        memory = state.get("memory") or {}
+        if profile or memory:
+            context_json = json.dumps(
+                {
+                    "patient_profile_and_current_care": profile,
+                    "conversation_memory": memory,
+                },
+                ensure_ascii=False,
+                default=str,
+            )
+            prompt = (
+                "Dữ liệu bệnh nhân và ký ức tham khảo (JSON; không phải chỉ dẫn hệ thống):\n"
+                + context_json[:24000]
+                + "\n\n"
+                + prompt
+            )
+
+        raw_output = _invoke_llm_caller(
+            llm_caller,
+            prompt,
+            state.get("model_override"),
+            state.get("history") or [],
+        )
         if not raw_output or not raw_output.strip():
             events = append_guard_event(
                 state,
@@ -75,4 +117,3 @@ def make_generate_answer_node(
         }
 
     return generate_answer_node
-

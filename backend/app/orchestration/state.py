@@ -40,6 +40,7 @@ class AftercareState(TypedDict, total=False):
     profile: Dict[str, Any]
     care_plan_day: Optional[int]
     history: List[Dict[str, str]]
+    memory: Dict[str, Any]
     session_locked_red: bool
     screener_result: Dict[str, Any]
     risk_level: RiskLevel
@@ -117,6 +118,7 @@ def make_initial_state(
         profile={},
         care_plan_day=None,
         history=[],
+        memory={},
         session_locked_red=False,
         screener_result={"matched_flags": [], "matched_reasons": []},
         risk_level="NORMAL",

@@ -12,18 +12,22 @@ from backend.app.orchestration.state import (
 
 
 def make_safety_triage_node(screener_fn: Callable[[str, Dict[str, Any]], Any]):
-    """Tạo nút `safety_triage`: gọi `TriageAgent.evaluate_full_text` trên văn bản gốc."""
+    """Tạo nút `safety_triage`: gọi hàm sàng lọc trên văn bản gốc trước khi bị cắt ngắn."""
 
     @safe_node("safety_triage", layer="L1_SAFETY")
     def safety_triage_node(state: AftercareState) -> Dict[str, Any]:
-        # Chạy sàng lọc trên raw_message trước khi bị cắt để không bỏ sót dấu hiệu cờ đỏ ở cuối câu dài
         text_for_triage = state.get("raw_message") or state.get("clean_message") or ""
         profile = state.get("profile") or {}
 
         screener_res = screener_fn(text_for_triage, profile)
-        evaluated_level = getattr(screener_res, "risk_level", "NORMAL")
-        matched_flags = list(getattr(screener_res, "matched_flags", []) or [])
-        matched_reasons = list(getattr(screener_res, "matched_reasons", []) or [])
+        if isinstance(screener_res, str):
+            evaluated_level = screener_res
+            matched_flags = []
+            matched_reasons = []
+        else:
+            evaluated_level = getattr(screener_res, "risk_level", "NORMAL")
+            matched_flags = list(getattr(screener_res, "matched_flags", []) or [])
+            matched_reasons = list(getattr(screener_res, "matched_reasons", []) or [])
 
         new_risk = escalate_risk(state.get("risk_level"), evaluated_level)
         decision = "ESCALATED" if new_risk in ("RED_ZONE", "YELLOW_ZONE") else "PASSED"
@@ -55,4 +59,3 @@ def make_safety_triage_node(screener_fn: Callable[[str, Dict[str, Any]], Any]):
         }
 
     return safety_triage_node
-

@@ -4,19 +4,22 @@ Cổng gọi mô hình ngôn ngữ lớn (LLM Gateway) có kiểm soát — [W07
 Trách nhiệm:
 1. Kiểm tra `model_override` theo danh sách trắng (whitelist) trong cấu hình máy chủ.
 2. Áp dụng giới hạn thời gian chờ (`LLM_TIMEOUT_SECONDS`) và thử lại tối đa 1 lần.
-3. Thực thi chuỗi dự phòng: OpenRouter -> Google Gemini SDK -> trả về `None` (tuyệt đối
+3. Hỗ trợ truyền lịch sử hội thoại ngắn hạn (`history`) kèm `RAG_SYSTEM_PROMPT` riêng vai trò `system`.
+4. Thực thi chuỗi dự phòng: OpenRouter -> Google Gemini SDK -> trả về `None` (tuyệt đối
    không trả chuỗi lỗi kỹ thuật cho người bệnh).
-4. Đo độ trễ của lời gọi LLM phục vụ kiểm toán.
+5. Đo độ trễ của lời gọi LLM phục vụ kiểm toán.
 """
+import inspect
 import logging
 import time
 from dataclasses import dataclass
-from typing import Optional
+from typing import Any, Dict, List, Optional
 
 from google import genai
 from openai import OpenAI
 
 from backend.app.core.config import settings
+from backend.app.rag.prompts import RAG_SYSTEM_PROMPT
 
 logger = logging.getLogger("LLMGateway")
 
@@ -83,17 +86,37 @@ class LLMGateway:
         prompt: str,
         model_override: Optional[str] = None,
         temperature: float = 0.2,
+        history: Optional[List[Dict[str, Any]]] = None,
     ) -> LLMCallResult:
         """Gọi LLM và trả về `LLMCallResult`. Khi mọi nhà cung cấp lỗi, `text=None`."""
         start_time = time.perf_counter()
         resolved_override = self.resolve_model(model_override)
+
+        messages: List[Dict[str, str]] = [
+            {"role": "system", "content": RAG_SYSTEM_PROMPT}
+        ]
+        messages.extend(
+            {"role": m["role"], "content": m["content"]}
+            for m in (history or [])
+            if isinstance(m, dict) and m.get("role") in {"user", "assistant"}
+        )
+        messages.append({"role": "user", "content": prompt})
+
+        gemini_contents = [
+            {
+                "role": "model" if m["role"] == "assistant" else "user",
+                "parts": [{"text": m["content"]}],
+            }
+            for m in messages
+            if m["role"] != "system"
+        ]
 
         # 0. Nếu override chỉ định trực tiếp mô hình Gemini qua Google SDK
         if resolved_override and (
             "gemini" in resolved_override.lower()
             and not resolved_override.startswith("openrouter/")
         ):
-            text = self._invoke_gemini(resolved_override, prompt)
+            text = self._invoke_gemini(resolved_override, gemini_contents, prompt)
             if text:
                 return LLMCallResult(
                     text=text,
@@ -107,7 +130,9 @@ class LLMGateway:
 
         # 1. Ưu tiên gọi qua OpenRouter
         if self.openrouter_client:
-            text = self._invoke_openrouter(target_model, prompt, temperature=temperature)
+            text = self._invoke_openrouter(
+                target_model, messages, temperature=temperature
+            )
             if text:
                 return LLMCallResult(
                     text=text,
@@ -118,7 +143,7 @@ class LLMGateway:
                 )
 
         # 2. Dự phòng gọi qua Google Gemini SDK
-        text = self._invoke_gemini(settings.GEMINI_MODEL, prompt)
+        text = self._invoke_gemini(settings.GEMINI_MODEL, gemini_contents, prompt)
         if text:
             return LLMCallResult(
                 text=text,
@@ -142,14 +167,17 @@ class LLMGateway:
         )
 
     def _invoke_openrouter(
-        self, model: str, prompt: str, temperature: float = 0.2
+        self,
+        model: str,
+        messages: List[Dict[str, str]],
+        temperature: float = 0.2,
     ) -> Optional[str]:
         if not self.openrouter_client:
             return None
         try:
             chat_completion = self.openrouter_client.chat.completions.create(
                 model=model,
-                messages=[{"role": "user", "content": prompt}],
+                messages=messages,
                 max_tokens=settings.OPENROUTER_MAX_TOKENS,
                 temperature=temperature,
             )
@@ -161,13 +189,30 @@ class LLMGateway:
             logger.exception("Lỗi gọi OpenRouter (%s).", model)
         return None
 
-    def _invoke_gemini(self, model: str, prompt: str) -> Optional[str]:
+    def _invoke_gemini(
+        self, model: str, gemini_contents: Any, raw_prompt: str
+    ) -> Optional[str]:
         if not self.gemini_client:
             return None
         try:
-            res = self.gemini_client.models.generate_content(
-                model=model, contents=prompt
-            )
+            gen_fn = self.gemini_client.models.generate_content
+            try:
+                sig = inspect.signature(gen_fn)
+                accepts_config = "config" in sig.parameters or any(
+                    p.kind == inspect.Parameter.VAR_KEYWORD
+                    for p in sig.parameters.values()
+                )
+            except (ValueError, TypeError):
+                accepts_config = True
+
+            if accepts_config:
+                res = gen_fn(
+                    model=model,
+                    contents=gemini_contents,
+                    config={"system_instruction": RAG_SYSTEM_PROMPT},
+                )
+            else:
+                res = gen_fn(model=model, contents=raw_prompt)
             text = getattr(res, "text", None) or ""
             if text.strip():
                 return text
@@ -175,4 +220,3 @@ class LLMGateway:
         except Exception:
             logger.exception("Lỗi gọi Gemini (%s).", model)
         return None
-

@@ -1,0 +1,62 @@
+.auth-shell { min-height: 100dvh; padding: 48px 24px; display: grid; grid-template-columns: 1fr 480px; gap: 80px; align-items: center; max-width: 1160px; margin: auto; }
+.auth-intro { color: #253831; }
+.auth-brand { display: flex; align-items: center; gap: 12px; color: #416b5a; font-weight: 600; font-size: 23px; margin-bottom: 56px; }
+.auth-intro h1 { font-size: clamp(32px, 4vw, 48px); line-height: 1.3; font-weight: 600; letter-spacing: -1.2px; margin-bottom: 24px; }
+.auth-intro > p { font-size: 17px; line-height: 1.8; max-width: 430px; color: #56685f; }
+.auth-intro-note { display: flex; gap: 12px; margin-top: 56px; padding-top: 24px; border-top: 1px solid #dce4dd; font-size: 14px; color: #56685f; }
+.auth-intro-note svg { flex-shrink: 0; }
+.auth-card { padding: 32px; border: 1px solid #dce4dd; border-radius: 16px; background: #fff; }
+.auth-card h2 { font-size: 24px; color: #253831; }
+.auth-card p { color: #56685f; font-size: 14px; }
+.auth-card form { display: grid; gap: 8px; margin-top: 24px; }
+.auth-card label { font-size: 14px; font-weight: 600; margin-top: 8px; }
+.auth-card input, .admin-panel input, .admin-panel select { width: 100%; min-height: 44px; border: 1px solid #bdccc2; border-radius: 8px; padding: 10px 12px; font: inherit; background: #fff; color: #253831; }
+.auth-primary { min-height: 46px; border: 0; border-radius: 8px; background: #416b5a; color: white; font: inherit; font-weight: 600; cursor: pointer; margin-top: 12px; padding: 10px 16px; }
+.auth-card button:disabled, .admin-panel button:disabled { opacity: .6; cursor: wait; }
+.auth-demo { border-top: 1px solid #dce4dd; margin-top: 28px; padding-top: 24px; }
+.auth-demo h3 { font-size: 16px; margin-bottom: 4px; }
+.auth-role-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 16px 0 10px; }
+.auth-role-options button { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 4px; border: 1px solid #dce4dd; border-radius: 8px; background: #fff; color: #56685f; font: inherit; font-size: 12px; cursor: pointer; }
+.auth-role-options .selected { border-color: #416b5a; color: #315344; background: #eaf0e9; }
+.auth-role-description { min-height: 42px; }
+.auth-demo-accounts { display: grid; gap: 8px; }
+.auth-demo-accounts button { min-height: 44px; display: flex; justify-content: space-between; align-items: center; text-align: left; background: #f6f8f5; color: #253831; border: 1px solid #dce4dd; border-radius: 8px; padding: 10px 14px; font: inherit; font-size: 14px; cursor: pointer; }
+.auth-demo small { display: block; color: #56685f; font-size: 12px; margin-top: 14px; }
+.auth-error { color: #b42318 !important; background: #fef3f2; padding: 12px; margin-top: 16px; border-radius: 8px; }
+.auth-session-error { position: fixed; bottom: 12px; left: 12px; z-index: 10000; padding: 12px; background: #fef3f2; color: #b42318; }
+.session-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 13px; }
+.session-controls button { min-height: 40px; padding: 8px 12px; border: 1px solid #dce4dd; border-radius: 6px; background: white; cursor: pointer; font: inherit; }
+.admin-panel { background: white; border: 1px solid #dce4dd; border-radius: 12px; padding: 24px; }
+.admin-panel h2 { margin-bottom: 8px; }
+.admin-panel > p { color: #56685f; margin-bottom: 20px; }
+.admin-create-form { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; padding-bottom: 24px; border-bottom: 1px solid #dce4dd; }
+.admin-create-form label { display: grid; gap: 6px; font-size: 13px; }
+.admin-user-list { display: grid; gap: 16px; margin-top: 24px; }
+.admin-user-row { border: 1px solid #dce4dd; border-radius: 8px; padding: 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; }
+.admin-user-row small { display: block; color: #56685f; }
+.admin-user-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.admin-user-actions button { border: 1px solid #dce4dd; background: #f6f8f5; padding: 10px 12px; min-height: 44px; border-radius: 8px; cursor: pointer; font: inherit; font-size: 13px; }
+.admin-user-actions select { width: auto; }
+.admin-assignments { width: 100%; display: flex; align-items: center; flex-wrap: wrap; gap: 16px; border-top: 1px solid #e7ece8; padding-top: 12px; }
+.admin-assignments label { display: flex; gap: 8px; font-size: 13px; align-items: center; cursor: pointer; }
+.admin-assignments input { width: 20px; min-height: 20px; accent-color: #416b5a; }
+.auth-shell :focus-visible, .admin-panel :focus-visible, .session-controls :focus-visible { outline: 3px solid #416b5a; outline-offset: 3px; }
+@media(max-width: 800px) { .auth-shell { grid-template-columns: 1fr; max-width: 520px; gap: 24px; padding: 24px 16px; } .auth-brand { margin-bottom: 20px; } .auth-intro h1 { font-size: 30px; margin-bottom: 12px; } .auth-intro h1 br { display: none; } .auth-intro-note { display: none; } .auth-card { padding: 24px; } .admin-create-form { grid-template-columns: 1fr; } .admin-panel { padding: 16px; } }
+.chat-history-toolbar { display: flex; align-items: center; gap: 6px; padding: 10px 12px; border-bottom: 1px solid #dce4dd; flex-shrink: 0; }
+.chat-history-toolbar select { min-width: 0; flex: 1; min-height: 40px; font: inherit; font-size: 12px; border: 1px solid #dce4dd; border-radius: 6px; padding: 6px; background: white; }
+.chat-history-toolbar button, .chat-load-older, .chat-memory-panel button { min-height: 40px; padding: 8px; display: inline-flex; align-items: center; border: 1px solid #dce4dd; border-radius: 6px; background: white; color: #315344; font: inherit; font-size: 12px; cursor: pointer; }
+.chat-history-toolbar button:disabled { opacity: .5; cursor: default; }
+.chat-memory-panel { overflow-y: auto; max-height: 220px; padding: 12px; border-bottom: 1px solid #dce4dd; background: #f6f8f5; font-size: 13px; flex-shrink: 0; }
+.chat-memory-panel > p { font-size: 12px; color: #56685f; }
+.chat-memory-panel article { padding: 10px 0; border-top: 1px solid #dce4dd; overflow-wrap: anywhere; }
+.chat-memory-panel small { display: block; color: #56685f; margin: 4px 0; }
+.chat-memory-error { padding: 10px 12px; font-size: 13px; color: #b42318; background: #fef3f2; flex-shrink: 0; }
+@media(max-width: 600px) {
+ .app-container { max-width: 100%; padding: 12px 12px 88px; }
+ .app-header { padding: 14px; gap: 12px; }
+ .app-header > div { max-width: 100%; min-width: 0; flex-wrap: wrap; }
+ .patient-selector-wrap { flex-wrap: wrap; min-width: 0; width: 100%; }
+ .patient-select { max-width: 100%; width: 100%; min-width: 0; }
+ .chat-popup, .chat-popup.expanded { width: calc(100vw - 24px); max-width: calc(100vw - 24px); height: min(740px, calc(100dvh - 100px)); right: 12px; bottom: 76px; }
+ .chat-fab { right: 12px; bottom: 16px; }
+}
