@@ -28,10 +28,12 @@ export default function MedicationReminderBanner({ reminders = [], onAcknowledge
                 <span className={`reminder-badge ${isOverdue ? 'overdue' : 'pending'}`}>
                   {isOverdue ? 'Đã quá hạn' : 'Đến giờ nhắc'}
                 </span>
-                <span className="reminder-time" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, whiteSpace: 'nowrap' }}>
-                  <Clock size={13} aria-hidden="true" />
-                  <span>Giờ hẹn: {String(rem.scheduled_time || '').slice(0, 5)}</span>
-                </span>
+                {rem.scheduled_time && (
+                  <span className="reminder-time">
+                    <Clock size={13} aria-hidden="true" />
+                    <span>Giờ hẹn: {String(rem.scheduled_time).slice(0, 5)}</span>
+                  </span>
+                )}
               </div>
               <h4 className="reminder-title">{rem.title}</h4>
               <p className="reminder-message">{rem.message_content}</p>
@@ -41,7 +43,7 @@ export default function MedicationReminderBanner({ reminders = [], onAcknowledge
               <button 
                 type="button"
                 className="btn-ack" 
-                onClick={() => !isMed && onMeasure ? onMeasure() : onAcknowledge(rem.id)}
+                onClick={() => !isMed && onMeasure ? onMeasure() : onAcknowledge?.(rem.id)}
                 title="Xác nhận đã dùng thuốc hoặc đã đo"
               >
                 <Check size={14} aria-hidden="true" />
@@ -50,7 +52,7 @@ export default function MedicationReminderBanner({ reminders = [], onAcknowledge
               <button 
                 type="button"
                 className="btn-snooze" 
-                onClick={() => onSnooze(rem.id)}
+                onClick={() => onSnooze?.(rem.id)}
                 title="Nhắc lại sau 15 phút nữa"
               >
                 <Clock size={14} aria-hidden="true" />

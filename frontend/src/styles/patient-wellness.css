@@ -1,4 +1,36 @@
-/* Scoped Patient Wellness Dashboard Styles (based on Patient Wellness & Reports + Asthma Assist flows) */
+.hopi-patient-launcher {
+  display: none;
+}
+
+@media(max-width:900px){
+  .hopi-patient-launcher,
+  .chat-fab.hopi-patient-launcher{
+    position: fixed;
+    bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+    right: 16px;
+    width: 52px;
+    height: 52px;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background: #0284c7;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+    border: 2px solid #ffffff;
+    cursor: pointer;
+    z-index: 40;
+  }
+  .hopi-patient-launcher img,
+  .chat-fab.hopi-patient-launcher img{
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+  }
+}
+
+/* Scoped Patient Wellness Dashboard Styles */
 
 .portal-patient {
   --pw-bg-page: #f5f7fa;
@@ -555,6 +587,15 @@
   gap: 6px 10px;
 }
 
+.portal-patient .reminder-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  color: var(--pw-ink-muted);
+  font-size: 12px;
+}
+
 .portal-patient .reminder-title,
 .portal-patient .reminder-message {
   overflow-wrap: anywhere;
@@ -767,16 +808,29 @@
 /* Overview 4-Tab Summary Grid (short, non-repeating cards) */
 .pw-overview-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
   gap: 20px;
   align-items: start;
+  min-width: 0;
+}
+
+.pw-welcome-card {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.pw-blue-metric-card {
+  grid-column: 2;
+  grid-row: 1;
 }
 
 .pw-overview-next-card {
   grid-column: 1 / -1;
+  grid-row: 2;
   display: flex;
   flex-direction: column;
   gap: 14px;
+  min-width: 0;
 }
 
 .pw-saved-metrics-pair {
@@ -801,6 +855,59 @@
   border: 1px solid var(--pw-border);
   border-radius: var(--pw-radius-inner);
   padding: 14px 16px;
+  min-width: 0;
+}
+
+.pw-today-schedule {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.pw-today-schedule > .pw-card-sub {
+  margin: 0 0 2px;
+}
+
+.pw-plan-reference {
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--pw-border);
+  border-left: 3px solid var(--pw-blue);
+  border-radius: var(--pw-radius-control);
+  background: var(--pw-surface);
+}
+
+.pw-plan-reference h3 {
+  margin: 0;
+  color: var(--pw-ink);
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.pw-plan-reference p {
+  margin: 5px 0 0;
+  color: var(--pw-ink-muted);
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.pw-plan-reference .pw-btn-soft {
+  margin-top: 10px;
+}
+
+.pw-overview-empty {
+  margin: 0;
+  color: var(--pw-ink-muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.pw-followup-row > div {
+  overflow-wrap: anywhere;
 }
 
 .pw-followup-row {
@@ -1338,6 +1445,18 @@
   .pw-overview-grid {
     grid-template-columns: 1fr;
     gap: 16px;
+  }
+  .pw-welcome-card {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .pw-overview-next-card {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .pw-blue-metric-card {
+    grid-column: 1;
+    grid-row: 3;
   }
 }
 
