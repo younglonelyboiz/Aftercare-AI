@@ -154,7 +154,11 @@ export default function FloatingChatWidget({
       {!hideFab && (
         <button
           type="button"
-          className={`chat-fab ${patientLauncher ? 'hopi-patient-launcher' : ''} ${initialAlertMessage?.safety_status === 'RED_ZONE' ? 'pulse-red' : ''}`}
+          className={
+            patientLauncher
+              ? `hopi-patient-launcher ${initialAlertMessage?.safety_status === 'RED_ZONE' ? 'pulse-red' : ''}`
+              : `chat-fab ${initialAlertMessage?.safety_status === 'RED_ZONE' ? 'pulse-red' : ''}`
+          }
           onClick={() => setIsOpen(!isOpen)}
           aria-label={isOpen ? "Đóng trò chuyện HOPI" : "Mở trò chuyện HOPI"}
           aria-expanded={isOpen}

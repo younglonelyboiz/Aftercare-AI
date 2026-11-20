@@ -22,8 +22,11 @@ from backend.app.core.security import COOKIE_NAME, hash_password, token_hash
 from backend.app.models.identity import User, AuthSession, NurseAssignment, Conversation, ChatMessage, MemoryNote
 from backend.app.models.asthma import AsthmaCarePlan, AsthmaCheckinLog, AsthmaReminder, AlertTicket
 from backend.app.api.v1.endpoints.chat import get_rag_service
-from backend.app.api.v1.endpoints import escalations
+from backend.app.api.v1.endpoints import chat as chat_endpoint, escalations
+from backend.app.repositories.asthma_repositories import AlertTicketRepository
+from backend.app.services.escalation_service import EscalationService
 from backend.app.services.chat_memory import build_memory, SHORT_TERM_MESSAGES
+from backend.app.services.audit_service import set_system_audit_session_factory
 
 PID1, PID2 = 'BN-2026-ASTHMA-01', 'BN-2026-ASTHMA-02'
 
@@ -66,6 +69,12 @@ def env(monkeypatch):
             connection.execute('PRAGMA foreign_keys=ON')
     Base.metadata.create_all(engine)
     factory = sessionmaker(bind=engine, expire_on_commit=False)
+    set_system_audit_session_factory(factory)
+    from backend.app.orchestration.nodes.escalate import EscalationOutboxDispatcher
+    dispatcher = EscalationOutboxDispatcher(
+        session_factory=factory,
+        spool_path=__import__('pathlib').Path('/tmp') / f'aftercare-test-outbox-{uuid.uuid4().hex}.jsonl',
+    )
     with factory() as db:
         for name, role, pid in [('admin', 'admin', None), ('nurse', 'nurse', None),
                                 ('patient1', 'patient', PID1), ('patient2', 'patient', PID2),
@@ -87,9 +96,13 @@ def env(monkeypatch):
     def db_override():
         with factory() as db:
             yield db
+    def escalation_override():
+        with factory() as db:
+            yield EscalationService(AlertTicketRepository(db))
     rag = StubRAG()
     app.dependency_overrides[get_db] = db_override
     app.dependency_overrides[get_rag_service] = lambda: rag
+    app.dependency_overrides[chat_endpoint.get_escalation_service] = escalation_override
     monkeypatch.setattr(settings, 'DEMO_LOGIN_ENABLED', True)
     monkeypatch.setattr(escalations, 'SessionLocal', factory)
     import backend.app.core.database as database
@@ -101,8 +114,11 @@ def env(monkeypatch):
         if name:
             assert c.post('/api/v1/auth/demo-login', json={'user_id': name}).status_code == 200
         return c
-    yield SimpleNamespace(db=factory, client=client, rag=rag)
+    # Keep alert delivery scoped to the isolated test DB and temporary spool.
+    monkeypatch.setattr(chat_endpoint, 'default_outbox_dispatcher', dispatcher)
+    yield SimpleNamespace(db=factory, client=client, rag=rag, dispatcher=dispatcher)
     app.dependency_overrides.clear()
+    set_system_audit_session_factory(None)
     for c in clients:
         c.close()
     engine.dispose()
@@ -360,3 +376,59 @@ def test_red_zone_rule_reply_is_persisted_without_llm(env):
     detail = c.get('/api/v1/chat/conversations/' + response.json()['conversation_id']).json()
     assert detail['messages'][-1]['safety_status'] == 'RED_ZONE'
     assert '115' in detail['messages'][-1]['content']
+
+
+def test_patient_red_chat_reaches_nurse_and_is_resolved_end_to_end(env, monkeypatch):
+    """Authenticated patient chat creates a real ticket delivered to an assigned nurse."""
+    env.rag.process_chat = lambda **kwargs: {
+        'response': 'Đây là tình huống cấp cứu. Gọi 115 ngay.',
+        'safety_status': 'RED_ZONE',
+        'citations': [],
+        'screener': {'matched_reasons': ['Khó thở dữ dội, tím môi']},
+        'trace_id': 'trace-patient-nurse-e2e',
+    }
+    patient = env.client('patient1')
+    nurse = env.client('nurse')
+    events = []
+    async def capture_broadcast(payload):
+        events.append(payload)
+    monkeypatch.setattr(escalations.nurse_ws_manager, 'broadcast_json', capture_broadcast)
+
+    response = send(patient, 'Tôi không thở được, tím môi, chỉ nói được từng từ.')
+    assert response.status_code == 200
+    result = response.json()
+    assert result['safety_status'] == 'RED_ZONE'
+    ticket_id = result['escalation_ticket_id']
+    assert ticket_id
+
+    event = next(item for item in events if item['event'] == 'NEW_ALERT_TICKET')
+    ticket = event['ticket']
+    assert ticket['id'] == ticket_id
+    assert ticket['patient_id'] == PID1
+    assert ticket['priority'] == 'P0_CRITICAL'
+    assert ticket['clinical_data']['source'] == 'CHAT'
+
+    active = nurse.get('/api/v1/escalations/tickets/active').json()
+    assert any(item['id'] == ticket_id for item in active)
+
+    acknowledged = nurse.post(
+        f'/api/v1/escalations/tickets/{ticket_id}/acknowledge',
+        json={'acknowledged_by': 'Tên giả bị server bỏ qua'},
+    )
+    assert acknowledged.status_code == 200
+    assert acknowledged.json()['status'] == 'ACKNOWLEDGED'
+    assert acknowledged.json()['acknowledged_by'] == 'nurse'
+    assert events[-1]['event'] == 'TICKET_ACKNOWLEDGED'
+
+    resolved = nurse.post(
+        f'/api/v1/escalations/tickets/{ticket_id}/resolve',
+        json={
+            'resolved_by': 'Tên giả bị server bỏ qua',
+            'resolution_notes': 'Đã liên hệ, bệnh nhân được hướng dẫn gọi 115 và xác nhận đang được hỗ trợ.',
+        },
+    )
+    assert resolved.status_code == 200
+    assert resolved.json()['status'] == 'RESOLVED'
+    assert resolved.json()['resolved_by'] == 'nurse'
+    assert events[-1]['event'] == 'TICKET_RESOLVED'
+    assert nurse.get('/api/v1/escalations/tickets/active').json() == []

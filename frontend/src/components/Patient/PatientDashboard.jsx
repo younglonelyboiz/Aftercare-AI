@@ -334,6 +334,8 @@ export default function PatientDashboard({
               onGoTodayCheckin={showCheckin}
               onOpenHistory={() => navigateToTab('history')}
               onOpenRecord={() => navigateToTab('plan')}
+              onAcknowledgeReminder={onAcknowledgeReminder}
+              onSnoozeReminder={onSnoozeReminder}
               onOpenChat={onOpenChat}
             />
           </section>
@@ -440,6 +442,7 @@ export default function PatientDashboard({
       <nav className="p052-bottom-nav" aria-label="Điều hướng bệnh nhân">
         <button
           type="button"
+          aria-label="Tổng quan"
           className={`p052-bottom-btn ${tab === 'overview' ? 'active' : ''}`}
           aria-current={tab === 'overview' ? 'page' : undefined}
           onClick={() => navigateToTab('overview')}
@@ -450,6 +453,7 @@ export default function PatientDashboard({
 
         <button
           type="button"
+          aria-label="Check-in"
           className={`p052-bottom-btn ${tab === 'checkin' ? 'active' : ''}`}
           aria-current={tab === 'checkin' ? 'page' : undefined}
           onClick={() => navigateToTab('checkin')}
@@ -460,6 +464,7 @@ export default function PatientDashboard({
 
         <button
           type="button"
+          aria-label="Kế hoạch"
           className={`p052-bottom-btn ${tab === 'plan' ? 'active' : ''}`}
           aria-current={tab === 'plan' ? 'page' : undefined}
           onClick={() => navigateToTab('plan')}
@@ -470,6 +475,7 @@ export default function PatientDashboard({
 
         <button
           type="button"
+          aria-label="Lịch sử"
           className={`p052-bottom-btn ${tab === 'history' ? 'active' : ''}`}
           aria-current={tab === 'history' ? 'page' : undefined}
           onClick={() => navigateToTab('history')}

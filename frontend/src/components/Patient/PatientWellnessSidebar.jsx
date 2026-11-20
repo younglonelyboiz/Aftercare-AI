@@ -2,10 +2,10 @@ import React from 'react';
 import { Activity, ClipboardCheck, Clock, FileText, Bot, LogOut } from 'lucide-react';
 
 const NAV_ITEMS = [
-  { id: 'overview', label: 'Hôm nay', icon: Activity },
+  { id: 'overview', label: 'Tổng quan', icon: Activity },
   { id: 'checkin', label: 'Check-in', icon: ClipboardCheck },
+  { id: 'plan', label: 'Kế hoạch', icon: FileText },
   { id: 'history', label: 'Lịch sử', icon: Clock },
-  { id: 'plan', label: 'Hồ sơ & Kế hoạch', icon: FileText },
 ];
 
 export default function PatientWellnessSidebar({
@@ -48,6 +48,7 @@ export default function PatientWellnessSidebar({
               <button
                 key={item.id}
                 type="button"
+                aria-label={item.label}
                 onClick={() => onSelectTab?.(item.id)}
                 aria-current={isActive ? 'page' : undefined}
                 className={`pw-nav-btn ${isActive ? 'active' : ''}`}

@@ -186,6 +186,7 @@ export default function App({ user, onLogout }) {
       }
     } catch (err) {
       alert('Lỗi lưu check-in: ' + err.message);
+      throw err;
     }
   };
 
@@ -306,7 +307,8 @@ export default function App({ user, onLogout }) {
         isOpen={isChatOpen}
         setIsOpen={setIsChatOpen}
         initialAlertMessage={initialAlertMessage}
-        patientLauncher={isPatientPortal}
+        patientLauncher={isPatientPortal && user.role === 'patient'}
+        hideFab={isPatientPortal && user.role !== 'patient'}
       />}
     </AuthenticatedShell>
   );

@@ -162,7 +162,7 @@ export default function PatientHistoryCalendar({ history = [], hideTrendSummary 
           )}
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-7 gap-2.5">
+        <div className="grid grid-cols-3 sm:grid-cols-7 gap-2.5">
           {days.map((item) => {
             const hasLog = !!item.log;
             const zone = (item.log?.action_zone || '').toUpperCase();

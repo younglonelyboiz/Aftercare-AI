@@ -48,6 +48,7 @@ venv.bak/
 # Kiểm thử & Đánh giá (Testing & Coverage)
 # ==========================================
 .pytest_cache/
+.hypothesis/
 .coverage
 .coverage.*
 htmlcov/
@@ -69,6 +70,8 @@ pnpm-debug.log*
 # Frontend (Next.js / Node.js)
 # ==========================================
 node_modules/
+test-results/
+playwright-report/
 .next/
 out/
 .vercel
@@ -101,6 +104,7 @@ Data/*_raw.json
 # Báo cáo tiến độ nội bộ (Local Reports)
 # ==========================================
 BAO_CAO_TIEN_DO_TUAN_5_AFTERCARE_AI.*
+BAO_CAO_TUAN/
 
 # Antigravity Local Customizations & Legacy Folders
 .agents/

@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
-import MedicationReminderBanner from '../CareTracker/MedicationReminderBanner';
 import {
   AlertTriangle,
   ArrowRight,
+  Bot,
   CalendarClock,
   CheckCircle2,
   ClipboardList,
@@ -19,6 +19,7 @@ import {
   getSortedHistoryAsc,
   hasCheckedInTodayVN,
 } from '../../utils/patientDate';
+import MedicationReminderBanner from '../CareTracker/MedicationReminderBanner';
 
 const ZONE_META = {
   GREEN: {
@@ -67,6 +68,7 @@ export default function PatientOverviewBento({
   onOpenRecord,
   onAcknowledgeReminder,
   onSnoozeReminder,
+  onOpenChat,
 }) {
   const personalBest =
     carePlan?.personal_best_pef ||
@@ -89,12 +91,16 @@ export default function PatientOverviewBento({
 
   const latestZoneMeta = getZoneMeta(latestSaved?.action_zone, savedPefPct);
   const LatestZoneIcon = latestZoneMeta.icon;
+  const activeReminders = useMemo(
+    () => (Array.isArray(reminders) ? reminders.filter(Boolean) : []),
+    [reminders]
+  );
 
   // Pick next reminder/task strictly from existing state without inventing priorities or schedules
   const nextTaskSummary = useMemo(() => {
-    if (Array.isArray(reminders) && reminders.length > 0) {
-      const overdue = reminders.find((r) => r && (r.status === 'OVERDUE' || r.is_overdue));
-      const target = overdue || reminders[0];
+    if (activeReminders.length > 0) {
+      const overdue = activeReminders.find((r) => r.status === 'OVERDUE' || r.is_overdue);
+      const target = overdue || activeReminders[0];
       const isOverdue = Boolean(target && (target.status === 'OVERDUE' || target.is_overdue));
       return {
         kind: 'reminder',
@@ -127,7 +133,7 @@ export default function PatientOverviewBento({
     }
 
     return { kind: 'none' };
-  }, [reminders, carePlan]);
+  }, [activeReminders, carePlan]);
 
   return (
     <div className="pw-overview-grid">
@@ -178,6 +184,22 @@ export default function PatientOverviewBento({
             <span>{checkedInToday ? 'Cập nhật check-in hôm nay' : 'Check-in hôm nay'}</span>
             <ArrowRight size={16} aria-hidden="true" />
           </button>
+          <button
+            type="button"
+            onClick={onOpenChat}
+            className="pw-btn-outline-blue"
+          >
+            <Bot size={16} aria-hidden="true" />
+            <span>Trò chuyện với HOPI</span>
+          </button>
+          <button
+            type="button"
+            onClick={onOpenRecord}
+            className="pw-link-btn"
+          >
+            <span>Kế hoạch & Hồ sơ</span>
+            <ArrowRight size={14} aria-hidden="true" />
+          </button>
         </div>
       </section>
 
@@ -199,14 +221,16 @@ export default function PatientOverviewBento({
 
         <div className="pw-next-task-body">
           {nextTaskSummary.kind === 'reminder' && (
-            <div>
-              <MedicationReminderBanner
-                reminders={[...reminders].sort((a, b) => Number(Boolean(b.is_overdue || b.status === 'OVERDUE')) - Number(Boolean(a.is_overdue || a.status === 'OVERDUE')))}
-                onAcknowledge={onAcknowledgeReminder}
-                onSnooze={onSnoozeReminder}
-                onMeasure={onGoTodayCheckin}
-              />
-            </div>
+            <MedicationReminderBanner
+              reminders={[...activeReminders].sort(
+                (a, b) =>
+                  Number(Boolean(b.is_overdue || b.status === 'OVERDUE')) -
+                  Number(Boolean(a.is_overdue || a.status === 'OVERDUE'))
+              )}
+              onAcknowledge={onAcknowledgeReminder}
+              onSnooze={onSnoozeReminder}
+              onMeasure={onGoTodayCheckin}
+            />
           )}
 
           {nextTaskSummary.kind !== 'reminder' && carePlan?.items?.length > 0 && (
@@ -226,8 +250,8 @@ export default function PatientOverviewBento({
           )}
 
           {nextTaskSummary.kind === 'none' && (
-            <p className="text-xs text-[#475569] m-0">
-              Hiện không có nhắc nhở đang chờ. Bạn có thể kiểm tra hoặc cập nhật check-in hôm nay.
+              <p className="pw-overview-empty">
+              Chưa có phác đồ chăm sóc hoặc nhắc nhở đang kích hoạt. Bạn vẫn có thể kiểm tra hoặc cập nhật check-in hôm nay.
             </p>
           )}
         </div>
