@@ -26,7 +26,6 @@ from backend.app.api.v1.endpoints import chat as chat_endpoint, escalations
 from backend.app.repositories.asthma_repositories import AlertTicketRepository
 from backend.app.services.escalation_service import EscalationService
 from backend.app.services.chat_memory import build_memory, SHORT_TERM_MESSAGES
-from backend.app.services.audit_service import set_system_audit_session_factory
 
 PID1, PID2 = 'BN-2026-ASTHMA-01', 'BN-2026-ASTHMA-02'
 
@@ -69,7 +68,6 @@ def env(monkeypatch):
             connection.execute('PRAGMA foreign_keys=ON')
     Base.metadata.create_all(engine)
     factory = sessionmaker(bind=engine, expire_on_commit=False)
-    set_system_audit_session_factory(factory)
     from backend.app.orchestration.nodes.escalate import EscalationOutboxDispatcher
     dispatcher = EscalationOutboxDispatcher(
         session_factory=factory,
@@ -118,7 +116,6 @@ def env(monkeypatch):
     monkeypatch.setattr(chat_endpoint, 'default_outbox_dispatcher', dispatcher)
     yield SimpleNamespace(db=factory, client=client, rag=rag, dispatcher=dispatcher)
     app.dependency_overrides.clear()
-    set_system_audit_session_factory(None)
     for c in clients:
         c.close()
     engine.dispose()
@@ -388,7 +385,7 @@ def test_patient_red_chat_reaches_nurse_and_is_resolved_end_to_end(env, monkeypa
         'trace_id': 'trace-patient-nurse-e2e',
     }
     patient = env.client('patient1')
-    nurse = env.client('nurse')
+    nurse = patient
     events = []
     async def capture_broadcast(payload):
         events.append(payload)
@@ -407,6 +404,9 @@ def test_patient_red_chat_reaches_nurse_and_is_resolved_end_to_end(env, monkeypa
     assert ticket['patient_id'] == PID1
     assert ticket['priority'] == 'P0_CRITICAL'
     assert ticket['clinical_data']['source'] == 'CHAT'
+
+    nurse.post('/api/v1/auth/logout')
+    assert nurse.post('/api/v1/auth/demo-login', json={'user_id': 'nurse'}).status_code == 200
 
     active = nurse.get('/api/v1/escalations/tickets/active').json()
     assert any(item['id'] == ticket_id for item in active)
