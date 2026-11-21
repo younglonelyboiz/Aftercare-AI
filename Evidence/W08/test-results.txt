@@ -1,10 +1,10 @@
 W08 targeted verification record
-Date: 2026-11-20 (Asia/Ho_Chi_Minh)
+Dates: 2026-11-20 and 2026-11-21 (Asia/Ho_Chi_Minh)
 
-Command: cd frontend && npm run test:ui -- --grep 'demo video|nurse reviews' --reporter=line
-Result: 3 passed (6.5s)
-  - demo video: patient overview and daily check-in
-  - demo video: patient asks HOPI for help
+Command: cd frontend && npm run test:ui -- --grep 'patient overview|patient asks HOPI|nurse reviews' --reporter=line
+Result: 3 passed (6.6s), rerun 2026-11-21 after removing mocked demo videos
+  - patient overview and daily check-in
+  - patient asks HOPI for help
   - nurse reviews, acknowledges, and resolves a patient alert
 
 Command: pytest -q tests/e2e/test_scenarios.py tests/orchestration/test_invariants.py
@@ -16,7 +16,7 @@ Result: passed; Vite production build completed.
 Command: cd frontend && npm run lint
 Result: completed with existing warnings; no lint error caused the command to fail.
 
-Scope note for videos 01–03: Playwright API calls are mocked. These recordings verify browser presentation and UI interactions only.
+Scope note: the three UI tests mock API calls and produce no retained video evidence. Only video 04 is retained as live end-to-end evidence.
 
 Command: cd frontend && npm run test:ui -- --config=playwright.backend.config.js --reporter=line
 Result: 1 passed (1.6m)

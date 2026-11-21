@@ -1,10 +1,4 @@
 import { test, expect } from '@playwright/test';
-import fs from 'node:fs';
-import path from 'node:path';
-
-test.use({ video: 'on' });
-
-const videoDir = path.resolve(process.cwd(), '../Evidence/W08/demo-videos');
 const patientProfile = {
   patient_info: { patient_id: 'BN001', full_name: 'Nguyễn Văn An', age: 58, gender: 'Nam' },
   clinical_status: { personal_best_pef: 500, baseline_spo2: 98, diagnosis: 'Hen phế quản ngoại trú' },
@@ -40,14 +34,7 @@ async function preparePatientPortal(page) {
   await page.route('**/api/v1/chat/conversations*', route => route.fulfill({ json: [] }));
 }
 
-async function saveVideo(page, filename) {
-  fs.mkdirSync(videoDir, { recursive: true });
-  const video = page.video();
-  await page.close();
-  await video.saveAs(path.join(videoDir, filename));
-}
-
-test('demo video: patient overview and daily check-in', async ({ page }) => {
+test('patient overview and daily check-in', async ({ page }) => {
   await preparePatientPortal(page);
   await page.goto('/');
   await expect(page.locator('#patient-overview-section')).toBeVisible();
@@ -58,11 +45,9 @@ test('demo video: patient overview and daily check-in', async ({ page }) => {
   await page.locator('#pef-number-input').fill('465');
   await page.getByRole('button', { name: 'Lưu đánh giá hôm nay' }).click();
   await expect(page.getByText('Đã lưu đánh giá sức khỏe hôm nay thành công!')).toBeVisible();
-  await page.waitForTimeout(1000);
-  await saveVideo(page, '01-patient-dashboard-checkin.webm');
 });
 
-test('demo video: patient asks HOPI for help', async ({ page }) => {
+test('patient asks HOPI for help', async ({ page }) => {
   await preparePatientPortal(page);
   await page.route('**/api/v1/chat/chat', async route => route.fulfill({
     json: {
@@ -78,6 +63,4 @@ test('demo video: patient asks HOPI for help', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Tin nhắn cho trợ lý' }).fill('Tôi nên làm gì để theo dõi cơn hen tại nhà?');
   await page.getByRole('button', { name: 'Gửi tin nhắn' }).click();
   await expect(page.locator('.chat-bubble').filter({ hasText: 'Bác hãy dùng thuốc đúng theo kế hoạch' })).toBeVisible();
-  await page.waitForTimeout(1000);
-  await saveVideo(page, '02-patient-hopi-chat.webm');
 });

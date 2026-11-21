@@ -1,8 +1,4 @@
 import { test, expect } from '@playwright/test';
-import fs from 'node:fs';
-import path from 'node:path';
-
-test.use({ video: 'on' });
 
 test('nurse reviews, acknowledges, and resolves a patient alert', async ({ page }) => {
   let ticketStatus = 'OPEN';
@@ -68,9 +64,4 @@ test('nurse reviews, acknowledges, and resolves a patient alert', async ({ page 
   expect(ticketStatus).toBe('RESOLVED');
   await expect(page.locator('.live-escalation-banner')).toHaveCount(0);
 
-  const video = page.video();
-  const videoDir = path.resolve(process.cwd(), '../Evidence/W08/demo-videos');
-  fs.mkdirSync(videoDir, { recursive: true });
-  await page.close();
-  await video.saveAs(path.join(videoDir, '03-nurse-alert-resolution.webm'));
 });

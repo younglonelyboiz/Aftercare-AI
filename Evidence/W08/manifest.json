@@ -14,7 +14,7 @@
     "backend_e2e_and_invariant_tests_passed": 11,
     "frontend_build": "PASSED",
     "frontend_lint": "COMPLETED_WITH_WARNINGS",
-    "api_mode_in_demo_videos": "VIDEOS_01_03_MOCKED_VIDEO_04_LIVE_POSTGRESQL"
+    "api_mode_in_demo_videos": "VIDEO_04_LIVE_POSTGRESQL_ONLY"
   },
   "github_tracking": {
     "issues": {
@@ -33,15 +33,15 @@
   "files": [
     {
       "path": "README.md",
-      "sha256": "2ddaba99ba5741245c1dbb5ec06d914b37df59bffbd48a4df55f0db1d5b480b3"
+      "sha256": "8a3e1050f163b3dca15196135e8c84994063abb5993bad35a8223ed9da796450"
     },
     {
       "path": "metrics.csv",
-      "sha256": "29f946abfc2d85df085318cf36d1d183ad29fbc479d6f9dc563e368ca2f3eb71"
+      "sha256": "fbfe41a05308b09b423d09ca8c52888891f1513da1ccc7ac7653111a9ec5cb24"
     },
     {
       "path": "test-results.txt",
-      "sha256": "b9058da6ae705704ab60d985f03a42850a4d8265bb07bb0b891ee53ab04e04a5"
+      "sha256": "b54894fcc68fe680c7f54b0fb3bdfb509e7dda979ec9064b980d7f6354939e14"
     },
     {
       "path": "figures/end_to_end_flow.mmd",
@@ -49,19 +49,7 @@
     },
     {
       "path": "demo-videos/README.md",
-      "sha256": "2d9c3d2f794da8d6770d47698271fdb6f1671c311a854c1ea0d6507d96ba97d0"
-    },
-    {
-      "path": "demo-videos/01-patient-dashboard-checkin.webm",
-      "sha256": "1ee8b04387820bff4f869079f8b870e43346ecda851d41999871f522e9c439af"
-    },
-    {
-      "path": "demo-videos/02-patient-hopi-chat.webm",
-      "sha256": "a2b9f3a701e85f6bdfc2b186924816ffc26e28e9be78fda63df3091b05e582a0"
-    },
-    {
-      "path": "demo-videos/03-nurse-alert-resolution.webm",
-      "sha256": "a03b0fd9461c403aece5eeaf15057ec27bedeab41b9c2e9ff40fb45b8f915af9"
+      "sha256": "2af49f88830def29a8c2dba58489ae2eadbd5332d0c14f990190a5df2a78c862"
     },
     {
       "path": "demo-videos/04-live-backend-patient-to-nurse.webm",

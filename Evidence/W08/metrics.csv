@@ -1,10 +1,10 @@
 metric,value,unit,source,notes
-patient_dashboard_checkin_demo,1,passed,Playwright,API mocked; video captured
-patient_hopi_chat_demo,1,passed,Playwright,API mocked; video captured
-nurse_alert_resolution_demo,1,passed,Playwright,API mocked; video captured
+patient_dashboard_checkin_ui,1,passed,Playwright,API mocked; no video evidence
+patient_hopi_chat_ui,1,passed,Playwright,API mocked; no video evidence
+nurse_alert_resolution_ui,1,passed,Playwright,API mocked; no video evidence
 patient_chat_to_nurse_live_backend,1,passed,Playwright+FastAPI+PostgreSQL,One continuous patient-to-nurse portal recording; realtime watcher verifies WebSocket; isolated schema; video 04
 patient_to_nurse_demo_video_duration,85.6,seconds,WebM metadata,Deliberate reading pauses on dashboard chat alert and intervention report
-playwright_demo_flows,3,passed,frontend/tests/ui,Targeted W08 demo run
+playwright_ui_flows,3,passed,frontend/tests/ui,Targeted W08 UI run with mocked API
 live_postgres_backend_e2e,1,passed,frontend/tests/ui/backend-live-e2e.spec.js,Random schema isolated then dropped; existing schemas untouched
 backend_e2e_and_invariants,11,passed,tests/e2e_and_orchestration,Existing backend regression coverage
 frontend_production_build,1,passed,npm run build,Production bundle built successfully
