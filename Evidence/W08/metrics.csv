@@ -1,11 +1,8 @@
 metric,value,unit,source,notes
-patient_dashboard_checkin_ui,1,passed,Playwright,API mocked; no video evidence
-patient_hopi_chat_ui,1,passed,Playwright,API mocked; no video evidence
-nurse_alert_resolution_ui,1,passed,Playwright,API mocked; no video evidence
-patient_chat_to_nurse_live_backend,1,passed,Playwright+FastAPI+PostgreSQL,One continuous patient-to-nurse portal recording; realtime watcher verifies WebSocket; isolated schema; video 04
-patient_to_nurse_demo_video_duration,85.6,seconds,WebM metadata,Deliberate reading pauses on dashboard chat alert and intervention report
-playwright_ui_flows,3,passed,frontend/tests/ui,Targeted W08 UI run with mocked API
-live_postgres_backend_e2e,1,passed,frontend/tests/ui/backend-live-e2e.spec.js,Random schema isolated then dropped; existing schemas untouched
+patient_checkin_hopi_live,1,passed,Playwright+FastAPI+PostgreSQL,Real check-in persisted and read back; real HOPI red-flag response
+patient_chat_to_nurse_live_backend,1,passed,Playwright+FastAPI+PostgreSQL+WebSocket,Real P0 ticket; realtime watcher; acknowledge; resolve; isolated schema; video 04
+patient_to_nurse_demo_video_duration,83.8,seconds,WebM metadata,Continuous patient-to-nurse recording
+live_postgres_backend_e2e,2,passed,frontend/tests/ui,Two separate live browser tests; one patient and one patient-to-nurse
 backend_e2e_and_invariants,11,passed,tests/e2e_and_orchestration,Existing backend regression coverage
-frontend_production_build,1,passed,npm run build,Production bundle built successfully
+frontend_production_build,1,passed,npm run build,Production bundle built successfully on 2026-11-20
 frontend_lint,1,completed_with_warnings,npm run lint,Existing lint warnings remain
