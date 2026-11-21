@@ -1,8 +1,3 @@
 # Video demo W08
 
-| Video | Luồng | Backend |
-|---|---|---|
-| [01 — Patient check-in](./01-patient-dashboard-checkin.webm) | Bệnh nhân xem dashboard, nhập PEF và lưu check-in. | API mock |
-| [02 — HOPI chat](./02-patient-hopi-chat.webm) | Bệnh nhân gửi câu hỏi và xem phản hồi. | API mock |
-
-Tạo lại bằng `cd frontend && npm run test:ui -- --grep 'demo video' --reporter=line`.
+Video 04 ghi một luồng liên tục qua patient portal và staff portal với FastAPI, PostgreSQL và WebSocket thật. Xem PR #37 và `Evidence/W08/README.md` để biết phạm vi kiểm chứng.
