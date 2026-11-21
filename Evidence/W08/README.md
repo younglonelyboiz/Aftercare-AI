@@ -75,10 +75,10 @@ Dữ liệu máy đọc được nằm ở [`metrics.csv`](./metrics.csv); log l
 | Deliverable | Issue | PR | Reviewer | Trạng thái |
 |---|---|---|---|---|
 | Patient portal demo flows | [#34](https://github.com/younglonelyboiz/Aftercare-AI/issues/34) | [#36](https://github.com/younglonelyboiz/Aftercare-AI/pull/36) | Nguyễn Trường Giang (`giangjk250704`) | PR đang review |
-| Nurse alert resolution UX và live E2E | [#35](https://github.com/younglonelyboiz/Aftercare-AI/issues/35) | PR nối tiếp nhánh patient, xem GitHub sau khi tạo | Hoàng Ngọc Đức (`younglonelyboiz`) | PR đang chuẩn bị |
+| Nurse alert resolution UX và live E2E | [#35](https://github.com/younglonelyboiz/Aftercare-AI/issues/35) | [#37](https://github.com/younglonelyboiz/Aftercare-AI/pull/37) | Nguyễn Trường Giang (`giangjk250704`) | PR đang review |
 | Backend regression verification | Thuộc regression suite W07 đã có | Không phải PR mới W08 | N/A | Chạy lại trong W08 |
 
-PR staff được mở nối tiếp PR patient để diff review tách rõ phần việc. `main` tại lúc tách nhánh là `ccd24e8` (merge PR #33). Tag `w08` là nhãn dự kiến, chưa tạo trước khi hai PR được review và tích hợp.
+PR staff được mở bằng tài khoản `younglonelyboiz` và giao cho Giang review, vì GitHub không cho tác giả tự review. PR này nối tiếp PR patient để diff review tách rõ phần việc. `main` tại lúc tách nhánh là `ccd24e8` (merge PR #33). Tag `w08` là nhãn dự kiến, chưa tạo trước khi hai PR được review và tích hợp.
 
 ## 7. Hạn chế và việc tiếp theo
 

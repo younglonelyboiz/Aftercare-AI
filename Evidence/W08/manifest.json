@@ -17,14 +17,23 @@
     "api_mode_in_demo_videos": "VIDEOS_01_03_MOCKED_VIDEO_04_LIVE_POSTGRESQL"
   },
   "github_tracking": {
-    "issues": "Not recorded in local repository evidence.",
-    "pull_requests": "Not recorded in local repository evidence.",
-    "reviewers": "Not recorded in local repository evidence."
+    "issues": {
+      "patient": "https://github.com/younglonelyboiz/Aftercare-AI/issues/34",
+      "staff_e2e": "https://github.com/younglonelyboiz/Aftercare-AI/issues/35"
+    },
+    "pull_requests": {
+      "patient": "https://github.com/younglonelyboiz/Aftercare-AI/pull/36",
+      "staff_e2e": "https://github.com/younglonelyboiz/Aftercare-AI/pull/37"
+    },
+    "reviewers": {
+      "patient": "giangjk250704",
+      "staff_e2e": "giangjk250704"
+    }
   },
   "files": [
     {
       "path": "README.md",
-      "sha256": "da94cfa3744993190207023e65bb92353b810f4fe182049862d1ae253031078d"
+      "sha256": "2ddaba99ba5741245c1dbb5ec06d914b37df59bffbd48a4df55f0db1d5b480b3"
     },
     {
       "path": "metrics.csv",
@@ -44,15 +53,15 @@
     },
     {
       "path": "demo-videos/01-patient-dashboard-checkin.webm",
-      "sha256": "b76584339dd0d824ff23a3d88c344f8b12d4f5acb69ff188e9d4fb640b635446"
+      "sha256": "1ee8b04387820bff4f869079f8b870e43346ecda851d41999871f522e9c439af"
     },
     {
       "path": "demo-videos/02-patient-hopi-chat.webm",
-      "sha256": "23af120b84cfe5b5f72eb9d3eed433d7942d8d837d52bea5a9f7481740c12d73"
+      "sha256": "a2b9f3a701e85f6bdfc2b186924816ffc26e28e9be78fda63df3091b05e582a0"
     },
     {
       "path": "demo-videos/03-nurse-alert-resolution.webm",
-      "sha256": "6b33f7cf1b82a770e70dac73536e2acb25e9c154dee7eaeee6125ea0661634c5"
+      "sha256": "a03b0fd9461c403aece5eeaf15057ec27bedeab41b9c2e9ff40fb45b8f915af9"
     },
     {
       "path": "demo-videos/04-live-backend-patient-to-nurse.webm",
