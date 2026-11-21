@@ -1,0 +1,29 @@
+flowchart LR
+  subgraph Patient[Patient portal]
+    A[Overview and care plan]
+    B[Daily check-in]
+    C[HOPI chat]
+  end
+
+  subgraph Backend[Aftercare backend]
+    D[Check-in and risk screening]
+    E[Chat orchestration and guardrails]
+    F[Escalation service and ticket]
+    K[(PostgreSQL)]
+    L[Staff WebSocket]
+  end
+
+  subgraph Staff[Staff portal]
+    G[Live alert]
+    H[Acknowledge ticket]
+    I[Record intervention]
+    J[Resolve ticket]
+  end
+
+  A --> B --> D
+  A --> C --> E --> F
+  D -->|Yellow or red| F
+  F --> K
+  F --> L --> G --> H --> I --> J
+  H --> K
+  J --> K

@@ -1,0 +1,21 @@
+W08 verification record
+Dates: 2026-11-20 and 2026-11-21 (Asia/Ho_Chi_Minh)
+
+Command: cd frontend && npm run test:ui -- --config=playwright.patient-live.config.js --reporter=line
+Result: 1 passed (7.4s), 2026-11-21
+Verified path: patient demo login -> real check-in POST -> GREEN -> history read-back contains saved PEF 465 -> real HOPI chat red flag -> RED_ZONE and emergency call link. FastAPI and PostgreSQL used a disposable schema; no API routes were mocked.
+
+Command: cd frontend && npm run test:ui -- --config=playwright.backend.config.js --reporter=line
+Result: 1 passed (1.5m), rerun 2026-11-21
+Verified path: patient demo login -> real `/chat/chat` and safety graph -> P0 ticket persisted in PostgreSQL -> real nurse WebSocket `NEW_ALERT_TICKET` -> acknowledge REST + `TICKET_ACKNOWLEDGED` -> resolve REST + `TICKET_RESOLVED` -> ticket history read-back confirms `RESOLVED` and resolution notes. Video 04 saved.
+Database isolation: each run used a random disposable schema in configured PostgreSQL; test teardown drops that schema. Existing schemas/tables were not seeded or modified.
+LLM scope: red-flag flow is handled by the real emergency safety branch and does not require an external LLM call.
+
+Command: pytest -q tests/e2e/test_scenarios.py tests/orchestration/test_invariants.py
+Result: 11 passed, 4 warnings (1.03s), 2026-11-20
+
+Command: cd frontend && npm run build
+Result: passed; Vite production build completed, 2026-11-20.
+
+Command: cd frontend && npm run lint
+Result: completed with existing warnings; no lint error caused the command to fail, 2026-11-20.

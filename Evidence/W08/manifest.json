@@ -1,0 +1,60 @@
+{
+  "week": "W08",
+  "milestone": "Tuan8",
+  "project": "Aftercare-AI",
+  "tag": {
+    "name": "w08",
+    "status": "PLANNED_NOT_CREATED",
+    "note": "Create only after the final W08 commit is agreed and tagged."
+  },
+  "created_at": "2026-11-20T00:00:00+07:00",
+  "summary": {
+    "patient_live_e2e_passed": 1,
+    "patient_to_nurse_live_e2e_passed": 1,
+    "backend_e2e_and_invariant_tests_passed": 11,
+    "frontend_build": "PASSED",
+    "frontend_lint": "COMPLETED_WITH_WARNINGS",
+    "api_mode_in_demo_videos": "VIDEO_04_LIVE_POSTGRESQL_ONLY"
+  },
+  "github_tracking": {
+    "issues": {
+      "patient": "https://github.com/younglonelyboiz/Aftercare-AI/issues/34",
+      "staff_e2e": "https://github.com/younglonelyboiz/Aftercare-AI/issues/35"
+    },
+    "pull_requests": {
+      "patient": "https://github.com/younglonelyboiz/Aftercare-AI/pull/36",
+      "staff_e2e": "https://github.com/younglonelyboiz/Aftercare-AI/pull/37"
+    },
+    "reviewers": {
+      "patient": "giangjk250704",
+      "staff_e2e": "giangjk250704"
+    }
+  },
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "0085ecf1a729f6f26e640d87d01391aef7d90547618ccfd2f0d5ce3fb6a2524d"
+    },
+    {
+      "path": "metrics.csv",
+      "sha256": "33ca88b2ec11706d43a3a863e13dc52fa74582b035875bad7ee56f172471e991"
+    },
+    {
+      "path": "test-results.txt",
+      "sha256": "8ff513e2005ad93e43b94ecceaeca6f51a8426f806aa55f5a94869391d22fd3a"
+    },
+    {
+      "path": "figures/end_to_end_flow.mmd",
+      "sha256": "ab21d5d5bdeda7d699f815eb331dbc570834e42c1783bd87b61a475849956f29"
+    },
+    {
+      "path": "demo-videos/README.md",
+      "sha256": "8ca12601e67c40569f4a2e92a736d9e21f0e3bdb7971618c5bb1966479cf854c"
+    },
+    {
+      "path": "demo-videos/04-live-backend-patient-to-nurse.webm",
+      "sha256": "c87d1a57fafad8c7a36c069e51a65c02c3ebfcacede6b26882f10339d0a6072a"
+    }
+  ],
+  "manifest_excludes_self": true
+}
