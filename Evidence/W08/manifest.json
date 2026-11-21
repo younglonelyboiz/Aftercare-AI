@@ -1,0 +1,63 @@
+{
+  "week": "W08",
+  "milestone": "Tuan8",
+  "project": "Aftercare-AI",
+  "tag": {
+    "name": "w08",
+    "status": "PLANNED_NOT_CREATED",
+    "note": "Create only after the final W08 commit is agreed and tagged."
+  },
+  "created_at": "2026-11-20T00:00:00+07:00",
+  "summary": {
+    "playwright_demo_flows_passed": 3,
+    "live_postgresql_backend_e2e_passed": 1,
+    "backend_e2e_and_invariant_tests_passed": 11,
+    "frontend_build": "PASSED",
+    "frontend_lint": "COMPLETED_WITH_WARNINGS",
+    "api_mode_in_demo_videos": "VIDEOS_01_03_MOCKED_VIDEO_04_LIVE_POSTGRESQL"
+  },
+  "github_tracking": {
+    "issues": "Not recorded in local repository evidence.",
+    "pull_requests": "Not recorded in local repository evidence.",
+    "reviewers": "Not recorded in local repository evidence."
+  },
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "da94cfa3744993190207023e65bb92353b810f4fe182049862d1ae253031078d"
+    },
+    {
+      "path": "metrics.csv",
+      "sha256": "29f946abfc2d85df085318cf36d1d183ad29fbc479d6f9dc563e368ca2f3eb71"
+    },
+    {
+      "path": "test-results.txt",
+      "sha256": "b9058da6ae705704ab60d985f03a42850a4d8265bb07bb0b891ee53ab04e04a5"
+    },
+    {
+      "path": "figures/end_to_end_flow.mmd",
+      "sha256": "ab21d5d5bdeda7d699f815eb331dbc570834e42c1783bd87b61a475849956f29"
+    },
+    {
+      "path": "demo-videos/README.md",
+      "sha256": "2d9c3d2f794da8d6770d47698271fdb6f1671c311a854c1ea0d6507d96ba97d0"
+    },
+    {
+      "path": "demo-videos/01-patient-dashboard-checkin.webm",
+      "sha256": "b76584339dd0d824ff23a3d88c344f8b12d4f5acb69ff188e9d4fb640b635446"
+    },
+    {
+      "path": "demo-videos/02-patient-hopi-chat.webm",
+      "sha256": "23af120b84cfe5b5f72eb9d3eed433d7942d8d837d52bea5a9f7481740c12d73"
+    },
+    {
+      "path": "demo-videos/03-nurse-alert-resolution.webm",
+      "sha256": "6b33f7cf1b82a770e70dac73536e2acb25e9c154dee7eaeee6125ea0661634c5"
+    },
+    {
+      "path": "demo-videos/04-live-backend-patient-to-nurse.webm",
+      "sha256": "0f37efc7917bd814320dc9a8d625e8fea559fbd7f8b428b281823bf346c63715"
+    }
+  ],
+  "manifest_excludes_self": true
+}

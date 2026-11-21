@@ -20,10 +20,11 @@ export default function LiveAlertBanner({
 }) {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
-  // Lọc vé ưu tiên cao nhất
-  const p0Ticket = tickets.find(t => t.priority === 'P0_CRITICAL' && t.status === 'OPEN');
-  const p1Ticket = !p0Ticket ? tickets.find(t => t.priority === 'P1_HIGH' && t.status === 'OPEN') : null;
-  const currentTicket = p0Ticket || p1Ticket || tickets.find(t => t.status === 'OPEN');
+  // Ưu tiên cảnh báo mới; ticket đã tiếp nhận vẫn cần hiện để điều dưỡng hoàn tất biên bản.
+  const activeTickets = tickets.filter(t => t.status !== 'RESOLVED');
+  const p0Ticket = activeTickets.find(t => t.priority === 'P0_CRITICAL' && t.status === 'OPEN');
+  const p1Ticket = !p0Ticket ? activeTickets.find(t => t.priority === 'P1_HIGH' && t.status === 'OPEN') : null;
+  const currentTicket = p0Ticket || p1Ticket || activeTickets[0];
 
   useEffect(() => {
     if (!currentTicket) {
@@ -45,6 +46,7 @@ export default function LiveAlertBanner({
   if (!currentTicket) return null;
 
   const isP0 = currentTicket.priority === 'P0_CRITICAL';
+  const isOpen = currentTicket.status === 'OPEN';
   const isChatbotSource =
     currentTicket.source_channel === 'CHATBOT' ||
     currentTicket.clinical_data?.source === 'CHAT' ||
@@ -112,14 +114,16 @@ export default function LiveAlertBanner({
           <span>{isMuted ? 'Đã tắt tiếng' : 'Tắt tiếng'}</span>
         </button>
 
-        <button
-          className="btn-banner-ack"
-          onClick={() => onAcknowledge(currentTicket.id)}
-          title="Tiếp nhận ca & ngắt chuông báo động"
-        >
-          <Bell size={15} style={{ marginRight: 6, verticalAlign: 'middle' }} />
-          Tiếp Nhận Ca
-        </button>
+        {isOpen && (
+          <button
+            className="btn-banner-ack"
+            onClick={() => onAcknowledge(currentTicket.id)}
+            title="Tiếp nhận ca & ngắt chuông báo động"
+          >
+            <Bell size={15} style={{ marginRight: 6, verticalAlign: 'middle' }} />
+            Tiếp Nhận Ca
+          </button>
+        )}
 
         <button
           className="btn-banner-resolve"

@@ -1,0 +1,28 @@
+W08 targeted verification record
+Date: 2026-11-20 (Asia/Ho_Chi_Minh)
+
+Command: cd frontend && npm run test:ui -- --grep 'demo video|nurse reviews' --reporter=line
+Result: 3 passed (6.5s)
+  - demo video: patient overview and daily check-in
+  - demo video: patient asks HOPI for help
+  - nurse reviews, acknowledges, and resolves a patient alert
+
+Command: pytest -q tests/e2e/test_scenarios.py tests/orchestration/test_invariants.py
+Result: 11 passed, 4 warnings (1.03s)
+
+Command: cd frontend && npm run build
+Result: passed; Vite production build completed.
+
+Command: cd frontend && npm run lint
+Result: completed with existing warnings; no lint error caused the command to fail.
+
+Scope note for videos 01–03: Playwright API calls are mocked. These recordings verify browser presentation and UI interactions only.
+
+Command: cd frontend && npm run test:ui -- --config=playwright.backend.config.js --reporter=line
+Result: 1 passed (1.6m)
+  - full live scenario video: patient reports red flag and nurse resolves the alert
+Verified path: patient demo login → real `/chat/chat` and safety graph → P0 ticket persisted in PostgreSQL → real nurse WebSocket `NEW_ALERT_TICKET` → acknowledge REST + `TICKET_ACKNOWLEDGED` → resolve REST + `TICKET_RESOLVED` → ticket history read-back confirms `RESOLVED` and resolution notes.
+Database isolation: used a random disposable schema in the configured PostgreSQL database; the test server drops only that schema on shutdown. Existing schemas/tables were not seeded or modified.
+Cleanup verification: post-run read-only query found 0 schemas matching the W08 temporary-schema prefix.
+LLM scope: red-flag flow is handled by the real emergency safety branch and does not require an external LLM call.
+Video: `demo-videos/04-live-backend-patient-to-nurse.webm`; 85.6 seconds. One continuous recorded page switches from patient portal to nurse portal after logout/login, with deliberate pauses for reading. A second nurse watcher verifies the real-time WebSocket delivery.

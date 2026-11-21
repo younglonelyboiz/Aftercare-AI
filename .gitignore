@@ -69,6 +69,8 @@ pnpm-debug.log*
 # Frontend (Next.js / Node.js)
 # ==========================================
 node_modules/
+test-results/
+playwright-report/
 .next/
 out/
 .vercel
